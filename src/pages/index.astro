@@ -1,0 +1,128 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PrimaryCta from '@/components/PrimaryCta.astro';
+---
+
+<BaseLayout title="Flight School Decision Tool | PilotPath">
+  <header class="mx-auto max-w-6xl px-4 py-16 text-center md:py-24">
+    <span class="mb-4 inline-block rounded-full bg-sky-100 px-3 py-1 text-xs font-bold uppercase tracking-widest text-sky-700">
+      Start Your Journey
+    </span>
+    <h1 class="mb-6 text-4xl font-extrabold leading-tight tracking-tight text-slate-900 md:text-6xl">
+      Stop Guessing. <br class="hidden md:block" /> Find Your Path to the <span class="text-sky-600">Cockpit.</span>
+    </h1>
+    <p class="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-slate-600 md:text-xl">
+      Take our 2-minute realistic pilot assessment to see if flight school fits your budget, goals, and lifestyle.
+    </p>
+    <div class="flex flex-col items-center justify-center gap-4 md:flex-row">
+      <PrimaryCta href="/quiz/">Start the Realistic Assessment</PrimaryCta>
+      <PrimaryCta href="/guides/" variant="secondary">View Beginner Guides</PrimaryCta>
+    </div>
+  </header>
+
+  <section id="how-it-works" class="mx-auto max-w-6xl px-4 py-16">
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
+      <article class="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm transition hover:shadow-md">
+        <div class="mb-4 text-3xl">💰</div>
+        <h3 class="mb-2 font-bold text-slate-900">Cost Analysis</h3>
+        <p class="text-sm text-slate-500">Real-world budgeting based on your goals and training style.</p>
+      </article>
+      <article class="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm transition hover:shadow-md">
+        <div class="mb-4 text-3xl">⏱️</div>
+        <h3 class="mb-2 font-bold text-slate-900">Timeline</h3>
+        <p class="text-sm text-slate-500">Estimate how many months until your first solo and first certificate.</p>
+      </article>
+      <article class="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm transition hover:shadow-md">
+        <div class="mb-4 text-3xl">📋</div>
+        <h3 class="mb-2 font-bold text-slate-900">License Type</h3>
+        <p class="text-sm text-slate-500">Private, instrument, commercial, or early exploration.</p>
+      </article>
+      <article class="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm transition hover:shadow-md">
+        <div class="mb-4 text-3xl">✈️</div>
+        <h3 class="mb-2 font-bold text-slate-900">Next Step</h3>
+        <p class="text-sm text-slate-500">Exactly what to do first to avoid wasting thousands.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="relative overflow-hidden bg-slate-900 py-20 text-white">
+    <div class="mx-auto max-w-4xl px-4 text-center">
+      <h2 class="mb-12 text-3xl font-bold md:text-4xl">Is It Actually Possible?</h2>
+      <div class="grid grid-cols-1 gap-12 text-left md:grid-cols-2">
+        <div class="flex gap-4">
+          <div class="text-xl font-bold text-sky-400">01.</div>
+          <div>
+            <h4 class="mb-2 text-lg font-bold">“Am I too old?”</h4>
+            <p class="text-sm text-slate-400">Many successful pilots start later than expected. The right path depends on your goal, age, medical eligibility, and timeline.</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <div class="text-xl font-bold text-sky-400">02.</div>
+          <div>
+            <h4 class="mb-2 text-lg font-bold">“Is it too expensive?”</h4>
+            <p class="text-sm text-slate-400">Flight school is not cheap, but there are multiple paths: pay-as-you-go, structured programs, clubs, scholarships, and financing.</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <div class="text-xl font-bold text-sky-400">03.</div>
+          <div>
+            <h4 class="mb-2 text-lg font-bold">“I’m bad at math.”</h4>
+            <p class="text-sm text-slate-400">You do not need to be a calculus genius. Basic arithmetic, procedures, judgment, and consistency matter more.</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <div class="text-xl font-bold text-sky-400">04.</div>
+          <div>
+            <h4 class="mb-2 text-lg font-bold">“Where do I start?”</h4>
+            <p class="text-sm text-slate-400">Most people should start with research, a discovery flight, and a realistic training budget before committing to a school.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 py-20">
+    <h2 class="mb-12 text-center text-3xl font-bold text-slate-900">Potential Pathways</h2>
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+      <article class="flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+        <div class="h-2 bg-slate-200"></div>
+        <div class="flex-1 p-8">
+          <h4 class="mb-2 text-xl font-bold">The Weekend Hobbyist</h4>
+          <p class="mb-6 text-sm text-slate-500">Fly for fun, take friends for lunch, and enjoy the freedom of the skies on your schedule.</p>
+          <ul class="space-y-2 text-sm text-slate-700">
+            <li>✓ Private Pilot License</li>
+            <li>✓ Fly on weekends</li>
+            <li>✓ Flexible timeline</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="flex flex-col overflow-hidden rounded-2xl border-2 border-sky-600 bg-white shadow-md md:scale-105">
+        <div class="h-2 bg-sky-600"></div>
+        <div class="flex-1 p-8">
+          <div class="mb-4 w-max rounded bg-sky-100 px-2 py-1 text-[10px] font-bold uppercase text-sky-700">Most Popular</div>
+          <h4 class="mb-2 text-xl font-bold text-sky-900">The Career Captain</h4>
+          <p class="mb-6 text-sm text-slate-500">Commit to reaching the airline flight deck as efficiently and realistically as possible.</p>
+          <ul class="space-y-2 text-sm text-slate-700">
+            <li>✓ Commercial & ATP pathway</li>
+            <li>✓ Full-time training option</li>
+            <li>✓ High-intensity path</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+        <div class="h-2 bg-slate-200"></div>
+        <div class="flex-1 p-8">
+          <h4 class="mb-2 text-xl font-bold">The Personal Owner</h4>
+          <p class="mb-6 text-sm text-slate-500">Train with the goal of owning, sharing, or using an aircraft for practical travel.</p>
+          <ul class="space-y-2 text-sm text-slate-700">
+            <li>✓ Instrument rating focus</li>
+            <li>✓ Cross-country mastery</li>
+            <li>✓ Long-term ownership planning</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </section>
+</BaseLayout>

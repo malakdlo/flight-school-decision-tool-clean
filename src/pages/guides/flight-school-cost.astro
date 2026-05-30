@@ -1,0 +1,63 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PrimaryCta from '@/components/PrimaryCta.astro';
+---
+
+<BaseLayout
+  title="How Much Does Flight School Actually Cost? | PilotPath"
+  description="A beginner-friendly guide to private pilot and career flight school costs, hidden fees, and training frequency."
+>
+  <article class="mx-auto max-w-3xl px-4 py-16">
+    <nav class="mb-8 text-xs font-bold uppercase tracking-widest text-slate-400">
+      <a href="/" class="hover:text-sky-600">Home</a> &gt; <a href="/guides/" class="hover:text-sky-600">Guides</a> &gt; Flight School Costs
+    </nav>
+
+    <h1 class="mb-8 text-4xl font-extrabold leading-tight text-slate-900 md:text-5xl">
+      How Much Does Flight School Actually Cost?
+    </h1>
+
+    <div class="mb-12 rounded-2xl border border-slate-800 bg-slate-900 p-8 text-white shadow-xl">
+      <div class="mb-3 text-xs font-bold uppercase tracking-widest text-sky-400">The Short Answer</div>
+      <p class="text-xl font-medium leading-relaxed">
+        A private pilot license often costs around <span class="font-bold text-sky-400">$12,000 to $20,000+</span> when you include aircraft rental, instructor time, supplies, exams, and checkride costs. Career-oriented training can reach <span class="font-bold text-sky-400">$75,000 to $100,000+</span> depending on the school, region, and training pace.
+      </p>
+    </div>
+
+    <section class="space-y-6 text-slate-600">
+      <h2 class="text-2xl font-bold text-slate-900">Why the advertised price is usually too low</h2>
+      <p class="leading-relaxed">
+        Flight training cost is usually quoted using FAA minimum hours, but many students need more time. Weather, aircraft availability, instructor changes, scheduling gaps, and relearning between lessons can all increase the final cost.
+      </p>
+
+      <div class="rounded-r-xl border-l-4 border-amber-400 bg-amber-50 p-6">
+        <h3 class="mb-2 font-bold text-amber-900">Key Takeaway</h3>
+        <p class="text-sm italic text-amber-800">
+          Training two to three times per week is often more cost-effective than training once in a while because you spend less time relearning previous lessons.
+        </p>
+      </div>
+
+      <h2 class="text-2xl font-bold text-slate-900">Common hidden fees</h2>
+      <ul class="list-disc space-y-3 pl-6">
+        <li><strong>FAA medical exam:</strong> often around $150 - $300 depending on provider and location</li>
+        <li><strong>Written exam:</strong> usually a separate testing fee</li>
+        <li><strong>Checkride:</strong> examiner fees can be a major out-of-pocket cost</li>
+        <li><strong>Headset and supplies:</strong> budget for basic gear, charts, apps, and ground materials</li>
+        <li><strong>Extra training time:</strong> the biggest variable for most students</li>
+      </ul>
+
+      <h2 class="text-2xl font-bold text-slate-900">The simplest way to start</h2>
+      <p class="leading-relaxed">
+        Before committing to a school, book a discovery flight, ask for realistic average completion costs, and compare at least two training options. The cheapest hourly rate is not always the cheapest path if scheduling, maintenance, or instructor availability slows you down.
+      </p>
+    </section>
+
+    <div class="mt-16 flex flex-col items-center gap-8 rounded-3xl border border-slate-200 bg-white p-10 shadow-sm md:flex-row">
+      <div class="text-4xl">⏱️</div>
+      <div class="flex-1">
+        <h3 class="mb-2 text-xl font-bold text-slate-900">Ready for a personalized estimate?</h3>
+        <p class="text-sm text-slate-500">Get a specific path based on your goal, schedule, and budget comfort level.</p>
+      </div>
+      <PrimaryCta href="/quiz/">Take Assessment</PrimaryCta>
+    </div>
+  </article>
+</BaseLayout>

@@ -1,0 +1,22 @@
+{
+  "name": "flight-school-decision-tool",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "deploy:pages": "npm run build && wrangler pages deploy dist"
+  },
+  "dependencies": {
+    "astro": "latest",
+    "@tailwindcss/vite": "latest",
+    "tailwindcss": "latest"
+  },
+  "devDependencies": {
+    "@astrojs/check": "latest",
+    "typescript": "latest",
+    "wrangler": "latest"
+  }
+}

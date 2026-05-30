@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight School Decision Tool | Visual Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --navy: #0F172A;
+            --sky: #0284C7;
+            --amber: #FBBF24;
+            --slate-50: #F8FAFC;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--slate-50);
+            color: #1E293B;
+            overflow-x: hidden;
+        }
+
+        .aviation-grid {
+            background-image: linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .runway-line {
+            height: 4px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--sky),
+                var(--sky) 20px,
+                transparent 20px,
+                transparent 40px
+            );
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+
+        .page-view {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .page-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-hover {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .quiz-option {
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .quiz-option.selected {
+            border-color: var(--sky);
+            background-color: #E0F2FE;
+        }
+    </style>
+</head>
+<body class="aviation-grid min-h-screen">
+
+    <!-- Nav Bar -->
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="showPage('home')">
+                <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-xs">FS</span>
+                </div>
+                <span class="font-bold text-slate-900 tracking-tight">PilotPath</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+                <a href="#" onclick="showPage('guides')" class="hover:text-sky-600">Guides</a>
+                <a href="#" onclick="showPage('home')" class="hover:text-sky-600">How it Works</a>
+                <button onclick="showPage('quiz-intro')" class="bg-sky-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-sky-700 transition">Start Quiz</button>
+            </div>
+            <button class="md:hidden text-slate-900">
+                <span class="text-2xl">☰</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- UI View: Home Page -->
+    <div id="home" class="page-view active">
+        <!-- Hero Section -->
+        <header class="max-w-6xl mx-auto px-4 py-16 md:py-24 text-center">
+            <span class="inline-block px-3 py-1 bg-sky-100 text-sky-700 text-xs font-bold rounded-full mb-4 tracking-widest uppercase">Start Your Journey</span>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight">
+                Stop Guessing. <br class="hidden md:block"> Find Your Path to the <span class="text-sky-600">Cockpit.</span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+                Take our 2-minute "Realistic Pilot Assessment" to see if flight school fits your budget, goals, and lifestyle.
+            </p>
+            <div class="flex flex-col md:flex-row items-center justify-center gap-4">
+                <button onclick="showPage('quiz-intro')" class="w-full md:w-auto px-8 py-4 bg-sky-600 text-white font-bold rounded-xl text-lg btn-hover">Start the Realistic Assessment</button>
+                <button onclick="showPage('guides')" class="w-full md:w-auto px-8 py-4 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl text-lg btn-hover">View Beginner Guides</button>
+            </div>
+        </header>
+
+        <!-- What You'll Discover -->
+        <section class="max-w-6xl mx-auto px-4 py-16">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="text-3xl mb-4">💰</div>
+                    <h3 class="font-bold text-slate-900 mb-2">Cost Analysis</h3>
+                    <p class="text-slate-500 text-sm">Real-world budgeting based on your location and goals.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="text-3xl mb-4">⏱️</div>
+                    <h3 class="font-bold text-slate-900 mb-2">Timeline</h3>
+                    <p class="text-slate-500 text-sm">How many months until your first solo and final license.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="text-3xl mb-4">📋</div>
+                    <h3 class="font-bold text-slate-900 mb-2">License Type</h3>
+                    <p class="text-slate-500 text-sm">Private vs. Commercial. We help you choose the right goal.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="text-3xl mb-4">✈️</div>
+                    <h3 class="font-bold text-slate-900 mb-2">Next Step</h3>
+                    <p class="text-slate-500 text-sm">Exactly what to do first to avoid wasting thousands.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Objections -->
+        <section class="bg-slate-900 py-20 text-white overflow-hidden relative">
+            <div class="max-w-4xl mx-auto px-4 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-12">Is It Actually Possible?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-left">
+                    <div class="flex gap-4">
+                        <div class="text-sky-400 font-bold text-xl">01.</div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">"Am I too old?"</h4>
+                            <p class="text-slate-400 text-sm">Many successful airline pilots start in their 30s or 40s. We'll show you the age-based reality.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="text-sky-400 font-bold text-xl">02.</div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">"Is it too expensive?"</h4>
+                            <p class="text-slate-400 text-sm">Flight school isn't cheap, but there are multiple ways to fund it that don't involve a fortune upfront.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="text-sky-400 font-bold text-xl">03.</div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">"I'm bad at math."</h4>
+                            <p class="text-slate-400 text-sm">You don't need to be a calculus genius. Basic arithmetic and spatial awareness are what matters most.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="text-sky-400 font-bold text-xl">04.</div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">"Where do I start?"</h4>
+                            <p class="text-slate-400 text-sm">Most people start with a discovery flight. We'll help you prepare so you get the most out of it.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pilot Path Preview -->
+        <section class="max-w-6xl mx-auto px-4 py-20">
+            <h2 class="text-3xl font-bold text-center text-slate-900 mb-12">Potential Pathways</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="group bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 flex flex-col">
+                    <div class="h-2 bg-slate-200"></div>
+                    <div class="p-8 flex-1">
+                        <h4 class="text-xl font-bold mb-2">The Weekend Hobbyist</h4>
+                        <p class="text-slate-500 text-sm mb-6">Fly for fun, take friends for lunch, and enjoy the freedom of the skies on your schedule.</p>
+                        <ul class="text-sm space-y-2 text-slate-700">
+                            <li>✓ Private Pilot License</li>
+                            <li>✓ Fly on weekends</li>
+                            <li>✓ Flexible timeline</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="group bg-white rounded-2xl overflow-hidden shadow-md border-2 border-sky-600 flex flex-col transform md:scale-105">
+                    <div class="h-2 bg-sky-600"></div>
+                    <div class="p-8 flex-1">
+                        <div class="bg-sky-100 text-sky-700 text-[10px] font-bold uppercase py-1 px-2 rounded w-max mb-4">Most Popular</div>
+                        <h4 class="text-xl font-bold mb-2 text-sky-900">The Career Captain</h4>
+                        <p class="text-slate-500 text-sm mb-6">Full commitment to reaching the airline flight deck as efficiently as possible.</p>
+                        <ul class="text-sm space-y-2 text-slate-700">
+                            <li>✓ Commercial & ATP</li>
+                            <li>✓ Full-time training</li>
+                            <li>✓ High-intensity path</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="group bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 flex flex-col">
+                    <div class="h-2 bg-slate-200"></div>
+                    <div class="p-8 flex-1">
+                        <h4 class="text-xl font-bold mb-2">The Personal Owner</h4>
+                        <p class="text-slate-500 text-sm mb-6">Train with the goal of owning or sharing an aircraft for business or travel.</p>
+                        <ul class="text-sm space-y-2 text-slate-700">
+                            <li>✓ Instrument Rating focus</li>
+                            <li>✓ Cross-country mastery</li>
+                            <li>✓ Long-term ownership</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-white border-t border-slate-200 pt-16 pb-8">
+            <div class="max-w-6xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                <div class="col-span-2">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-xs">FS</span>
+                        </div>
+                        <span class="font-bold text-slate-900 tracking-tight">PilotPath</span>
+                    </div>
+                    <p class="text-slate-500 text-sm max-w-xs">Helping the next generation of aviators take flight with confidence, clarity, and realistic expectations.</p>
+                </div>
+                <div>
+                    <h5 class="font-bold text-slate-900 mb-4">Guides</h5>
+                    <ul class="text-sm text-slate-500 space-y-2">
+                        <li><a href="#" class="hover:text-sky-600">Cost Breakdown</a></li>
+                        <li><a href="#" class="hover:text-sky-600">License Types</a></li>
+                        <li><a href="#" class="hover:text-sky-600">Medical Exams</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold text-slate-900 mb-4">Tools</h5>
+                    <ul class="text-sm text-slate-500 space-y-2">
+                        <li><a href="#" class="hover:text-sky-600">Quiz</a></li>
+                        <li><a href="#" class="hover:text-sky-600">Cost Calculator</a></li>
+                        <li><a href="#" class="hover:text-sky-600">Starter Kit</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="max-w-6xl mx-auto px-4 pt-8 border-t border-slate-100 text-center text-xs text-slate-400">
+                &copy; 2024 Flight School Decision Tool. Clear for Takeoff.
+            </div>
+        </footer>
+    </div>
+
+    <!-- UI View: Quiz Intro -->
+    <div id="quiz-intro" class="page-view">
+        <div class="max-w-xl mx-auto px-4 py-16">
+            <div class="bg-white p-8 md:p-12 rounded-3xl shadow-xl border border-slate-100 text-center">
+                <div class="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-8">
+                    <span class="text-3xl">📋</span>
+                </div>
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-4">Assessment</h2>
+                <h3 class="text-xl text-slate-600 font-medium mb-6">"Is Becoming a Pilot Actually Realistic for You?"</h3>
+                <p class="text-slate-500 mb-8 leading-relaxed">
+                    This interactive assessment uses real-world industry data to calculate your feasibility score and recommend a training path that fits your life.
+                </p>
+                <div class="space-y-4 text-left mb-10">
+                    <div class="flex items-center gap-3 text-sm text-slate-600">
+                        <span class="text-sky-500 font-bold">✓</span> 6-8 Targeted Questions
+                    </div>
+                    <div class="flex items-center gap-3 text-sm text-slate-600">
+                        <span class="text-sky-500 font-bold">✓</span> Personalized Cost & Time Estimates
+                    </div>
+                    <div class="flex items-center gap-3 text-sm text-slate-600">
+                        <span class="text-sky-500 font-bold">✓</span> 100% Free Beginner Roadmap
+                    </div>
+                </div>
+                <button onclick="startQuiz()" class="w-full py-4 bg-slate-900 text-white font-bold rounded-xl btn-hover">Start Now (takes 2 mins)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- UI View: Quiz Question Shell -->
+    <div id="quiz-question" class="page-view">
+        <div class="max-w-2xl mx-auto px-4 py-12">
+            <!-- Progress -->
+            <div class="mb-12">
+                <div class="flex justify-between text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">
+                    <span>Question <span id="q-index">1</span> of 6</span>
+                    <span><span id="q-percent">16</span>% Complete</span>
+                </div>
+                <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div id="q-progress-bar" class="h-full bg-sky-600 transition-all duration-500" style="width: 16%"></div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div id="quiz-content" class="min-h-[400px]">
+                <h2 id="question-text" class="text-2xl md:text-3xl font-bold text-slate-900 mb-2">What is your primary goal for aviation?</h2>
+                <p id="question-subtext" class="text-slate-500 mb-10 italic">This helps us determine which pilot certificate is the best fit.</p>
+                
+                <div id="options-container" class="space-y-4">
+                    <!-- Options injected here -->
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="mt-12 flex items-center justify-between">
+                <button onclick="prevQuestion()" class="text-slate-400 font-bold text-sm hover:text-slate-900">Back</button>
+                <button onclick="nextQuestion()" class="px-8 py-3 bg-sky-600 text-white font-bold rounded-lg btn-hover">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- UI View: Loading Screen -->
+    <div id="quiz-loading" class="page-view">
+        <div class="max-w-md mx-auto px-4 py-32 text-center">
+            <div class="relative w-32 h-32 mx-auto mb-12">
+                <div class="absolute inset-0 border-4 border-sky-100 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-sky-600 rounded-full border-t-transparent animate-spin"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="text-2xl">✈️</span>
+                </div>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-900 mb-4">Analyzing your flight path...</h2>
+            <div class="space-y-3 text-slate-400 text-sm font-medium">
+                <p id="loading-msg-1" class="opacity-0 transition-opacity duration-500">Cross-referencing training timelines...</p>
+                <p id="loading-msg-2" class="opacity-0 transition-opacity duration-500">Calculating estimated investment costs...</p>
+                <p id="loading-msg-3" class="opacity-0 transition-opacity duration-500">Preparing your personalized roadmap...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- UI View: Result Page -->
+    <div id="results" class="page-view">
+        <!-- Result Hero -->
+        <header class="bg-white border-b border-slate-200 py-16">
+            <div class="max-w-4xl mx-auto px-4 text-center">
+                <div class="inline-flex items-center gap-2 bg-amber-100 text-amber-700 text-[10px] font-bold tracking-widest uppercase py-1.5 px-3 rounded-full mb-6">
+                    <span>★</span> Your Recommended Path
+                </div>
+                <h1 id="result-title" class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6">The Career Pilot Path</h1>
+                <p id="result-desc" class="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+                    Based on your commitment level and goal of flying for an airline, the professional path is your best route to success.
+                </p>
+            </div>
+        </header>
+
+        <!-- Stats Bar -->
+        <section class="max-w-5xl mx-auto px-4 -mt-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-lg border border-slate-800">
+                    <div class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">Estimated Cost</div>
+                    <div class="text-2xl font-bold text-sky-400">$75,000 - $95,000</div>
+                    <div class="text-xs text-slate-500 mt-1">Zero to Commercial Single Engine</div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100">
+                    <div class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">Estimated Timeline</div>
+                    <div class="text-2xl font-bold text-slate-900">12 - 18 Months</div>
+                    <div class="text-xs text-slate-500 mt-1">Based on full-time training commitment</div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100">
+                    <div class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">Intensity Level</div>
+                    <div class="text-2xl font-bold text-amber-500">High Demand</div>
+                    <div class="text-xs text-slate-500 mt-1">Recommended for career-seekers</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detailed Breakdown -->
+        <section class="max-w-4xl mx-auto px-4 py-20">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="text-xl font-bold mb-6 text-slate-900">Why this path fits:</h3>
+                    <div class="space-y-4">
+                        <div class="flex gap-3">
+                            <span class="text-sky-600 font-bold">✓</span>
+                            <p class="text-slate-600 text-sm">Aligns with your timeline to reach the airlines by 2026.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <span class="text-sky-600 font-bold">✓</span>
+                            <p class="text-slate-600 text-sm">Fits your budget flexibility for structured 141 training.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <span class="text-sky-600 font-bold">✓</span>
+                            <p class="text-slate-600 text-sm">Matches your commitment level for 4+ days of training/week.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-200">
+                    <h3 class="text-xl font-bold mb-4 text-slate-900">Roadmap Chart</h3>
+                    <div class="chart-container">
+                        <canvas id="roadmapChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Roadmap List -->
+            <div class="mt-20">
+                <h3 class="text-2xl font-bold text-center mb-12">Your First 3 Steps</h3>
+                <div class="space-y-6">
+                    <div class="flex flex-col md:flex-row gap-6 p-8 bg-white border border-slate-100 rounded-2xl">
+                        <div class="w-12 h-12 bg-sky-600 text-white rounded-full flex items-center justify-center font-bold shrink-0">1</div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">Book a Discovery Flight</h4>
+                            <p class="text-slate-500 text-sm mb-4">Before spending thousands, spend $150 to see if you actually enjoy being at the controls of a small aircraft.</p>
+                            <a href="#" class="text-sky-600 text-sm font-bold hover:underline">How to prepare for a discovery flight →</a>
+                        </div>
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-6 p-8 bg-white border border-slate-100 rounded-2xl">
+                        <div class="w-12 h-12 bg-slate-900 text-white rounded-full flex items-center justify-center font-bold shrink-0">2</div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">Obtain a Medical Certificate</h4>
+                            <p class="text-slate-500 text-sm">Ensure you can meet FAA medical standards. Do this early to avoid surprises later in your training.</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-6 p-8 bg-white border border-slate-100 rounded-2xl">
+                        <div class="w-12 h-12 bg-slate-900 text-white rounded-full flex items-center justify-center font-bold shrink-0">3</div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">Choose a Training Structure (61 vs 141)</h4>
+                            <p class="text-slate-500 text-sm">Interview 2-3 flight schools to see which environment fits your personality and schedule.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="max-w-4xl mx-auto px-4 py-20">
+            <div class="bg-sky-600 rounded-3xl p-10 text-center text-white relative overflow-hidden">
+                <div class="relative z-10">
+                    <h2 class="text-3xl font-bold mb-4">Get the Full Roadmap (PDF)</h2>
+                    <p class="text-sky-100 mb-8 max-w-md mx-auto">We've detailed this entire path including financing options and school checklists in our free Pilot Starter Kit.</p>
+                    <div class="flex flex-col md:flex-row gap-4 max-w-md mx-auto">
+                        <input type="email" placeholder="Enter your email" class="flex-1 px-6 py-4 rounded-xl text-slate-900 focus:outline-none">
+                        <button class="bg-slate-900 px-8 py-4 rounded-xl font-bold btn-hover">Send My Kit</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- UI View: Guide Template -->
+    <div id="guides" class="page-view">
+        <div class="max-w-3xl mx-auto px-4 py-16">
+            <nav class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-8">
+                Home > Guides > Flight School Costs
+            </nav>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-8 leading-tight">How Much Does Flight School Actually Cost in 2024?</h1>
+            
+            <!-- AEO Answer Box -->
+            <div class="bg-slate-900 text-white p-8 rounded-2xl mb-12 shadow-xl border border-slate-800">
+                <div class="text-sky-400 font-bold text-xs uppercase tracking-widest mb-3">The Short Answer</div>
+                <p class="text-xl font-medium leading-relaxed">
+                    On average, obtaining a Private Pilot License (PPL) costs between <span class="text-sky-400 font-bold">$10,000 and $16,000</span>. For those pursuing a career, the full path from zero to Commercial Pilot typically ranges from <span class="text-sky-400 font-bold">$70,000 to $100,000</span> depending on training frequency and school type.
+                </p>
+            </div>
+
+            <div class="prose prose-slate max-w-none">
+                <h2 class="text-2xl font-bold mb-4 text-slate-900">Understanding the Variable Costs</h2>
+                <p class="text-slate-600 mb-6 leading-relaxed">
+                    Most flight training costs are driven by three primary factors: aircraft rental time, instructor fees, and ground school materials. Unlike a traditional college degree, flight school is often "pay-as-you-go," which offers flexibility but requires disciplined budgeting.
+                </p>
+                
+                <div class="bg-amber-50 border-l-4 border-amber-400 p-6 rounded-r-xl mb-10">
+                    <h4 class="font-bold text-amber-900 mb-2">Key Takeaway</h4>
+                    <p class="text-sm text-amber-800 italic">Training 2-3 times per week is significantly more cost-effective than training once a week, as you spend less time "re-learning" maneuvers from your previous lesson.</p>
+                </div>
+
+                <h3 class="text-xl font-bold mb-4 text-slate-900">Common Hidden Fees</h3>
+                <ul class="list-disc pl-6 space-y-3 text-slate-600 mb-8">
+                    <li><strong>FAA Medical Exam:</strong> $150 - $250</li>
+                    <li><strong>Written Exam Fee:</strong> $175 per attempt</li>
+                    <li><strong>Checkride Fee:</strong> $800 - $1,200 (Designated Pilot Examiner)</li>
+                    <li><strong>Aviation Headset:</strong> $300 - $1,100</li>
+                </ul>
+            </div>
+
+            <!-- Quiz CTA -->
+            <div class="mt-16 bg-white border border-slate-200 rounded-3xl p-10 flex flex-col md:flex-row items-center gap-8 shadow-sm">
+                <div class="text-4xl">⏱️</div>
+                <div class="flex-1">
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Ready for a personalized estimate?</h3>
+                    <p class="text-slate-500 text-sm">Get a specific budget and timeline based on your location and availability.</p>
+                </div>
+                <button onclick="showPage('quiz-intro')" class="w-full md:w-auto px-8 py-3 bg-sky-600 text-white font-bold rounded-xl btn-hover whitespace-nowrap">Take Assessment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation & JS -->
+    <script>
+        const quizData = [
+            {
+                id: 1,
+                question: "What is your primary goal for aviation?",
+                sub: "This helps us determine which pilot certificate is the best fit.",
+                options: ["Fly for a major airline", "Fly privately for fun/travel", "Own a business aircraft", "Not sure yet"]
+            },
+            {
+                id: 2,
+                question: "What is your biggest concern right now?",
+                sub: "We'll address this in your personalized roadmap.",
+                options: ["The total cost", "Time commitment", "Medical eligibility", "Fear of the difficulty/math"]
+            },
+            {
+                id: 3,
+                question: "How much time can you commit weekly?",
+                sub: "Training frequency dictates how fast you progress.",
+                options: ["Full-time (4-5 days)", "Part-time (2-3 days)", "Weekends only", "Occasionally"]
+            },
+            {
+                id: 4,
+                question: "What is your investment comfort level?",
+                sub: "This helps us identify financing or pay-as-you-go paths.",
+                options: ["Under $15,000", "$15,000 - $50,000", "$50,000 - $100,000", "Whatever it takes"]
+            },
+            {
+                id: 5,
+                question: "What is your desired timeline?",
+                sub: "When do you want to have your first license in hand?",
+                options: ["ASAP (Under 6 months)", "12 months", "2 years", "No rush"]
+            },
+            {
+                id: 6,
+                question: "Do you have any medical concerns?",
+                sub: "FAA medical exams are required for solo flight.",
+                options: ["None", "Corrective vision only", "A specific condition", "I don't know the requirements"]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let roadmapChartInstance = null;
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0,0);
+
+            if (pageId === 'results') {
+                initChart();
+            }
+        }
+
+        function startQuiz() {
+            currentQuestion = 0;
+            renderQuestion();
+            showPage('quiz-question');
+        }
+
+        function renderQuestion() {
+            const q = quizData[currentQuestion];
+            document.getElementById('q-index').innerText = currentQuestion + 1;
+            document.getElementById('q-percent').innerText = Math.round(((currentQuestion + 1) / quizData.length) * 100);
+            document.getElementById('q-progress-bar').style.width = ((currentQuestion + 1) / quizData.length) * 100 + '%';
+            document.getElementById('question-text').innerText = q.question;
+            document.getElementById('question-subtext').innerText = q.sub;
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-option w-full p-5 bg-white rounded-xl shadow-sm border border-slate-100 text-left font-semibold text-slate-700 hover:border-sky-300 hover:bg-sky-50";
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    document.querySelectorAll('.quiz-option').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            } else {
+                runLoading();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+            } else {
+                showPage('quiz-intro');
+            }
+        }
+
+        function runLoading() {
+            showPage('quiz-loading');
+            setTimeout(() => document.getElementById('loading-msg-1').classList.add('opacity-100'), 800);
+            setTimeout(() => document.getElementById('loading-msg-2').classList.add('opacity-100'), 1600);
+            setTimeout(() => document.getElementById('loading-msg-3').classList.add('opacity-100'), 2400);
+            setTimeout(() => showPage('results'), 4000);
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('roadmapChart');
+            if (roadmapChartInstance) roadmapChartInstance.destroy();
+
+            roadmapChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Start', 'Solo', 'PPL', 'Inst', 'Comm'],
+                    datasets: [{
+                        label: 'Progress (%)',
+                        data: [0, 25, 45, 75, 100],
+                        borderColor: '#0284C7',
+                        backgroundColor: 'rgba(2, 132, 199, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { display: false },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            // Can add splash delay if needed
+        });
+    </script>
+
+    <!-- Application Structure Plan:
+        1. Multi-view SPA: Uses logic-based view switching (Home, Quiz Intro, Quiz Flow, Loading, Results, Guide) to simulate the full funnel.
+        2. "Modern Aviation Guidance" UI: Minimalist navy/sky palette with grid backgrounds and bold typography.
+        3. Logic:
+            - Home: High-conversion hero + path previews.
+            - Quiz: State machine with 6 questions, interactive selection, and progress tracking.
+            - Results: Dashboard with data (Chart.js) and clear hierarchical stats.
+            - Guide: AEO-focused layout with direct answers and high scannability.
+        4. User Flow: Land on Home -> Click "Start" -> Interactive Assessment -> Dynamic loading -> Result Dashboard with specific call to action.
+    -->
+    <!-- Visualization & Content Choices:
+        - Chart.js: Used for the "Roadmap Chart" in the results view to show progression over time.
+        - Tailwind Grid/Flex: Used for all responsive layouts, including card grids and stats bars.
+        - Unicode/Emojis: Used for quick visual context (✈️, 💰, etc.) to keep the design friendly and approachable.
+        - Background CSS: Linear-gradient grid pattern provides a "technical/planning" feel without heavy SVG usage.
+        - Loading Logic: Sequenced message triggers simulate an "analysis engine" to build trust in the result.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</body>
+</html>

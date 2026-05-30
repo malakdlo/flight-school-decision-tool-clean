@@ -1,0 +1,29 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Beginner Flight School Guides | PilotPath">
+  <section class="mx-auto max-w-5xl px-4 py-16">
+    <span class="mb-4 inline-block rounded-full bg-sky-100 px-3 py-1 text-xs font-bold uppercase tracking-widest text-sky-700">
+      Beginner Guides
+    </span>
+    <h1 class="mb-6 text-4xl font-extrabold tracking-tight text-slate-900 md:text-5xl">Flight school decisions, explained plainly.</h1>
+    <p class="mb-12 max-w-2xl text-lg leading-relaxed text-slate-600">
+      Start with the basics: cost, training timelines, medical requirements, school types, and the first steps that help you avoid expensive mistakes.
+    </p>
+
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <a href="/guides/flight-school-cost/" class="btn-hover rounded-2xl border border-slate-100 bg-white p-8 shadow-sm">
+        <div class="mb-4 text-3xl">💰</div>
+        <h2 class="mb-2 text-xl font-bold text-slate-900">How Much Does Flight School Actually Cost?</h2>
+        <p class="text-sm leading-relaxed text-slate-500">A beginner-friendly breakdown of PPL cost, career training cost, hidden fees, and training frequency.</p>
+      </a>
+
+      <a href="/quiz/" class="btn-hover rounded-2xl border-2 border-sky-600 bg-white p-8 shadow-sm">
+        <div class="mb-4 text-3xl">✈️</div>
+        <h2 class="mb-2 text-xl font-bold text-sky-900">Take the Pilot Path Assessment</h2>
+        <p class="text-sm leading-relaxed text-slate-500">Get a personalized path based on your goal, timeline, budget, and current concerns.</p>
+      </a>
+    </div>
+  </section>
+</BaseLayout>
