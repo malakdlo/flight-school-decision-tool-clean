@@ -17,6 +17,7 @@
   "devDependencies": {
     "@astrojs/check": "latest",
     "typescript": "latest",
+    "vite": "^7",
     "wrangler": "latest"
   }
 }
