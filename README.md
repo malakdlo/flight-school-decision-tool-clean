@@ -36,18 +36,37 @@ npm run preview
 
 ## Deploy to Cloudflare Pages
 
-Cloudflare Pages settings:
+Deployment is automatic: push to `main` and Cloudflare Pages builds and deploys.
 
-```text
-Build command: npm run build
-Build output directory: dist
-```
+**Cloudflare Pages settings (confirmed working):**
 
-Or deploy with Wrangler:
+| Setting | Value |
+|---|---|
+| Framework | Astro |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+| Root directory | `/` |
+| Production branch | `main` |
+
+Or deploy manually with Wrangler:
 
 ```bash
 npm run deploy:pages
 ```
+
+## Deployment Notes
+
+- `npm run build` runs `astro check && astro build`. Both must pass for a deployment to succeed.
+- `vite` is pinned to `^7` in `devDependencies`. Do not remove this pin or upgrade it to `^8` — see Troubleshooting below.
+- No environment variables are required for static builds. Add them in the Cloudflare Pages dashboard only if a future phase introduces server-side features.
+
+## Troubleshooting
+
+**`astro check` fails with: `Type 'Plugin<any>[]' is not assignable to type 'PluginOption'`**
+
+This is a duplicate Vite version conflict. It happens when npm installs `vite@8` at the project root to satisfy `@tailwindcss/vite`'s peer dependency, while Astro bundles its own `vite@7`. TypeScript sees two incompatible Vite type sets and fails on the plugin assignment in `astro.config.mjs`.
+
+Fix: ensure `package.json` has `"vite": "^7"` in `devDependencies`, then run `npm install`. npm will deduplicate to a single `vite@7.x` that both Astro and `@tailwindcss/vite` accept.
 
 ## Recommended Git setup
 
@@ -57,7 +76,7 @@ git add .
 git commit -m "Initial clean Astro build from Gemini prototype"
 ```
 
-Then create a new GitHub repo and connect it to Cloudflare Pages.
+Then create a new GitHub repo and connect it to Cloudflare Pages for automatic deploys on push to `main`.
 
 ## Operating model
 
