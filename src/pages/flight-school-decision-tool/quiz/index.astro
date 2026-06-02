@@ -1,0 +1,161 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Flight School Decision Quiz | Flight School Friend"
+  description="Answer 8 practical questions about your goals, budget, timeline, schedule, and readiness. Get a recommended starting path for flight training."
+>
+  <div class="bg-white min-h-[80vh]">
+    <div id="quiz-container" class="max-w-3xl mx-auto px-4 py-12 md:py-20">
+
+      <!-- Intro Screen -->
+      <div id="quiz-intro" class="quiz-step active text-center">
+        <div class="w-16 h-16 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center text-3xl mb-6 mx-auto">✈️</div>
+        <h1 class="text-4xl font-extrabold text-slate-900 mb-6 tracking-tight">Find your best starting path into flight training.</h1>
+        <p class="text-lg text-slate-600 mb-10 leading-relaxed">
+          Answer a few questions about your goals, budget, timeline, schedule, and readiness. You'll get a starting roadmap — not a final decision — to help you research smarter before spending heavily.
+        </p>
+        <button id="start-quiz-btn" class="px-10 py-4 bg-sky-600 text-white font-bold rounded-xl text-lg btn-hover shadow-md w-full sm:w-auto">
+          Start Quiz
+        </button>
+      </div>
+
+      <!-- Active Question Screen -->
+      <div id="quiz-question-container" class="quiz-step">
+        <div class="mb-8">
+          <div class="flex justify-between text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">
+            <span>Step <span id="quiz-current-step">1</span> of 8</span>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-2">
+            <div id="quiz-progress-bar" class="bg-sky-600 h-2 rounded-full transition-all duration-300" style="width: 12.5%"></div>
+          </div>
+        </div>
+
+        <h2 id="quiz-question-text" class="text-2xl md:text-3xl font-bold text-slate-900 mb-8"></h2>
+        <div id="quiz-options-grid" class="flex flex-col gap-3 mb-10"></div>
+
+        <div class="flex items-center justify-between border-t border-slate-100 pt-6">
+          <button id="quiz-btn-prev" class="px-6 py-3 text-slate-500 font-medium hover:bg-slate-50 rounded-lg transition hidden">
+            &larr; Back
+          </button>
+          <div></div>
+          <button id="quiz-btn-next" class="px-8 py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            Next
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading Screen -->
+      <div id="quiz-loading" class="quiz-step text-center py-20">
+        <div class="inline-block animate-spin w-12 h-12 border-4 border-slate-200 border-t-sky-600 rounded-full mb-6"></div>
+        <h2 class="text-2xl font-bold text-slate-900 mb-2">Analyzing your answers...</h2>
+        <p class="text-slate-500">Generating your personalized starting roadmap.</p>
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { quizQuestions } from '@/data/quizQuestions';
+  import { scoreQuiz, resultRoutes } from '@/lib/scoring';
+  import type { QuizAnswer } from '@/types/quiz';
+
+  let currentStep = -1;
+  let answers: QuizAnswer[] = [];
+
+  const introEl = document.getElementById('quiz-intro')!;
+  const questionEl = document.getElementById('quiz-question-container')!;
+  const loadingEl = document.getElementById('quiz-loading')!;
+  const stepLabel = document.getElementById('quiz-current-step')!;
+  const progressBar = document.getElementById('quiz-progress-bar')!;
+  const questionText = document.getElementById('quiz-question-text')!;
+  const optionsGrid = document.getElementById('quiz-options-grid')!;
+  const btnPrev = document.getElementById('quiz-btn-prev')!;
+  const btnNext = document.getElementById('quiz-btn-next') as HTMLButtonElement;
+
+  function showStep(step: 'intro' | 'question' | 'loading') {
+    introEl.classList.remove('active');
+    questionEl.classList.remove('active');
+    loadingEl.classList.remove('active');
+    if (step === 'intro') introEl.classList.add('active');
+    if (step === 'question') questionEl.classList.add('active');
+    if (step === 'loading') loadingEl.classList.add('active');
+    window.scrollTo({ top: document.getElementById('quiz-container')!.offsetTop - 80, behavior: 'smooth' });
+  }
+
+  function renderQuestion() {
+    const q = quizQuestions[currentStep];
+    const existing = answers.find(a => a.questionId === q.id);
+
+    stepLabel.textContent = String(currentStep + 1);
+    progressBar.style.width = `${((currentStep) / quizQuestions.length) * 100}%`;
+    questionText.textContent = q.text;
+
+    btnPrev.classList.toggle('hidden', currentStep === 0);
+    btnNext.disabled = !existing;
+    btnNext.textContent = currentStep === quizQuestions.length - 1 ? 'Finish' : 'Next';
+
+    optionsGrid.innerHTML = q.options.map(opt => {
+      const isSelected = existing?.value === opt.value;
+      const scoresJson = JSON.stringify(opt.scores).replace(/"/g, '&quot;');
+      return `
+        <label class="cursor-pointer relative block">
+          <input type="radio" name="${q.id}" value="${opt.value}"
+            class="quiz-option-input hidden"
+            data-scores="${scoresJson}"
+            ${isSelected ? 'checked' : ''}
+          >
+          <div class="p-5 border-2 ${isSelected ? 'border-sky-500 bg-sky-50' : 'border-slate-200 bg-white'} rounded-xl hover:border-sky-300 hover:bg-slate-50 transition flex items-center gap-4">
+            <div class="radio-circle w-5 h-5 rounded-full border-2 ${isSelected ? 'border-sky-500' : 'border-slate-300'} flex items-center justify-center flex-shrink-0">
+              ${isSelected ? '<span class="block w-2.5 h-2.5 bg-sky-500 rounded-full"></span>' : ''}
+            </div>
+            <span class="font-medium text-slate-700 text-lg leading-tight">${opt.label}</span>
+          </div>
+        </label>
+      `;
+    }).join('');
+
+    optionsGrid.querySelectorAll<HTMLInputElement>('input[type="radio"]').forEach(input => {
+      input.addEventListener('change', () => {
+        const scores = JSON.parse(input.dataset.scores!.replace(/&quot;/g, '"'));
+        answers = answers.filter(a => a.questionId !== q.id);
+        answers.push({ questionId: q.id, value: input.value, scores });
+        btnNext.disabled = false;
+        // Auto-advance after brief delay
+        setTimeout(() => btnNext.click(), 280);
+      });
+    });
+  }
+
+  function finish() {
+    showStep('loading');
+    const resultType = scoreQuiz(answers);
+    setTimeout(() => {
+      window.location.href = resultRoutes[resultType];
+    }, 1500);
+  }
+
+  document.getElementById('start-quiz-btn')!.addEventListener('click', () => {
+    currentStep = 0;
+    answers = [];
+    renderQuestion();
+    showStep('question');
+  });
+
+  btnPrev.addEventListener('click', () => {
+    if (currentStep === 0) { showStep('intro'); return; }
+    currentStep--;
+    renderQuestion();
+  });
+
+  btnNext.addEventListener('click', () => {
+    if (currentStep < quizQuestions.length - 1) {
+      currentStep++;
+      renderQuestion();
+    } else {
+      finish();
+    }
+  });
+</script>

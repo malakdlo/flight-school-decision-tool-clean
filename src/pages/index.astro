@@ -1,128 +1,206 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import PrimaryCta from '@/components/PrimaryCta.astro';
 ---
 
-<BaseLayout title="Flight School Decision Tool | PilotPath">
-  <header class="mx-auto max-w-6xl px-4 py-16 text-center md:py-24">
-    <span class="mb-4 inline-block rounded-full bg-sky-100 px-3 py-1 text-xs font-bold uppercase tracking-widest text-sky-700">
-      Start Your Journey
-    </span>
-    <h1 class="mb-6 text-4xl font-extrabold leading-tight tracking-tight text-slate-900 md:text-6xl">
-      Stop Guessing. <br class="hidden md:block" /> Find Your Path to the <span class="text-sky-600">Cockpit.</span>
-    </h1>
-    <p class="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-slate-600 md:text-xl">
-      Take our 2-minute realistic pilot assessment to see if flight school fits your budget, goals, and lifestyle.
-    </p>
-    <div class="flex flex-col items-center justify-center gap-4 md:flex-row">
-      <PrimaryCta href="/quiz/">Start the Realistic Assessment</PrimaryCta>
-      <PrimaryCta href="/guides/" variant="secondary">View Beginner Guides</PrimaryCta>
-    </div>
-  </header>
-
-  <section id="how-it-works" class="mx-auto max-w-6xl px-4 py-16">
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
-      <article class="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm transition hover:shadow-md">
-        <div class="mb-4 text-3xl">💰</div>
-        <h3 class="mb-2 font-bold text-slate-900">Cost Analysis</h3>
-        <p class="text-sm text-slate-500">Real-world budgeting based on your goals and training style.</p>
-      </article>
-      <article class="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm transition hover:shadow-md">
-        <div class="mb-4 text-3xl">⏱️</div>
-        <h3 class="mb-2 font-bold text-slate-900">Timeline</h3>
-        <p class="text-sm text-slate-500">Estimate how many months until your first solo and first certificate.</p>
-      </article>
-      <article class="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm transition hover:shadow-md">
-        <div class="mb-4 text-3xl">📋</div>
-        <h3 class="mb-2 font-bold text-slate-900">License Type</h3>
-        <p class="text-sm text-slate-500">Private, instrument, commercial, or early exploration.</p>
-      </article>
-      <article class="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm transition hover:shadow-md">
-        <div class="mb-4 text-3xl">✈️</div>
-        <h3 class="mb-2 font-bold text-slate-900">Next Step</h3>
-        <p class="text-sm text-slate-500">Exactly what to do first to avoid wasting thousands.</p>
-      </article>
+<BaseLayout
+  title="Flight School Friend | Independent Pilot Decision Layer"
+  description="Flight School Friend helps you compare training paths, estimate what matters, and decide what to do next before you spend thousands of dollars on flight training."
+>
+  <!-- Hero -->
+  <section class="max-w-6xl mx-auto px-4 py-20 md:py-28">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <span class="inline-block px-3 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded-full mb-6 tracking-widest uppercase border border-slate-200">
+          The Independent Decision Layer for Future Pilots
+        </span>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight">
+          Before you choose a flight school, <span class="text-sky-600">understand your best path.</span>
+        </h1>
+        <p class="text-lg text-slate-600 mb-8 leading-relaxed max-w-lg">
+          Flight School Friend helps you compare training paths, estimate what matters, and decide what to do next before you spend thousands of dollars on flight training.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
+          <a href="/flight-school-decision-tool/quiz/" class="w-full sm:w-auto px-8 py-4 bg-sky-600 text-white font-bold rounded-xl text-lg btn-hover shadow-md text-center">
+            Start Here
+          </a>
+          <a href="/flight-school-decision-tool/" class="w-full sm:w-auto px-8 py-4 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl text-lg btn-hover shadow-sm text-center">
+            See how the tool works
+          </a>
+        </div>
+        <p class="text-xs text-slate-500 font-medium">Free starting recommendation. No school sales call required.</p>
+      </div>
+      <!-- Hero Visual -->
+      <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-sky-50 rounded-bl-full -z-10"></div>
+        <h3 class="font-bold text-slate-900 mb-6 border-b border-slate-100 pb-4 text-sm uppercase tracking-widest">Decision Factors</h3>
+        <div class="space-y-4 mb-8">
+          <div class="flex items-center justify-between"><span class="text-slate-500">Goal</span><span class="font-semibold text-slate-900 bg-slate-100 px-3 py-1 rounded-md text-sm">Career Airlines</span></div>
+          <div class="flex items-center justify-between"><span class="text-slate-500">Budget</span><span class="font-semibold text-slate-900 bg-slate-100 px-3 py-1 rounded-md text-sm">Financing Needed</span></div>
+          <div class="flex items-center justify-between"><span class="text-slate-500">Timeline</span><span class="font-semibold text-slate-900 bg-slate-100 px-3 py-1 rounded-md text-sm">Fast-Track</span></div>
+          <div class="flex items-center justify-between"><span class="text-slate-500">Medical</span><span class="font-semibold text-slate-900 bg-slate-100 px-3 py-1 rounded-md text-sm">First Class Req.</span></div>
+        </div>
+        <div class="bg-slate-900 text-white p-5 rounded-xl border border-slate-800">
+          <div class="text-xs text-sky-400 font-bold uppercase tracking-wider mb-1">Recommended Path</div>
+          <div class="text-xl font-bold">Career Captain</div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="relative overflow-hidden bg-slate-900 py-20 text-white">
-    <div class="mx-auto max-w-4xl px-4 text-center">
-      <h2 class="mb-12 text-3xl font-bold md:text-4xl">Is It Actually Possible?</h2>
-      <div class="grid grid-cols-1 gap-12 text-left md:grid-cols-2">
-        <div class="flex gap-4">
-          <div class="text-xl font-bold text-sky-400">01.</div>
-          <div>
-            <h4 class="mb-2 text-lg font-bold">“Am I too old?”</h4>
-            <p class="text-sm text-slate-400">Many successful pilots start later than expected. The right path depends on your goal, age, medical eligibility, and timeline.</p>
-          </div>
+  <!-- Problem Section -->
+  <section class="bg-slate-900 py-24 text-white">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="max-w-3xl mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6 tracking-tight">Flight school is exciting — but the first decision is harder than it looks.</h2>
+        <p class="text-lg text-slate-400 leading-relaxed">
+          Most future pilots are not just asking "Which school should I call?" They are trying to understand whether aviation fits their budget, schedule, health/medical readiness, career goals, and confidence level.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl">
+          <h3 class="font-bold text-sky-400 mb-2 text-xl">Costs vary quickly</h3>
+          <p class="text-slate-300 text-sm">Aircraft rates, instructor rates, pace, and total hours can change the real cost.</p>
         </div>
-        <div class="flex gap-4">
-          <div class="text-xl font-bold text-sky-400">02.</div>
-          <div>
-            <h4 class="mb-2 text-lg font-bold">“Is it too expensive?”</h4>
-            <p class="text-sm text-slate-400">Flight school is not cheap, but there are multiple paths: pay-as-you-go, structured programs, clubs, scholarships, and financing.</p>
-          </div>
+        <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl">
+          <h3 class="font-bold text-sky-400 mb-2 text-xl">Training paths are confusing</h3>
+          <p class="text-slate-300 text-sm">Part 61, Part 141, accelerated programs, clubs, and academies all fit different students.</p>
         </div>
-        <div class="flex gap-4">
-          <div class="text-xl font-bold text-sky-400">03.</div>
-          <div>
-            <h4 class="mb-2 text-lg font-bold">“I’m bad at math.”</h4>
-            <p class="text-sm text-slate-400">You do not need to be a calculus genius. Basic arithmetic, procedures, judgment, and consistency matter more.</p>
-          </div>
+        <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl">
+          <h3 class="font-bold text-sky-400 mb-2 text-xl">Medical questions matter early</h3>
+          <p class="text-slate-300 text-sm">Some students should clarify medical readiness before spending heavily.</p>
         </div>
-        <div class="flex gap-4">
-          <div class="text-xl font-bold text-sky-400">04.</div>
-          <div>
-            <h4 class="mb-2 text-lg font-bold">“Where do I start?”</h4>
-            <p class="text-sm text-slate-400">Most people should start with research, a discovery flight, and a realistic training budget before committing to a school.</p>
+        <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl">
+          <h3 class="font-bold text-sky-400 mb-2 text-xl">Your goal changes the plan</h3>
+          <p class="text-slate-300 text-sm">A hobby pilot, career switcher, and future aircraft owner should not follow the same roadmap.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How Flight School Friend Helps -->
+  <section class="py-24 max-w-6xl mx-auto px-4 text-center">
+    <h2 class="text-3xl font-bold text-slate-900 mb-16 tracking-tight">A better starting point before you commit.</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div>
+        <div class="w-16 h-16 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center text-2xl font-bold mx-auto mb-6">1</div>
+        <h3 class="font-bold text-slate-900 text-xl mb-3">Take the decision quiz</h3>
+        <p class="text-slate-600 text-sm">Answer practical questions about your goal, budget, schedule, timeline, and readiness.</p>
+      </div>
+      <div>
+        <div class="w-16 h-16 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center text-2xl font-bold mx-auto mb-6">2</div>
+        <h3 class="font-bold text-slate-900 text-xl mb-3">Get a starting roadmap</h3>
+        <p class="text-slate-600 text-sm">See whether you look more like a Weekend Hobbyist, Career Captain, Personal Owner, or Research-First planner.</p>
+      </div>
+      <div>
+        <div class="w-16 h-16 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center text-2xl font-bold mx-auto mb-6">3</div>
+        <h3 class="font-bold text-slate-900 text-xl mb-3">Use guides and tools</h3>
+        <p class="text-slate-600 text-sm">Compare schools, estimate costs, and prepare better questions before booking or paying.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quiz Preview & Four Paths -->
+  <section class="bg-white border-y border-slate-200 py-24">
+    <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+      <div class="lg:col-span-5">
+        <h2 class="text-3xl font-bold text-slate-900 mb-6 tracking-tight">Get a recommended starting path in a few minutes.</h2>
+        <p class="text-slate-600 mb-6">The quiz looks at:</p>
+        <ul class="space-y-3 mb-8 text-sm text-slate-700 font-medium">
+          {[
+            'Why you want to fly',
+            'Whether you are career, hobby, travel, ownership, or research-first motivated',
+            'How much time you can train each week',
+            'How soon you want to make progress',
+            'Budget comfort',
+            'Medical/document readiness',
+            'Confidence level',
+            'Whether you are ready to contact schools',
+          ].map(item => (
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-sky-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              {item}
+            </li>
+          ))}
+        </ul>
+        <a href="/flight-school-decision-tool/quiz/" class="inline-block px-8 py-4 bg-sky-600 text-white font-bold rounded-xl text-lg btn-hover shadow-md">
+          Start Here
+        </a>
+      </div>
+      <div class="lg:col-span-7">
+        <h2 class="text-2xl font-bold text-slate-900 mb-6">Four possible starting paths</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+            <h4 class="font-bold text-slate-900 mb-2">Weekend Hobbyist</h4>
+            <p class="text-sm text-slate-600 mb-4">You may fit a flexible local PPL path focused on fun, skill-building, and sustainable weekly training.</p>
+            <a href="/flight-school-decision-tool/quiz/" class="text-sky-600 text-sm font-semibold hover:underline">Take the quiz to see if this fits &rarr;</a>
+          </div>
+          <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+            <h4 class="font-bold text-slate-900 mb-2">Career Captain</h4>
+            <p class="text-sm text-slate-600 mb-4">You may need a structured, cost-aware training plan that looks beyond PPL toward instrument, commercial, CFI, and hour building.</p>
+            <a href="/flight-school-decision-tool/quiz/" class="text-sky-600 text-sm font-semibold hover:underline">Take the quiz to see if this fits &rarr;</a>
+          </div>
+          <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+            <h4 class="font-bold text-slate-900 mb-2">Personal Owner</h4>
+            <p class="text-sm text-slate-600 mb-4">You may be best served by PPL first, then cross-country confidence, instrument training, and ownership/club research.</p>
+            <a href="/flight-school-decision-tool/quiz/" class="text-sky-600 text-sm font-semibold hover:underline">Take the quiz to see if this fits &rarr;</a>
+          </div>
+          <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 border-l-4 border-l-amber-400">
+            <h4 class="font-bold text-slate-900 mb-2">Research-First</h4>
+            <p class="text-sm text-slate-600 mb-4">You may need to clarify cost, medical readiness, and school fit before spending heavily.</p>
+            <a href="/flight-school-decision-tool/quiz/" class="text-sky-600 text-sm font-semibold hover:underline">Take the quiz to see if this fits &rarr;</a>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="mx-auto max-w-6xl px-4 py-20">
-    <h2 class="mb-12 text-center text-3xl font-bold text-slate-900">Potential Pathways</h2>
-    <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
-      <article class="flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-        <div class="h-2 bg-slate-200"></div>
-        <div class="flex-1 p-8">
-          <h4 class="mb-2 text-xl font-bold">The Weekend Hobbyist</h4>
-          <p class="mb-6 text-sm text-slate-500">Fly for fun, take friends for lunch, and enjoy the freedom of the skies on your schedule.</p>
-          <ul class="space-y-2 text-sm text-slate-700">
-            <li>✓ Private Pilot License</li>
-            <li>✓ Fly on weekends</li>
-            <li>✓ Flexible timeline</li>
-          </ul>
-        </div>
-      </article>
-
-      <article class="flex flex-col overflow-hidden rounded-2xl border-2 border-sky-600 bg-white shadow-md md:scale-105">
-        <div class="h-2 bg-sky-600"></div>
-        <div class="flex-1 p-8">
-          <div class="mb-4 w-max rounded bg-sky-100 px-2 py-1 text-[10px] font-bold uppercase text-sky-700">Most Popular</div>
-          <h4 class="mb-2 text-xl font-bold text-sky-900">The Career Captain</h4>
-          <p class="mb-6 text-sm text-slate-500">Commit to reaching the airline flight deck as efficiently and realistically as possible.</p>
-          <ul class="space-y-2 text-sm text-slate-700">
-            <li>✓ Commercial & ATP pathway</li>
-            <li>✓ Full-time training option</li>
-            <li>✓ High-intensity path</li>
-          </ul>
-        </div>
-      </article>
-
-      <article class="flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-        <div class="h-2 bg-slate-200"></div>
-        <div class="flex-1 p-8">
-          <h4 class="mb-2 text-xl font-bold">The Personal Owner</h4>
-          <p class="mb-6 text-sm text-slate-500">Train with the goal of owning, sharing, or using an aircraft for practical travel.</p>
-          <ul class="space-y-2 text-sm text-slate-700">
-            <li>✓ Instrument rating focus</li>
-            <li>✓ Cross-country mastery</li>
-            <li>✓ Long-term ownership planning</li>
-          </ul>
-        </div>
-      </article>
+  <!-- Featured Guides -->
+  <section class="py-24 max-w-6xl mx-auto px-4">
+    <div class="mb-16">
+      <h2 class="text-3xl font-bold text-slate-900 mb-8">Featured Guides</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm"><h3 class="font-bold text-slate-900 mb-2">Flight School Cost</h3><p class="text-sm text-slate-500 mb-4">Understanding the real budget required.</p><a href="/guides/flight-school-cost/" class="text-xs text-sky-600 font-bold uppercase">Read Guide &rarr;</a></div>
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm"><h3 class="font-bold text-slate-900 mb-2">Part 61 vs Part 141</h3><p class="text-sm text-slate-500 mb-4">Which FAA structure fits your goals?</p><a href="/guides/part-61-vs-part-141/" class="text-xs text-sky-600 font-bold uppercase">Read Guide &rarr;</a></div>
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm"><h3 class="font-bold text-slate-900 mb-2">Choosing a School</h3><p class="text-sm text-slate-500 mb-4">Red flags and questions to ask.</p><a href="/guides/how-to-choose-a-flight-school/" class="text-xs text-sky-600 font-bold uppercase">Read Guide &rarr;</a></div>
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm"><h3 class="font-bold text-slate-900 mb-2">Private Pilot Req.</h3><p class="text-sm text-slate-500 mb-4">FAA minimums vs reality.</p><a href="/guides/private-pilot-requirements/" class="text-xs text-sky-600 font-bold uppercase">Read Guide &rarr;</a></div>
+      </div>
     </div>
+
+    <div class="mb-16">
+      <h2 class="text-3xl font-bold text-slate-900 mb-8">Planning Tools</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a href="/tools/" class="block bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-sky-300 transition"><span class="inline-block px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-wider rounded mb-2">Template Preview</span><h3 class="font-bold text-slate-900 mb-2">Flight School Cost Calculator</h3><p class="text-sm text-slate-500">Estimate your exact total.</p></a>
+        <a href="/tools/" class="block bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-sky-300 transition"><span class="inline-block px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-wider rounded mb-2">Template Preview</span><h3 class="font-bold text-slate-900 mb-2">Research Scorecard</h3><p class="text-sm text-slate-500">Compare 3 schools side-by-side.</p></a>
+        <a href="/tools/" class="block bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-sky-300 transition"><span class="inline-block px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-wider rounded mb-2">Template Preview</span><h3 class="font-bold text-slate-900 mb-2">PPL Progress Tracker</h3><p class="text-sm text-slate-500">Track milestones zero to checkride.</p></a>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-3xl font-bold text-slate-900 mb-8">Find Resources</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <a href="/find/" class="block bg-white p-6 rounded-xl border border-slate-200 shadow-sm font-bold text-slate-900 text-center hover:border-sky-300 transition">Flight Schools <span class="block mt-2 text-[10px] text-slate-400 font-normal uppercase">Coming Soon</span></a>
+        <a href="/find/" class="block bg-white p-6 rounded-xl border border-slate-200 shadow-sm font-bold text-slate-900 text-center hover:border-sky-300 transition">AMEs <span class="block mt-2 text-[10px] text-slate-400 font-normal uppercase">Coming Soon</span></a>
+        <a href="/find/" class="block bg-white p-6 rounded-xl border border-slate-200 shadow-sm font-bold text-slate-900 text-center hover:border-sky-300 transition">Scholarships <span class="block mt-2 text-[10px] text-slate-400 font-normal uppercase">Coming Soon</span></a>
+        <a href="/find/" class="block bg-white p-6 rounded-xl border border-slate-200 shadow-sm font-bold text-slate-900 text-center hover:border-sky-300 transition">CFI / DPE <span class="block mt-2 text-[10px] text-slate-400 font-normal uppercase">Coming Soon</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Premium Plan Preview -->
+  <section class="bg-sky-50 py-24 border-y border-sky-100">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <span class="inline-block px-3 py-1 bg-sky-200 text-sky-800 text-xs font-bold rounded-full mb-4 tracking-widest uppercase">Coming Soon</span>
+      <h2 class="text-3xl font-bold text-slate-900 mb-6">Want a clearer plan before you start?</h2>
+      <p class="text-lg text-slate-600 mb-8 max-w-2xl mx-auto">
+        Get a customized 28-Day Flight School Plan to help you research schools, estimate costs, prepare questions, organize documents, and build confidence before committing.
+      </p>
+      <button class="px-8 py-4 bg-slate-900 text-white font-bold rounded-xl text-lg opacity-50 cursor-not-allowed" disabled>
+        View the 28-Day Plan
+      </button>
+    </div>
+  </section>
+
+  <section class="py-12 bg-white text-center text-sm text-slate-500">
+    <p class="max-w-3xl mx-auto px-4">Flight School Friend is an independent educational resource. It is not legal, medical, financial, or FAA certification advice. Always verify requirements with the FAA, your aviation medical examiner, and your flight school.</p>
   </section>
 </BaseLayout>

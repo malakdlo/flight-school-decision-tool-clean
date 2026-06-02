@@ -1,0 +1,95 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Career Captain — Your Starting Path | Flight School Friend"
+  description="You need a structured, cost-aware career training plan. Here's your recommended roadmap from PPL through ATP."
+>
+  <section class="bg-white max-w-4xl mx-auto px-4 py-16 md:py-24">
+    <div class="text-center mb-12">
+      <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded-full mb-4 uppercase tracking-widest">Your Recommended Path</span>
+      <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6">Career Captain</h1>
+      <p class="text-xl text-slate-600 mb-4 font-medium">You need a structured, cost-aware career training plan.</p>
+      <p class="text-sm text-slate-400">This is a starting recommendation, not a final training decision.</p>
+    </div>
+
+    <!-- Roadmap Timeline -->
+    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-8 mb-12 overflow-x-auto">
+      <h3 class="font-bold text-slate-900 mb-6 uppercase tracking-wider text-sm border-b border-slate-200 pb-2">Roadmap Timeline</h3>
+      <div class="flex gap-2 items-center text-xs font-medium text-slate-700 min-w-max">
+        <div class="bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm">Medical First</div>
+        <span class="text-slate-300">&rarr;</span>
+        <div class="bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm">Budget/Finance Plan</div>
+        <span class="text-slate-300">&rarr;</span>
+        <div class="bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm">141/Academy/Fast 61</div>
+        <span class="text-slate-300">&rarr;</span>
+        <div class="bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm">PPL</div>
+        <span class="text-slate-300">&rarr;</span>
+        <div class="bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm">IR</div>
+        <span class="text-slate-300">&rarr;</span>
+        <div class="bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm">Commercial</div>
+        <span class="text-slate-300">&rarr;</span>
+        <div class="bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm">CFI</div>
+        <span class="text-slate-300">&rarr;</span>
+        <div class="bg-sky-600 text-white px-3 py-2 rounded-lg shadow-sm">ATP Path</div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+      <div>
+        <h3 class="text-xl font-bold text-slate-900 mb-4">Why this fits:</h3>
+        <ul class="space-y-3 text-slate-600">
+          <li class="flex gap-2"><span class="text-sky-500 font-bold">✓</span> You are likely evaluating aviation as a serious career path.</li>
+          <li class="flex gap-2"><span class="text-sky-500 font-bold">✓</span> Training sequence, financing, timeline, and medical eligibility matter early.</li>
+          <li class="flex gap-2"><span class="text-sky-500 font-bold">✓</span> A structured program may help if you need speed, financing, or a full-path plan.</li>
+          <li class="flex gap-2"><span class="text-sky-500 font-bold">✓</span> You should understand the full path beyond private pilot before committing.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-xl font-bold text-slate-900 mb-4">What to clarify next:</h3>
+        <ul class="space-y-3 text-slate-600">
+          <li class="flex gap-2"><span class="text-amber-500 font-bold">?</span> Can you qualify medically for the certificate class you need?</li>
+          <li class="flex gap-2"><span class="text-amber-500 font-bold">?</span> Do you understand the full training cost through commercial/CFI?</li>
+          <li class="flex gap-2"><span class="text-amber-500 font-bold">?</span> Are you looking for full-time or part-time training?</li>
+          <li class="flex gap-2"><span class="text-amber-500 font-bold">?</span> Do you need financing, school structure, or airline pathway options?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bg-slate-900 text-white p-8 md:p-12 rounded-3xl mb-16 text-center">
+      <h3 class="text-2xl font-bold mb-4">Email me my career pilot roadmap</h3>
+      <p class="text-slate-400 mb-6">Get this checklist and next steps sent directly to your inbox.</p>
+      <form id="email-form" class="max-w-md mx-auto flex flex-col sm:flex-row gap-2">
+        <input type="email" placeholder="Your email address" required class="flex-grow px-4 py-3 rounded-lg text-slate-900 outline-none focus:ring-2 focus:ring-sky-500" />
+        <button type="submit" class="px-6 py-3 bg-sky-600 hover:bg-sky-500 font-bold rounded-lg transition">Send Roadmap</button>
+      </form>
+      <p id="email-success" class="hidden text-green-400 font-medium mt-4">Got it — your roadmap would be sent here in the live version.</p>
+    </div>
+
+    <div class="mb-12 border-t border-slate-200 pt-12">
+      <h3 class="text-xl font-bold text-slate-900 mb-6">Related Resources</h3>
+      <div class="flex flex-wrap gap-3">
+        <a href="/guides/flight-school-cost/" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition">Flight School Cost Guide</a>
+        <a href="/guides/part-61-vs-part-141/" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition">Part 61 vs Part 141</a>
+        <a href="/guides/how-to-choose-a-flight-school/" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition">How to Choose a Flight School</a>
+        <a href="/guides/private-pilot-requirements/" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition">Private Pilot Requirements</a>
+      </div>
+    </div>
+
+    <div class="text-center">
+      <a href="/flight-school-decision-tool/quiz/" class="text-sky-600 font-medium hover:underline flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+        Retake the Quiz
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  document.getElementById('email-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    (e.target as HTMLElement).classList.add('hidden');
+    document.getElementById('email-success')?.classList.remove('hidden');
+  });
+</script>

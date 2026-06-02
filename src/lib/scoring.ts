@@ -1,40 +1,42 @@
-import { quizQuestions } from '@/data/quizQuestions';
 import type { QuizAnswer, ResultType } from '@/types/quiz';
 
-const resultTypes: ResultType[] = ['hobbyist', 'career', 'owner', 'explorer'];
+const resultTypes: ResultType[] = ['weekendHobbyist', 'careerCaptain', 'personalOwner', 'researchFirst'];
 
 export function scoreQuiz(answers: QuizAnswer[]): ResultType {
   const totals = resultTypes.reduce(
-    (acc, resultType) => {
-      acc[resultType] = 0;
-      return acc;
-    },
+    (acc, r) => { acc[r] = 0; return acc; },
     {} as Record<ResultType, number>,
   );
 
   for (const answer of answers) {
-    const question = quizQuestions.find((item) => item.id === answer.questionId);
-    const option = question?.options.find((item) => item.id === answer.optionId);
-
-    if (!option) continue;
-
-    for (const [resultType, points] of Object.entries(option.scores)) {
-      totals[resultType as ResultType] += points ?? 0;
+    for (const [key, val] of Object.entries(answer.scores)) {
+      totals[key as ResultType] += val ?? 0;
     }
   }
 
-  const sorted = [...resultTypes].sort((a, b) => totals[b] - totals[a]);
-  const top = sorted[0];
-  const second = sorted[1];
-
-  // Tie-breaker: if the first question shows a clear goal, respect it.
-  if (totals[top] === totals[second]) {
-    const goalAnswer = answers.find((answer) => answer.questionId === 'goal');
-    if (goalAnswer?.optionId === 'major-airline') return 'career';
-    if (goalAnswer?.optionId === 'private-fun-travel') return 'hobbyist';
-    if (goalAnswer?.optionId === 'business-aircraft') return 'owner';
-    return 'explorer';
+  let maxScore = -1;
+  for (const score of Object.values(totals)) {
+    if (score > maxScore) maxScore = score;
   }
 
-  return top;
+  const leaders = resultTypes.filter(r => totals[r] === maxScore);
+  if (leaders.length === 1) return leaders[0];
+
+  // Tie-breakers using goal, budget, medical answers
+  const goalAns = answers.find(a => a.questionId === 'goal')?.value;
+  const budgetAns = answers.find(a => a.questionId === 'budget')?.value;
+  const medicalAns = answers.find(a => a.questionId === 'medical')?.value;
+
+  if (leaders.includes('careerCaptain') && goalAns === 'career') return 'careerCaptain';
+  if (leaders.includes('researchFirst') && (goalAns === 'unsure' || budgetAns === 'cost_concern' || medicalAns === 'concerned')) return 'researchFirst';
+  if (leaders.includes('personalOwner') && goalAns === 'ownership_travel') return 'personalOwner';
+
+  return 'weekendHobbyist';
 }
+
+export const resultRoutes: Record<ResultType, string> = {
+  weekendHobbyist: '/flight-school-decision-tool/results/weekend-hobbyist/',
+  careerCaptain: '/flight-school-decision-tool/results/career-captain/',
+  personalOwner: '/flight-school-decision-tool/results/personal-owner/',
+  researchFirst: '/flight-school-decision-tool/results/research-first/',
+};

@@ -1,0 +1,97 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="About Flight School Friend"
+  description="Learn why Flight School Friend exists and how it helps future pilots make better decisions before choosing a flight school, instructor, medical path, or training timeline."
+>
+  <section class="bg-white max-w-3xl mx-auto px-4 py-20 md:py-24">
+    <div class="text-center mb-16">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight">Helping future pilots make better decisions before flight school.</h1>
+      <p class="text-lg text-slate-600 mb-8 leading-relaxed">
+        Flight School Friend is an independent resource for people who are curious about becoming a pilot, comparing flight schools, preparing for training, or trying to understand whether aviation is a realistic fit for their goals, budget, schedule, and life stage.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="/flight-school-decision-tool/quiz/" class="w-full sm:w-auto px-8 py-4 bg-sky-600 text-white font-bold rounded-xl text-lg btn-hover shadow-md text-center">Start Here</a>
+        <a href="/guides/" class="w-full sm:w-auto px-8 py-4 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl text-lg btn-hover shadow-sm text-center">Read the Guides</a>
+      </div>
+    </div>
+
+    <div class="space-y-16 guide-content">
+      <div>
+        <h2>Why Flight School Friend exists</h2>
+        <p>Flight training can be life-changing, but it is also expensive, confusing, and easy to start without a clear plan. Many future pilots are trying to answer the same questions: How much will this really cost? Should I choose Part 61 or Part 141? Do I need a medical certificate first? How do I compare schools? What should I do before booking a discovery flight?</p>
+        <p>Flight School Friend exists to make those early decisions easier. The goal is to help future pilots slow down, understand their options, ask better questions, and move forward with more confidence.</p>
+      </div>
+
+      <div>
+        <h2>What we help with</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+          {[
+            'Understanding flight school paths',
+            'Comparing Part 61, Part 141, accelerated, club, and local options',
+            'Estimating realistic costs',
+            'Preparing for discovery flights',
+            'Thinking through medical and document readiness',
+            'Comparing schools and instructors',
+            'Building a pre-training plan',
+            'Tracking early private pilot progress',
+          ].map(item => (
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-sm font-medium text-slate-700">{item}</div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h2>Who this is for</h2>
+        <ul class="space-y-2 mt-4">
+          {[
+            'Adults considering a career change into aviation',
+            'Hobby pilots who want to fly for fun',
+            'Future aircraft owners',
+            'Parents helping a teen research flight training',
+            'Students comparing local and accelerated programs',
+            'People who are aviation-curious but not ready to call schools yet',
+          ].map(item => (
+            <li class="flex items-start gap-2">
+              <svg class="w-5 h-5 text-sky-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h2>What makes this different</h2>
+        <p>Flight School Friend is not a flight school directory pretending every school is the right fit. It is a decision tool and research resource built around the questions people ask before they commit. The site is designed to help users understand tradeoffs, compare options, and decide what to do next.</p>
+      </div>
+
+      <div>
+        <h2>Editorial standards</h2>
+        <p>Flight School Friend aims to explain aviation training topics in plain language, cite or point users toward official sources where appropriate, and clearly separate educational content from personal, financial, legal, medical, or FAA certification advice.</p>
+        <div class="bg-sky-50 p-6 rounded-2xl border border-sky-100 mt-6">
+          <h4 class="font-bold text-slate-900 mb-3 text-sm uppercase tracking-wider">How we try to stay useful:</h4>
+          <ul class="space-y-2 text-sm text-slate-700 list-none p-0 m-0">
+            <li class="flex gap-2"><span class="text-sky-500">•</span> Explain tradeoffs, not just definitions</li>
+            <li class="flex gap-2"><span class="text-sky-500">•</span> Keep beginner language clear</li>
+            <li class="flex gap-2"><span class="text-sky-500">•</span> Encourage source verification</li>
+            <li class="flex gap-2"><span class="text-sky-500">•</span> Avoid pretending one training path fits everyone</li>
+            <li class="flex gap-2"><span class="text-sky-500">•</span> Separate educational content from official advice</li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <h2>Important disclaimer</h2>
+        <p class="text-sm text-slate-500 bg-slate-50 p-6 rounded-xl border border-slate-200">Flight School Friend is an independent educational resource. It is not legal, medical, financial, or FAA certification advice. Aviation regulations, school pricing, medical certification rules, and training requirements can change. Always verify important decisions with the FAA, an aviation medical examiner, a certificated flight instructor, and the specific flight school or provider you plan to use.</p>
+      </div>
+    </div>
+
+    <div class="bg-slate-900 text-white rounded-3xl p-8 md:p-16 text-center mt-20 shadow-lg">
+      <h2 class="text-3xl font-bold mb-4">Not sure where to start?</h2>
+      <p class="text-slate-400 mb-8 max-w-xl mx-auto text-lg">Take the Flight School Decision Tool and get a recommended starting path based on your goals, budget, timeline, and readiness.</p>
+      <a href="/flight-school-decision-tool/quiz/" class="inline-block px-8 py-4 bg-sky-600 hover:bg-sky-500 font-bold rounded-xl text-lg transition shadow-md">Start Here</a>
+    </div>
+  </section>
+</BaseLayout>

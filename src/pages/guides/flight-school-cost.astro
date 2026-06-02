@@ -1,63 +1,164 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import PrimaryCta from '@/components/PrimaryCta.astro';
 ---
 
 <BaseLayout
-  title="How Much Does Flight School Actually Cost? | PilotPath"
-  description="A beginner-friendly guide to private pilot and career flight school costs, hidden fees, and training frequency."
+  title="Flight School Cost Guide: Private Pilot Training Costs | Flight School Friend"
+  description="A beginner-friendly guide to flight school cost, private pilot training expenses, hidden fees, and how to estimate your realistic budget before you start."
 >
-  <article class="mx-auto max-w-3xl px-4 py-16">
-    <nav class="mb-8 text-xs font-bold uppercase tracking-widest text-slate-400">
-      <a href="/" class="hover:text-sky-600">Home</a> &gt; <a href="/guides/" class="hover:text-sky-600">Guides</a> &gt; Flight School Costs
-    </nav>
+  <div class="bg-white pb-24">
+    <div class="max-w-6xl mx-auto px-4 py-8">
 
-    <h1 class="mb-8 text-4xl font-extrabold leading-tight text-slate-900 md:text-5xl">
-      How Much Does Flight School Actually Cost?
-    </h1>
-
-    <div class="mb-12 rounded-2xl border border-slate-800 bg-slate-900 p-8 text-white shadow-xl">
-      <div class="mb-3 text-xs font-bold uppercase tracking-widest text-sky-400">The Short Answer</div>
-      <p class="text-xl font-medium leading-relaxed">
-        A private pilot license often costs around <span class="font-bold text-sky-400">$12,000 to $20,000+</span> when you include aircraft rental, instructor time, supplies, exams, and checkride costs. Career-oriented training can reach <span class="font-bold text-sky-400">$75,000 to $100,000+</span> depending on the school, region, and training pace.
-      </p>
-    </div>
-
-    <section class="space-y-6 text-slate-600">
-      <h2 class="text-2xl font-bold text-slate-900">Why the advertised price is usually too low</h2>
-      <p class="leading-relaxed">
-        Flight training cost is usually quoted using FAA minimum hours, but many students need more time. Weather, aircraft availability, instructor changes, scheduling gaps, and relearning between lessons can all increase the final cost.
-      </p>
-
-      <div class="rounded-r-xl border-l-4 border-amber-400 bg-amber-50 p-6">
-        <h3 class="mb-2 font-bold text-amber-900">Key Takeaway</h3>
-        <p class="text-sm italic text-amber-800">
-          Training two to three times per week is often more cost-effective than training once in a while because you spend less time relearning previous lessons.
-        </p>
+      <!-- Breadcrumbs -->
+      <div class="text-sm text-slate-500 mb-8 font-medium">
+        <a href="/" class="hover:text-sky-600 transition">Home</a> &rarr;
+        <a href="/guides/" class="hover:text-sky-600 transition">Guides</a> &rarr;
+        <span class="text-slate-900">Flight School Cost Guide</span>
       </div>
 
-      <h2 class="text-2xl font-bold text-slate-900">Common hidden fees</h2>
-      <ul class="list-disc space-y-3 pl-6">
-        <li><strong>FAA medical exam:</strong> often around $150 - $300 depending on provider and location</li>
-        <li><strong>Written exam:</strong> usually a separate testing fee</li>
-        <li><strong>Checkride:</strong> examiner fees can be a major out-of-pocket cost</li>
-        <li><strong>Headset and supplies:</strong> budget for basic gear, charts, apps, and ground materials</li>
-        <li><strong>Extra training time:</strong> the biggest variable for most students</li>
-      </ul>
-
-      <h2 class="text-2xl font-bold text-slate-900">The simplest way to start</h2>
-      <p class="leading-relaxed">
-        Before committing to a school, book a discovery flight, ask for realistic average completion costs, and compare at least two training options. The cheapest hourly rate is not always the cheapest path if scheduling, maintenance, or instructor availability slows you down.
-      </p>
-    </section>
-
-    <div class="mt-16 flex flex-col items-center gap-8 rounded-3xl border border-slate-200 bg-white p-10 shadow-sm md:flex-row">
-      <div class="text-4xl">⏱️</div>
-      <div class="flex-1">
-        <h3 class="mb-2 text-xl font-bold text-slate-900">Ready for a personalized estimate?</h3>
-        <p class="text-sm text-slate-500">Get a specific path based on your goal, schedule, and budget comfort level.</p>
+      <!-- Hero -->
+      <div class="mb-12">
+        <span class="inline-block bg-sky-100 text-sky-800 text-xs font-bold px-3 py-1 rounded-full mb-4">Cost & Budget</span>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">Flight School Cost Guide: What It Really Costs to Become a Private Pilot</h1>
+        <div class="flex items-center gap-4 text-sm text-slate-500 font-medium mb-8">
+          <span>Reading time: 8 mins</span>
+          <span>&bull;</span>
+          <span>Updated: June 2026</span>
+        </div>
+        <a href="/flight-school-decision-tool/quiz/" class="inline-block px-6 py-3 bg-sky-600 text-white font-bold rounded-lg hover:bg-sky-500 transition">Take the Flight School Decision Tool</a>
       </div>
-      <PrimaryCta href="/quiz/">Take Assessment</PrimaryCta>
+
+      <!-- Quick Answer Box -->
+      <div class="bg-slate-50 border-l-4 border-sky-500 p-6 rounded-r-2xl mb-12 shadow-sm">
+        <h3 class="font-bold text-slate-900 text-lg mb-2">The Short Answer</h3>
+        <p class="text-slate-700 font-medium">Flight school cost depends on aircraft rate, instructor rate, total flight hours, ground instruction, testing, gear, location, and training pace. Beginners should plan around realistic completion costs, not only FAA legal minimums.</p>
+      </div>
+
+      <div class="flex flex-col lg:flex-row gap-12 relative items-start">
+        <!-- Main Content -->
+        <div class="lg:w-2/3 guide-content">
+          <h2 id="what-affects-cost">What affects flight school cost?</h2>
+          <p>Flight training is rarely a flat fee. Instead, you pay for the hours you consume. Because every student learns at a different pace, the final cost varies wildly.</p>
+
+          <h3>Realistic Cost Formula</h3>
+          <div class="bg-slate-100 p-6 rounded-xl font-mono text-sm mb-6 border border-slate-200">
+            Realistic Cost = ((Aircraft Rate + Instructor Rate) × Expected Hours) + Fixed Fees
+          </div>
+
+          <h2 id="cost-breakdown">Cost breakdown table</h2>
+          <div class="overflow-x-auto mb-8">
+            <table class="min-w-full bg-white">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Optimistic (Min Hours)</th>
+                  <th>Realistic (National Avg)</th>
+                  <th>High/Premium</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Flight Hours</td><td>40 hours</td><td>65–75 hours</td><td>80+ hours</td></tr>
+                <tr><td>Aircraft Rental</td><td>$6,000</td><td>$10,500</td><td>$14,000+</td></tr>
+                <tr><td>Instructor Time</td><td>$2,000</td><td>$4,500</td><td>$6,000+</td></tr>
+                <tr><td>Fixed Costs (Testing, Gear)</td><td>$1,200</td><td>$1,500</td><td>$2,000+</td></tr>
+                <tr class="font-bold bg-slate-50"><td>Estimated Total</td><td>$9,200</td><td>$16,500</td><td>$22,000+</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2 id="aircraft-instructor-rates">Aircraft and Instructor Rates</h2>
+          <p>The type of airplane you fly dictates the largest chunk of your budget. Older, analog Cessna 152s might rent for $110/hour, while newer glass-cockpit Cirrus SR20s might cost $300+/hour. Flight instructors typically charge between $50 and $100 per hour, which applies to both flight time and ground briefings.</p>
+
+          <!-- Mid CTA -->
+          <div class="my-12 bg-sky-50 border border-sky-100 rounded-2xl p-8 text-center">
+            <h3 class="text-2xl font-bold text-slate-900 mb-2">Want the starter budget checklist?</h3>
+            <p class="text-slate-600 mb-6">Get our comprehensive cost planner sent to your inbox.</p>
+            <form id="mid-email-form" class="max-w-md mx-auto flex flex-col sm:flex-row gap-2">
+              <input type="email" placeholder="Your email address" required class="flex-grow px-4 py-3 rounded-lg text-slate-900 outline-none border border-slate-200 focus:ring-2 focus:ring-sky-500" />
+              <button type="submit" class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-lg transition">Email me the checklist</button>
+            </form>
+            <p id="mid-email-success" class="hidden text-green-600 font-medium mt-4">Got it — this checklist would be sent in the live version.</p>
+          </div>
+
+          <h2 id="fixed-costs">Fixed costs and hidden fees</h2>
+          <ul>
+            <li><strong>Medical Certificate:</strong> $100–$200.</li>
+            <li><strong>FAA Written Exam:</strong> ~$175.</li>
+            <li><strong>FAA Practical Exam (Checkride):</strong> $600–$1,000+ (paid to the DPE).</li>
+            <li><strong>Headset:</strong> $200 (entry-level) to $1,100 (premium noise-canceling).</li>
+            <li><strong>Insurance:</strong> Non-owner renter's insurance is often required ($200–$400/yr).</li>
+          </ul>
+
+          <h2 id="minimum-hours">Why minimum hours are not the same as realistic cost</h2>
+          <p>Flight schools often advertise the FAA legal minimum of 40 flight hours (for Part 61) to make their programs look cheaper. The national average to complete a private pilot certificate is actually closer to 65–75 hours. Budgeting for 40 hours is a recipe for running out of money before your checkride.</p>
+
+          <h2 id="estimate-budget">How to estimate your budget before calling schools</h2>
+          <p>Call local schools and ask for their wet rate (fuel included) for the primary trainer aircraft, and the hourly instructor rate. Multiply the total hourly cost by 70. Add $1,500 for gear, exams, and medical fees. That is your realistic budget target.</p>
+
+          <h2 id="common-mistakes">Common cost mistakes</h2>
+          <ul>
+            <li>Underfunding the account and having to pause training (which causes skill fade).</li>
+            <li>Buying a $1,000 headset before passing the medical exam.</li>
+            <li>Training inconsistently (e.g., once every two weeks), resulting in repeating lessons.</li>
+          </ul>
+
+          <h2 id="faq">FAQ</h2>
+          <h3>Can I get a loan for flight school?</h3>
+          <p>Yes. Part 141 university programs often qualify for federal student aid. Part 61 schools usually require private flight training loans (like Meritize or Sallie Mae) or personal financing.</p>
+
+          <div class="mt-12 pt-8 border-t border-slate-200 text-sm text-slate-500">
+            <h3 class="font-bold text-slate-900 mb-2 text-base">Sources & Verification</h3>
+            <ul class="space-y-1 mb-4">
+              <li><a href="https://www.faa.gov/pilots/medical_certification" target="_blank" rel="noopener" class="text-sky-600 hover:underline">FAA Medical Certification</a></li>
+              <li><a href="https://www.aopa.org/training-and-safety/students/pilot-license-cost" target="_blank" rel="noopener" class="text-sky-600 hover:underline">AOPA Pilot License Cost</a></li>
+              <li><a href="https://www.ecfr.gov/current/title-14/chapter-I/subchapter-D/part-61/subpart-E" target="_blank" rel="noopener" class="text-sky-600 hover:underline">eCFR Part 61 Subpart E</a></li>
+            </ul>
+            <p>This guide is for educational planning only. Always confirm current FAA requirements with your CFI, school, AME, DPE, or the FAA.</p>
+          </div>
+        </div>
+
+        <!-- TOC Sidebar -->
+        <div class="lg:w-1/3 w-full">
+          <div class="sticky top-24 bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <h3 class="font-bold text-slate-900 mb-4 uppercase tracking-wider text-sm border-b border-slate-200 pb-2">In this guide</h3>
+            <ul class="space-y-3 text-sm text-slate-600 font-medium">
+              <li><a href="#what-affects-cost" class="hover:text-sky-600 transition">What affects flight school cost?</a></li>
+              <li><a href="#cost-breakdown" class="hover:text-sky-600 transition">Cost breakdown table</a></li>
+              <li><a href="#aircraft-instructor-rates" class="hover:text-sky-600 transition">Aircraft and Instructor Rates</a></li>
+              <li><a href="#fixed-costs" class="hover:text-sky-600 transition">Fixed costs and hidden fees</a></li>
+              <li><a href="#minimum-hours" class="hover:text-sky-600 transition">Why minimum hours vs realistic cost</a></li>
+              <li><a href="#estimate-budget" class="hover:text-sky-600 transition">How to estimate your budget</a></li>
+              <li><a href="#common-mistakes" class="hover:text-sky-600 transition">Common cost mistakes</a></li>
+              <li><a href="#faq" class="hover:text-sky-600 transition">FAQ</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Guides -->
+      <div class="mt-16 pt-12 border-t border-slate-200">
+        <h2 class="text-2xl font-bold text-slate-900 mb-6">Related Guides</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <a href="/guides/part-61-vs-part-141/" class="block bg-white border border-slate-200 hover:border-sky-300 rounded-xl p-6 transition shadow-sm"><h3 class="font-bold text-slate-900 mb-2">Part 61 vs Part 141</h3><p class="text-sm text-slate-500">Compare flexible and structured training paths.</p></a>
+          <a href="/guides/how-to-choose-a-flight-school/" class="block bg-white border border-slate-200 hover:border-sky-300 rounded-xl p-6 transition shadow-sm"><h3 class="font-bold text-slate-900 mb-2">How to Choose a Flight School</h3><p class="text-sm text-slate-500">Use a practical checklist to compare schools.</p></a>
+          <a href="/guides/private-pilot-requirements/" class="block bg-white border border-slate-200 hover:border-sky-300 rounded-xl p-6 transition shadow-sm"><h3 class="font-bold text-slate-900 mb-2">Private Pilot Requirements</h3><p class="text-sm text-slate-500">Understand the main steps and FAA requirements.</p></a>
+        </div>
+      </div>
+
+      <!-- End CTA -->
+      <div class="bg-slate-900 text-white rounded-3xl p-8 md:p-16 text-center mt-16">
+        <h2 class="text-3xl font-bold mb-4">Want a personalized starting path?</h2>
+        <p class="text-slate-400 mb-8 max-w-2xl mx-auto text-lg">Take the Flight School Decision Tool to get a recommended roadmap based on your situation.</p>
+        <a href="/flight-school-decision-tool/quiz/" class="inline-block px-8 py-4 bg-sky-600 hover:bg-sky-500 font-bold rounded-xl text-lg transition shadow-md">Start Here</a>
+      </div>
     </div>
-  </article>
+  </div>
 </BaseLayout>
+
+<script>
+  document.getElementById('mid-email-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    (e.target as HTMLElement).classList.add('hidden');
+    document.getElementById('mid-email-success')?.classList.remove('hidden');
+  });
+</script>

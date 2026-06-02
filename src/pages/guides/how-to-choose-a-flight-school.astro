@@ -1,0 +1,125 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="How to Choose a Flight School: Beginner Checklist | Flight School Friend"
+  description="Learn how to compare flight schools by cost, aircraft availability, instructor fit, safety culture, scheduling, Part 61 vs Part 141, and checkride readiness."
+>
+  <div class="bg-white pb-24">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+
+      <div class="text-sm text-slate-500 mb-8 font-medium">
+        <a href="/" class="hover:text-sky-600 transition">Home</a> &rarr;
+        <a href="/guides/" class="hover:text-sky-600 transition">Guides</a> &rarr;
+        <span class="text-slate-900">How to Choose a Flight School</span>
+      </div>
+
+      <div class="mb-12">
+        <span class="inline-block bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full mb-4">School Selection</span>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">How to Choose a Flight School: A Beginner's Checklist</h1>
+        <div class="flex items-center gap-4 text-sm text-slate-500 font-medium mb-8">
+          <span>Reading time: 9 mins</span><span>&bull;</span><span>Updated: June 2026</span>
+        </div>
+        <a href="/flight-school-decision-tool/quiz/" class="inline-block px-6 py-3 bg-sky-600 text-white font-bold rounded-lg hover:bg-sky-500 transition">Take the Flight School Decision Tool</a>
+      </div>
+
+      <div class="bg-slate-50 border-l-4 border-sky-500 p-6 rounded-r-2xl mb-12 shadow-sm">
+        <h3 class="font-bold text-slate-900 text-lg mb-2">The Short Answer</h3>
+        <p class="text-slate-700 font-medium">The best flight school is not always the cheapest or closest option. Compare aircraft availability, instructor fit, scheduling, maintenance, pricing transparency, school structure, safety culture, and whether the school fits your actual goal.</p>
+      </div>
+
+      <div class="flex flex-col lg:flex-row gap-12 relative items-start">
+        <div class="lg:w-2/3 guide-content">
+          <h2 id="scorecard">Flight school comparison scorecard</h2>
+          <div class="overflow-x-auto mb-8">
+            <table class="min-w-full bg-white">
+              <thead><tr><th>Evaluation Area</th><th>What to Look For</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Instructor Fit</strong></td><td>Do they align with your pace and goals? Are they constantly leaving for airlines?</td></tr>
+                <tr><td><strong>Aircraft Availability</strong></td><td>What is the student-to-airplane ratio? Are aircraft frequently grounded for maintenance?</td></tr>
+                <tr><td><strong>Cost Transparency</strong></td><td>Do they advertise realistic hours or just the legal minimums? Are there hidden fuel surcharges?</td></tr>
+                <tr><td><strong>Safety Culture</strong></td><td>Are planes clean and well-maintained? Is there a clear dispatch and weather policy?</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2 id="safety-culture">Safety culture and maintenance</h2>
+          <p>Walk around the hangar. Are the airplanes clean? Do they have a dedicated maintenance team on the field, or do they wait for a mechanic to visit? A school with a strong safety culture won't pressure students or instructors to fly in marginal weather or with questionable equipment.</p>
+
+          <h2 id="instructor-fit">Instructor fit</h2>
+          <p>Your CFI (Certified Flight Instructor) is the single biggest factor in your training. It is completely normal to ask for an instructor who fits your learning style. If you are a weekend hobbyist, an older career CFI might be a better fit than a 21-year-old instructor rushing to build 1,500 hours for the airlines.</p>
+
+          <div class="my-12 bg-sky-50 border border-sky-100 rounded-2xl p-8 text-center">
+            <h3 class="text-2xl font-bold text-slate-900 mb-2">Want the school comparison checklist?</h3>
+            <p class="text-slate-600 mb-6">Print this out before you visit local hangars.</p>
+            <form id="mid-email-form" class="max-w-md mx-auto flex flex-col sm:flex-row gap-2">
+              <input type="email" placeholder="Your email address" required class="flex-grow px-4 py-3 rounded-lg text-slate-900 outline-none border border-slate-200 focus:ring-2 focus:ring-sky-500" />
+              <button type="submit" class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-lg transition">Email me the school checklist</button>
+            </form>
+            <p id="mid-email-success" class="hidden text-green-600 font-medium mt-4">Got it — this checklist would be sent in the live version.</p>
+          </div>
+
+          <h2 id="scheduling">Scheduling and Aircraft Availability</h2>
+          <p>A school might have low hourly rates, but if they have 50 students sharing 2 airplanes, you will never get on the schedule. Ask what the typical wait time is for a training slot, and how far in advance you need to book.</p>
+
+          <h2 id="red-flags">Red flags</h2>
+          <ul>
+            <li><strong>Large upfront deposits:</strong> Be wary of schools demanding $50,000 upfront. Pay-as-you-go or block rates (e.g., depositing $2,000 at a time) are standard.</li>
+            <li><strong>High instructor turnover:</strong> If you cycle through 4 instructors during your Private Pilot training, it will severely delay your progress.</li>
+            <li><strong>Evasive pricing:</strong> If they won't give you a clear "wet rate" (cost of aircraft including fuel) or instructor rate, look elsewhere.</li>
+          </ul>
+
+          <h2 id="questions">Questions to ask before booking</h2>
+          <p>"Can I view a copy of the rental agreement?"<br />"What happens to my deposit if I decide to stop training?"<br />"Are fuel surcharges included in the quoted aircraft rate?"</p>
+
+          <div class="mt-12 pt-8 border-t border-slate-200 text-sm text-slate-500">
+            <h3 class="font-bold text-slate-900 mb-2 text-base">Sources & Verification</h3>
+            <ul class="space-y-1 mb-4">
+              <li><a href="https://www.aopa.org/training-and-safety/learn-to-fly/flying-for-fun/choose-where-to-train" target="_blank" rel="noopener" class="text-sky-600 hover:underline">AOPA Choosing a Flight School</a></li>
+              <li><a href="https://www.faa.gov/pilots/become" target="_blank" rel="noopener" class="text-sky-600 hover:underline">FAA Become a Pilot</a></li>
+            </ul>
+            <p>This guide is for educational planning only. Always confirm current FAA requirements with your CFI, school, AME, DPE, or the FAA.</p>
+          </div>
+        </div>
+
+        <div class="lg:w-1/3 w-full">
+          <div class="sticky top-24 bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <h3 class="font-bold text-slate-900 mb-4 uppercase tracking-wider text-sm border-b border-slate-200 pb-2">In this guide</h3>
+            <ul class="space-y-3 text-sm text-slate-600 font-medium">
+              <li><a href="#scorecard" class="hover:text-sky-600 transition">Flight school comparison scorecard</a></li>
+              <li><a href="#safety-culture" class="hover:text-sky-600 transition">Safety culture and maintenance</a></li>
+              <li><a href="#instructor-fit" class="hover:text-sky-600 transition">Instructor fit</a></li>
+              <li><a href="#scheduling" class="hover:text-sky-600 transition">Scheduling and Availability</a></li>
+              <li><a href="#red-flags" class="hover:text-sky-600 transition">Red flags</a></li>
+              <li><a href="#questions" class="hover:text-sky-600 transition">Questions to ask before booking</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-16 pt-12 border-t border-slate-200">
+        <h2 class="text-2xl font-bold text-slate-900 mb-6">Related Guides</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <a href="/guides/flight-school-cost/" class="block bg-white border border-slate-200 hover:border-sky-300 rounded-xl p-6 transition shadow-sm"><h3 class="font-bold text-slate-900 mb-2">Flight School Cost Guide</h3><p class="text-sm text-slate-500">Understand realistic private pilot training costs.</p></a>
+          <a href="/guides/part-61-vs-part-141/" class="block bg-white border border-slate-200 hover:border-sky-300 rounded-xl p-6 transition shadow-sm"><h3 class="font-bold text-slate-900 mb-2">Part 61 vs Part 141</h3><p class="text-sm text-slate-500">Compare flexible and structured training paths.</p></a>
+          <a href="/guides/private-pilot-requirements/" class="block bg-white border border-slate-200 hover:border-sky-300 rounded-xl p-6 transition shadow-sm"><h3 class="font-bold text-slate-900 mb-2">Private Pilot Requirements</h3><p class="text-sm text-slate-500">Understand the main steps and FAA requirements.</p></a>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 text-white rounded-3xl p-8 md:p-16 text-center mt-16">
+        <h2 class="text-3xl font-bold mb-4">Want a personalized starting path?</h2>
+        <p class="text-slate-400 mb-8 max-w-2xl mx-auto text-lg">Take the Flight School Decision Tool to get a recommended roadmap based on your situation.</p>
+        <a href="/flight-school-decision-tool/quiz/" class="inline-block px-8 py-4 bg-sky-600 hover:bg-sky-500 font-bold rounded-xl text-lg transition shadow-md">Start Here</a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  document.getElementById('mid-email-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    (e.target as HTMLElement).classList.add('hidden');
+    document.getElementById('mid-email-success')?.classList.remove('hidden');
+  });
+</script>

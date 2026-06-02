@@ -3,164 +3,82 @@ import type { QuizQuestion } from '@/types/quiz';
 export const quizQuestions: QuizQuestion[] = [
   {
     id: 'goal',
-    question: 'What is your primary goal for aviation?',
-    subtext: 'This helps us determine which pilot path is the best fit.',
+    text: 'What best describes why you want to fly?',
     options: [
-      {
-        id: 'major-airline',
-        label: 'Fly for a major airline',
-        scores: { career: 5, explorer: 1 },
-      },
-      {
-        id: 'private-fun-travel',
-        label: 'Fly privately for fun/travel',
-        scores: { hobbyist: 5, owner: 1 },
-      },
-      {
-        id: 'business-aircraft',
-        label: 'Own or use an aircraft for business/travel',
-        scores: { owner: 5, hobbyist: 1 },
-      },
-      {
-        id: 'not-sure',
-        label: 'Not sure yet',
-        scores: { explorer: 5 },
-      },
-    ],
-  },
-  {
-    id: 'concern',
-    question: 'What is your biggest concern right now?',
-    subtext: "We'll address this in your personalized roadmap.",
-    options: [
-      {
-        id: 'cost',
-        label: 'The total cost',
-        scores: { hobbyist: 2, explorer: 2 },
-      },
-      {
-        id: 'time',
-        label: 'Time commitment',
-        scores: { hobbyist: 2, owner: 1 },
-      },
-      {
-        id: 'medical',
-        label: 'Medical eligibility',
-        scores: { explorer: 3 },
-      },
-      {
-        id: 'difficulty',
-        label: 'Fear of the difficulty/math',
-        scores: { explorer: 2, hobbyist: 1 },
-      },
-    ],
-  },
-  {
-    id: 'weekly-time',
-    question: 'How much time can you commit weekly?',
-    subtext: 'Training frequency has a major impact on cost and timeline.',
-    options: [
-      {
-        id: 'full-time',
-        label: 'Full-time (4-5 days)',
-        scores: { career: 4 },
-      },
-      {
-        id: 'part-time',
-        label: 'Part-time (2-3 days)',
-        scores: { career: 2, hobbyist: 2, owner: 2 },
-      },
-      {
-        id: 'weekends-only',
-        label: 'Weekends only',
-        scores: { hobbyist: 4, owner: 1 },
-      },
-      {
-        id: 'occasionally',
-        label: 'Occasionally',
-        scores: { explorer: 3, hobbyist: 1 },
-      },
-    ],
-  },
-  {
-    id: 'budget',
-    question: 'What is your investment comfort level?',
-    subtext: 'This helps us identify financing or pay-as-you-go paths.',
-    options: [
-      {
-        id: 'under-15k',
-        label: 'Under $15,000',
-        scores: { hobbyist: 3, explorer: 2 },
-      },
-      {
-        id: '15k-50k',
-        label: '$15,000 - $50,000',
-        scores: { hobbyist: 3, owner: 1 },
-      },
-      {
-        id: '50k-100k',
-        label: '$50,000 - $100,000',
-        scores: { career: 4, owner: 2 },
-      },
-      {
-        id: 'whatever-it-takes',
-        label: 'Whatever it takes',
-        scores: { career: 4, owner: 3 },
-      },
+      { value: 'hobby', label: 'Fly for fun, personal growth, or local adventures', scores: { weekendHobbyist: 3 } },
+      { value: 'career', label: 'Become a professional pilot or explore an airline/commercial career', scores: { careerCaptain: 4 } },
+      { value: 'ownership_travel', label: 'Travel for personal, family, or business reasons — maybe even own or share an aircraft someday', scores: { personalOwner: 4 } },
+      { value: 'unsure', label: "I'm interested, but I'm still figuring out whether flight training makes sense", scores: { researchFirst: 4 } },
     ],
   },
   {
     id: 'timeline',
-    question: 'What is your desired timeline?',
-    subtext: 'When do you want to have your first license in hand?',
+    text: 'How quickly do you want to move?',
     options: [
-      {
-        id: 'under-6-months',
-        label: 'ASAP (Under 6 months)',
-        scores: { career: 3, owner: 1 },
-      },
-      {
-        id: '12-months',
-        label: '12 months',
-        scores: { career: 2, hobbyist: 2, owner: 2 },
-      },
-      {
-        id: '2-years',
-        label: '2 years',
-        scores: { hobbyist: 3, owner: 2 },
-      },
-      {
-        id: 'no-rush',
-        label: 'No rush',
-        scores: { hobbyist: 2, explorer: 2 },
-      },
+      { value: 'flexible', label: "Flexible — I'm okay taking my time", scores: { weekendHobbyist: 2, researchFirst: 1 } },
+      { value: 'steady', label: 'Steady progress over the next year', scores: { weekendHobbyist: 1, personalOwner: 2 } },
+      { value: 'fast', label: "Fast — I want a structured plan and momentum", scores: { careerCaptain: 3 } },
+      { value: 'unclear', label: "I'm not ready to choose a timeline yet", scores: { researchFirst: 3 } },
+    ],
+  },
+  {
+    id: 'availability',
+    text: 'How often could you realistically train?',
+    options: [
+      { value: 'once_weekly', label: '1 time per week', scores: { weekendHobbyist: 2, researchFirst: 1 } },
+      { value: 'twice_weekly', label: '2 times per week', scores: { weekendHobbyist: 2, personalOwner: 1 } },
+      { value: 'three_plus', label: '3+ times per week', scores: { careerCaptain: 3, personalOwner: 1 } },
+      { value: 'unknown', label: "I'm not sure yet", scores: { researchFirst: 2 } },
+    ],
+  },
+  {
+    id: 'budget',
+    text: 'Which budget statement feels most accurate?',
+    options: [
+      { value: 'pay_as_you_go', label: 'I want to pay as I go and stay flexible', scores: { weekendHobbyist: 3 } },
+      { value: 'career_budget', label: "I'm willing to build a serious financing/budget plan if the career path makes sense", scores: { careerCaptain: 3 } },
+      { value: 'ownership_budget', label: 'I can invest in training if it supports travel, safety, or future ownership', scores: { personalOwner: 3 } },
+      { value: 'cost_concern', label: 'Cost is my biggest concern and I need more clarity first', scores: { researchFirst: 4 } },
     ],
   },
   {
     id: 'medical',
-    question: 'Do you have any medical concerns?',
-    subtext: 'FAA medical eligibility can affect the best first step.',
+    text: 'How clear are you on aviation medical requirements?',
     options: [
-      {
-        id: 'none',
-        label: 'None',
-        scores: { career: 1, hobbyist: 1, owner: 1 },
-      },
-      {
-        id: 'vision-only',
-        label: 'Corrective vision only',
-        scores: { career: 1, hobbyist: 1, owner: 1 },
-      },
-      {
-        id: 'specific-condition',
-        label: 'A specific condition',
-        scores: { explorer: 4 },
-      },
-      {
-        id: 'dont-know',
-        label: "I don't know the requirements",
-        scores: { explorer: 3 },
-      },
+      { value: 'probably_ok', label: "I think I'm fine, but I still need to verify", scores: { weekendHobbyist: 1, personalOwner: 1 } },
+      { value: 'medical_first', label: 'I need a medical-first plan before spending money', scores: { careerCaptain: 2, researchFirst: 3 } },
+      { value: 'career_medical', label: 'I already know medical eligibility is important for my career goal', scores: { careerCaptain: 3 } },
+      { value: 'concerned', label: "I'm confused or concerned about medical requirements", scores: { researchFirst: 4 } },
+    ],
+  },
+  {
+    id: 'training_style',
+    text: 'Which training environment sounds best?',
+    options: [
+      { value: 'local_flexible', label: 'Local instructor or flying club with flexibility', scores: { weekendHobbyist: 3 } },
+      { value: 'structured', label: 'Structured academy or school with a defined syllabus', scores: { careerCaptain: 3 } },
+      { value: 'practical_travel', label: 'Practical training focused on real-world cross-country confidence', scores: { personalOwner: 3 } },
+      { value: 'compare_first', label: 'I want to compare options before deciding', scores: { researchFirst: 3 } },
+    ],
+  },
+  {
+    id: 'confidence',
+    text: 'What is your confidence level right now?',
+    options: [
+      { value: 'confident', label: 'Pretty confident — I mostly need a starting plan', scores: { weekendHobbyist: 1, personalOwner: 1 } },
+      { value: 'highly_motivated', label: 'Highly motivated — I want a serious path', scores: { careerCaptain: 3 } },
+      { value: 'cautious', label: 'Motivated, but I want to avoid expensive mistakes', scores: { personalOwner: 1, researchFirst: 2 } },
+      { value: 'uncertain', label: 'Curious, but uncertain', scores: { researchFirst: 3 } },
+    ],
+  },
+  {
+    id: 'next_step',
+    text: 'What feels like your next best step?',
+    options: [
+      { value: 'discovery_flight', label: 'Book a discovery flight', scores: { weekendHobbyist: 2, personalOwner: 1 } },
+      { value: 'compare_career', label: 'Compare schools/programs and understand the career path', scores: { careerCaptain: 3 } },
+      { value: 'ownership_plan', label: 'Build a travel/ownership-oriented training plan', scores: { personalOwner: 3 } },
+      { value: 'research_first', label: 'Research costs, medical, and school fit first', scores: { researchFirst: 4 } },
     ],
   },
 ];

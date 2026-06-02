@@ -2,40 +2,59 @@
 import { site } from '@/config/site';
 ---
 
-<footer class="border-t border-slate-200 bg-white pt-16 pb-8">
-  <div class="mx-auto mb-12 grid max-w-6xl grid-cols-2 gap-8 px-4 md:grid-cols-4">
-    <div class="col-span-2">
-      <div class="mb-6 flex items-center gap-2">
-        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900">
-          <span class="text-xs font-bold text-white">FS</span>
+<footer class="bg-white border-t border-slate-200 pt-16 pb-8 mt-auto">
+  <div class="max-w-6xl mx-auto px-4 grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+
+    <div class="col-span-2 md:col-span-1">
+      <a href="/" class="flex items-center gap-2 mb-6" aria-label="Flight School Friend home">
+        <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
+          <span class="text-white font-bold text-xs">FSF</span>
         </div>
-        <span class="font-bold tracking-tight text-slate-900">{site.name}</span>
-      </div>
-      <p class="max-w-xs text-sm text-slate-500">
-        Helping future aviators take flight with confidence, clarity, and realistic expectations.
-      </p>
+      </a>
+      <p class="text-slate-500 text-sm mb-6 pr-4">The independent decision layer for future pilots. Plan your path before you pay.</p>
+      <a href="/flight-school-decision-tool/quiz/" class="inline-block bg-sky-100 text-sky-700 px-4 py-2 rounded font-bold text-sm hover:bg-sky-200 transition">
+        Start Here &rarr;
+      </a>
     </div>
 
     <div>
-      <h5 class="mb-4 font-bold text-slate-900">Guides</h5>
-      <ul class="space-y-2 text-sm text-slate-500">
-        <li><a href="/guides/flight-school-cost/" class="hover:text-sky-600">Cost Breakdown</a></li>
-        <li><a href="/guides/" class="hover:text-sky-600">License Types</a></li>
-        <li><a href="/guides/" class="hover:text-sky-600">Medical Exams</a></li>
+      <h5 class="font-bold text-slate-900 mb-4">Start</h5>
+      <ul class="text-sm text-slate-500 space-y-3">
+        <li><a href="/flight-school-decision-tool/" class="hover:text-sky-600 transition">Flight School Decision Tool</a></li>
+        <li><a href="/flight-school-decision-tool/quiz/" class="hover:text-sky-600 transition">Take the Free Quiz</a></li>
+        <li><a href="/guides/" class="hover:text-sky-600 transition">Flight School Starter Guides</a></li>
       </ul>
     </div>
 
     <div>
-      <h5 class="mb-4 font-bold text-slate-900">Tools</h5>
-      <ul class="space-y-2 text-sm text-slate-500">
-        <li><a href="/quiz/" class="hover:text-sky-600">Assessment Quiz</a></li>
-        <li><a href="/guides/" class="hover:text-sky-600">Beginner Guides</a></li>
-        <li><a href="/quiz/" class="hover:text-sky-600">Starter Kit</a></li>
+      <h5 class="font-bold text-slate-900 mb-4">Guides</h5>
+      <ul class="text-sm text-slate-500 space-y-3">
+        <li><a href="/guides/flight-school-cost/" class="hover:text-sky-600 transition">Flight School Cost</a></li>
+        <li><a href="/guides/part-61-vs-part-141/" class="hover:text-sky-600 transition">Part 61 vs Part 141</a></li>
+        <li><a href="/guides/how-to-choose-a-flight-school/" class="hover:text-sky-600 transition">How to Choose a Flight School</a></li>
+        <li><a href="/guides/private-pilot-requirements/" class="hover:text-sky-600 transition">Private Pilot Requirements</a></li>
       </ul>
     </div>
+
+    <div>
+      <h5 class="font-bold text-slate-900 mb-4">Future Resources</h5>
+      <ul class="text-sm text-slate-500 space-y-3">
+        <li><a href="/tools/" class="hover:text-sky-600 transition text-slate-400">Tools</a></li>
+        <li><a href="/find/" class="hover:text-sky-600 transition text-slate-400">Find Resources</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h5 class="font-bold text-slate-900 mb-4">Company</h5>
+      <ul class="text-sm text-slate-500 space-y-3">
+        <li><a href="/about/" class="hover:text-sky-600 transition">About</a></li>
+        <li><a href="/privacy/" class="hover:text-sky-600 transition">Privacy Policy</a></li>
+      </ul>
+    </div>
+
   </div>
 
-  <div class="mx-auto max-w-6xl border-t border-slate-100 px-4 pt-8 text-center text-xs text-slate-400">
-    &copy; 2026 Flight School Decision Tool. Clear for takeoff.
+  <div class="max-w-6xl mx-auto px-4 border-t border-slate-100 pt-8 text-center md:text-left">
+    <p class="text-sm text-slate-400">&copy; 2026 {site.name}. All rights reserved.</p>
   </div>
 </footer>

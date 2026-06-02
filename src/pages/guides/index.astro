@@ -2,27 +2,64 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Beginner Flight School Guides | PilotPath">
-  <section class="mx-auto max-w-5xl px-4 py-16">
-    <span class="mb-4 inline-block rounded-full bg-sky-100 px-3 py-1 text-xs font-bold uppercase tracking-widest text-sky-700">
-      Beginner Guides
+<BaseLayout
+  title="Flight School Starter Guides | Flight School Friend"
+  description="Clear, beginner-friendly guides to help you understand flight school cost, training paths, requirements, and how to choose a school before you spend heavily."
+>
+  <section class="max-w-6xl mx-auto px-4 py-20 text-center">
+    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded-full mb-6 tracking-widest uppercase border border-slate-200">
+      Aviation Education Hub
     </span>
-    <h1 class="mb-6 text-4xl font-extrabold tracking-tight text-slate-900 md:text-5xl">Flight school decisions, explained plainly.</h1>
-    <p class="mb-12 max-w-2xl text-lg leading-relaxed text-slate-600">
-      Start with the basics: cost, training timelines, medical requirements, school types, and the first steps that help you avoid expensive mistakes.
+    <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">Flight School Starter Guides</h1>
+    <p class="text-xl text-slate-600 mb-4 max-w-3xl mx-auto leading-relaxed">
+      Clear, beginner-friendly guides to help you understand flight school cost, training paths, requirements, and how to choose a school before you spend heavily.
     </p>
-
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-      <a href="/guides/flight-school-cost/" class="btn-hover rounded-2xl border border-slate-100 bg-white p-8 shadow-sm">
-        <div class="mb-4 text-3xl">💰</div>
-        <h2 class="mb-2 text-xl font-bold text-slate-900">How Much Does Flight School Actually Cost?</h2>
-        <p class="text-sm leading-relaxed text-slate-500">A beginner-friendly breakdown of PPL cost, career training cost, hidden fees, and training frequency.</p>
+    <p class="text-slate-500 mb-10 max-w-2xl mx-auto">
+      Start with the topic that matches your biggest question, or take the Flight School Decision Tool for a personalized starting path.
+    </p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+      <a href="/flight-school-decision-tool/quiz/" class="w-full sm:w-auto px-8 py-4 bg-sky-600 text-white font-bold rounded-xl text-lg btn-hover shadow-md">
+        Start Here
       </a>
+      <a href="/flight-school-decision-tool/" class="w-full sm:w-auto px-8 py-4 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl text-lg btn-hover shadow-sm">
+        How the Decision Tool Works
+      </a>
+    </div>
+  </section>
 
-      <a href="/quiz/" class="btn-hover rounded-2xl border-2 border-sky-600 bg-white p-8 shadow-sm">
-        <div class="mb-4 text-3xl">✈️</div>
-        <h2 class="mb-2 text-xl font-bold text-sky-900">Take the Pilot Path Assessment</h2>
-        <p class="text-sm leading-relaxed text-slate-500">Get a personalized path based on your goal, timeline, budget, and current concerns.</p>
+  <section class="max-w-6xl mx-auto px-4 pb-24">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <a href="/guides/flight-school-cost/" class="group block bg-slate-50 border border-slate-200 hover:border-sky-300 rounded-2xl p-8 transition shadow-sm hover:shadow-md">
+        <span class="inline-block bg-sky-100 text-sky-800 text-xs font-bold px-3 py-1 rounded-full mb-4">Cost & Budget</span>
+        <h2 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-sky-700 transition">Flight School Cost Guide</h2>
+        <p class="text-slate-600 mb-6">Understand realistic private pilot training costs, common hidden expenses, and how to estimate your budget before calling schools.</p>
+        <span class="text-sky-600 font-bold uppercase text-sm tracking-wider">Read Guide &rarr;</span>
+      </a>
+      <a href="/guides/part-61-vs-part-141/" class="group block bg-slate-50 border border-slate-200 hover:border-sky-300 rounded-2xl p-8 transition shadow-sm hover:shadow-md">
+        <span class="inline-block bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full mb-4">Training Paths</span>
+        <h2 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-sky-700 transition">Part 61 vs Part 141 Guide</h2>
+        <p class="text-slate-600 mb-6">Compare flexible and structured training paths, including cost, timeline, schedule, and student fit.</p>
+        <span class="text-sky-600 font-bold uppercase text-sm tracking-wider">Read Guide &rarr;</span>
+      </a>
+      <a href="/guides/how-to-choose-a-flight-school/" class="group block bg-slate-50 border border-slate-200 hover:border-sky-300 rounded-2xl p-8 transition shadow-sm hover:shadow-md">
+        <span class="inline-block bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full mb-4">School Selection</span>
+        <h2 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-sky-700 transition">How to Choose a Flight School</h2>
+        <p class="text-slate-600 mb-6">Use a practical checklist to compare schools by instructor fit, aircraft availability, scheduling, pricing transparency, and safety culture.</p>
+        <span class="text-sky-600 font-bold uppercase text-sm tracking-wider">Read Guide &rarr;</span>
+      </a>
+      <a href="/guides/private-pilot-requirements/" class="group block bg-slate-50 border border-slate-200 hover:border-sky-300 rounded-2xl p-8 transition shadow-sm hover:shadow-md">
+        <span class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full mb-4">Requirements</span>
+        <h2 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-sky-700 transition">Private Pilot Requirements Guide</h2>
+        <p class="text-slate-600 mb-6">Understand the main steps, documents, training requirements, tests, and checkride path for private pilot training.</p>
+        <span class="text-sky-600 font-bold uppercase text-sm tracking-wider">Read Guide &rarr;</span>
+      </a>
+    </div>
+
+    <div class="mt-16 bg-slate-900 text-white rounded-3xl p-10 md:p-16 text-center">
+      <h2 class="text-3xl font-bold mb-4">Not sure which guide fits your situation?</h2>
+      <p class="text-slate-400 max-w-2xl mx-auto mb-8 text-lg">Take the Flight School Decision Tool and get a starting roadmap based on your goals, budget, timeline, medical readiness, and training preferences.</p>
+      <a href="/flight-school-decision-tool/quiz/" class="inline-block px-8 py-4 bg-sky-600 hover:bg-sky-500 font-bold rounded-xl text-lg transition shadow-md">
+        Start Here
       </a>
     </div>
   </section>

@@ -1,0 +1,53 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Find CFI and DPE Resources (Template Preview) | Flight School Friend"
+  description="This page will help students understand the roles of certificated flight instructors and designated pilot examiners, and what to ask as they prepare."
+>
+  <section class="bg-white max-w-3xl mx-auto px-4 py-20">
+    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded-full mb-4 uppercase tracking-widest border border-slate-200">Template Preview</span>
+    <h1 class="text-4xl font-extrabold text-slate-900 mb-6">Find CFI and DPE Resources</h1>
+    <p class="text-lg text-slate-600 mb-10 leading-relaxed">This page will help students understand the roles of certificated flight instructors and designated pilot examiners, and what to ask as they prepare for training and checkrides.</p>
+
+    <div class="space-y-8">
+      <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+        <h3 class="font-bold text-slate-900 mb-3">What this page will eventually help compare:</h3>
+        <ul class="list-disc pl-5 text-slate-600 space-y-1">
+          <li>Instructor specialization & Availability</li>
+          <li>Aircraft familiarity & Teaching style</li>
+          <li>Checkride prep support</li>
+          <li>DPE availability by region & Scheduling lead times</li>
+          <li>Student feedback</li>
+        </ul>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="border border-slate-200 p-6 rounded-2xl">
+          <h3 class="font-bold text-slate-900 mb-3">What to verify:</h3>
+          <ul class="list-disc pl-5 text-sm text-slate-500 space-y-1">
+            <li>Instructor certificate and availability</li>
+            <li>School policies for CFI changes</li>
+            <li>DPE scheduling timelines</li>
+            <li>Checkride expectations</li>
+            <li>Aircraft/checkride requirements</li>
+          </ul>
+        </div>
+        <div class="border border-slate-200 p-6 rounded-2xl bg-amber-50 border-amber-100">
+          <h3 class="font-bold text-slate-900 mb-3">Questions to ask:</h3>
+          <ul class="list-disc pl-5 text-sm text-amber-900 space-y-1 font-medium">
+            <li>How often can I fly with the same instructor?</li>
+            <li>What is your approach to solo readiness?</li>
+            <li>How do you prepare students for checkrides?</li>
+            <li>How far out are DPEs scheduling in this area?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="/find/" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg transition text-center">&larr; Back to Find</a>
+      <a href="/flight-school-decision-tool/quiz/" class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-lg transition text-center">Start Here</a>
+    </div>
+  </section>
+</BaseLayout>

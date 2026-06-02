@@ -1,0 +1,54 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Private Pilot Progress Tracker (Template Preview) | Flight School Friend"
+  description="Track your private pilot training progress from early lessons through solo, cross-country, written test, and checkride readiness."
+>
+  <section class="bg-white max-w-3xl mx-auto px-4 py-20">
+    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded-full mb-4 uppercase tracking-widest border border-slate-200">Template Preview</span>
+    <h1 class="text-4xl font-extrabold text-slate-900 mb-6">Private Pilot Progress Tracker</h1>
+    <p class="text-lg text-slate-600 mb-10 leading-relaxed">Track your private pilot training progress from early lessons through solo, cross-country, written test, and checkride readiness.</p>
+
+    <div class="space-y-8">
+      <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+        <h3 class="font-bold text-slate-900 mb-3">What this tool will help with:</h3>
+        <ul class="list-disc pl-5 text-slate-600 space-y-1">
+          <li>Organize training milestones</li>
+          <li>Track required and recommended experience</li>
+          <li>Keep notes from lessons</li>
+          <li>Prepare for solo and checkride conversations with your CFI</li>
+        </ul>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="border border-slate-200 p-6 rounded-2xl">
+          <h3 class="font-bold text-slate-900 mb-3">Inputs this tool may use:</h3>
+          <ul class="list-disc pl-5 text-sm text-slate-500 space-y-1">
+            <li>Lesson date & Aircraft</li>
+            <li>Maneuvers practiced & Ground topics</li>
+            <li>Flight time</li>
+            <li>Solo & Cross-country milestones</li>
+            <li>Written test status</li>
+            <li>Checkride readiness notes</li>
+          </ul>
+        </div>
+        <div class="border border-slate-200 p-6 rounded-2xl bg-sky-50">
+          <h3 class="font-bold text-slate-900 mb-3">Example output:</h3>
+          <ul class="list-disc pl-5 text-sm text-sky-900 space-y-1 font-medium">
+            <li>Progress summary</li>
+            <li>Next lesson focus</li>
+            <li>Items to ask your CFI</li>
+            <li>Checkride prep status</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="/tools/" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg transition text-center">&larr; Back to Tools</a>
+      <a href="/flight-school-decision-tool/quiz/" class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-lg transition text-center">Start Here</a>
+    </div>
+  </section>
+</BaseLayout>

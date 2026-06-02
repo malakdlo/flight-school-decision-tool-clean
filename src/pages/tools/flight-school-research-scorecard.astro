@@ -1,0 +1,54 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Flight School Research Scorecard (Template Preview) | Flight School Friend"
+  description="Compare flight schools side-by-side using the factors that matter before you commit."
+>
+  <section class="bg-white max-w-3xl mx-auto px-4 py-20">
+    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded-full mb-4 uppercase tracking-widest border border-slate-200">Template Preview</span>
+    <h1 class="text-4xl font-extrabold text-slate-900 mb-6">Flight School Research Scorecard</h1>
+    <p class="text-lg text-slate-600 mb-10 leading-relaxed">Compare flight schools side-by-side using the factors that matter before you commit.</p>
+
+    <div class="space-y-8">
+      <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+        <h3 class="font-bold text-slate-900 mb-3">What this tool will help with:</h3>
+        <ul class="list-disc pl-5 text-slate-600 space-y-1">
+          <li>Compare 2–5 schools objectively</li>
+          <li>Identify missing information</li>
+          <li>Score schools by fit, not just price</li>
+          <li>Prepare better questions before calling or visiting</li>
+        </ul>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="border border-slate-200 p-6 rounded-2xl">
+          <h3 class="font-bold text-slate-900 mb-3">Inputs this tool may use:</h3>
+          <ul class="list-disc pl-5 text-sm text-slate-500 space-y-1">
+            <li>School name & Part type (61/141/club)</li>
+            <li>Aircraft and instructor rental rate</li>
+            <li>Aircraft availability & Scheduling flexibility</li>
+            <li>Maintenance/safety notes</li>
+            <li>Instructor fit & Pricing transparency</li>
+            <li>Distance from home & Goal fit</li>
+          </ul>
+        </div>
+        <div class="border border-slate-200 p-6 rounded-2xl bg-sky-50">
+          <h3 class="font-bold text-slate-900 mb-3">Example output:</h3>
+          <ul class="list-disc pl-5 text-sm text-sky-900 space-y-1 font-medium">
+            <li>School comparison score</li>
+            <li>Best fit summary</li>
+            <li>Missing information checklist</li>
+            <li>Follow-up questions</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="/tools/" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg transition text-center">&larr; Back to Tools</a>
+      <a href="/flight-school-decision-tool/quiz/" class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-lg transition text-center">Start Here</a>
+    </div>
+  </section>
+</BaseLayout>

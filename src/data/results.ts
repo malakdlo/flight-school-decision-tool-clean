@@ -1,6 +1,6 @@
-import type { ResultPath } from '@/types/quiz';
-
-export const resultPaths: Record<ResultPath['id'], ResultPath> = {
+// Legacy result path data — kept for reference. Quiz now navigates to real Astro result pages.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const resultPaths: Record<string, any> = {
   career: {
     id: 'career',
     eyebrow: 'Your Recommended Path',

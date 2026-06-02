@@ -1,0 +1,52 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Find Flight Training Scholarships (Template Preview) | Flight School Friend"
+  description="This page will help future pilots organize scholarship research and track opportunities by deadline, eligibility, training stage, and award amount."
+>
+  <section class="bg-white max-w-3xl mx-auto px-4 py-20">
+    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded-full mb-4 uppercase tracking-widest border border-slate-200">Template Preview</span>
+    <h1 class="text-4xl font-extrabold text-slate-900 mb-6">Find Flight Training Scholarships</h1>
+    <p class="text-lg text-slate-600 mb-10 leading-relaxed">This page will help future pilots organize scholarship research and track opportunities by deadline, eligibility, training stage, and award amount.</p>
+
+    <div class="space-y-8">
+      <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+        <h3 class="font-bold text-slate-900 mb-3">What this page will eventually help compare:</h3>
+        <ul class="list-disc pl-5 text-slate-600 space-y-1">
+          <li>Scholarship name & Provider</li>
+          <li>Eligibility & Award amount</li>
+          <li>Deadline & Required documents</li>
+          <li>Training stage & Location restrictions</li>
+          <li>Application link</li>
+        </ul>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="border border-slate-200 p-6 rounded-2xl">
+          <h3 class="font-bold text-slate-900 mb-3">What to verify:</h3>
+          <ul class="list-disc pl-5 text-sm text-slate-500 space-y-1">
+            <li>Current deadline</li>
+            <li>Eligibility requirements</li>
+            <li>Whether funds can be used at your school</li>
+            <li>Required essays, recommendations, or documentation</li>
+          </ul>
+        </div>
+        <div class="border border-slate-200 p-6 rounded-2xl bg-amber-50 border-amber-100">
+          <h3 class="font-bold text-slate-900 mb-3">Questions to ask:</h3>
+          <ul class="list-disc pl-5 text-sm text-amber-900 space-y-1 font-medium">
+            <li>Am I eligible based on age, location, training stage, or membership?</li>
+            <li>Can funds be used for Part 61 or only Part 141?</li>
+            <li>What documents do I need?</li>
+            <li>When should I apply?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="/find/" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg transition text-center">&larr; Back to Find</a>
+      <a href="/flight-school-decision-tool/quiz/" class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-lg transition text-center">Start Here</a>
+    </div>
+  </section>
+</BaseLayout>
