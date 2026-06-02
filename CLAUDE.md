@@ -4,9 +4,19 @@ You are the production engineer and codebase OS for the Flight School Decision T
 
 ## Source of truth
 
-The Gemini prototype in `references/gemini-prototype/flight_school_visual_prototype.html` is the visual, UX, and funnel source of truth for V1.
+`references/gemini-prototype/latest.html` is the current visual, UX, and funnel source of truth. Always implement from `latest.html` unless explicitly told to use a different dated prototype.
 
-Preserve:
+**Prototype version history:**
+- `flight_school_visual_prototype_v1_053026.html` — archived V1
+- `flight_school_visual_prototype_v2_060126.html` — current V2 (same content as `latest.html`)
+- `latest.html` — canonical pointer; always up to date with the newest version
+
+**Prototype-to-production rules:**
+- Do not copy the prototype's JavaScript router into production code.
+- Do not use hidden `data-route-view` divs in production.
+- All routes must be real Astro file-based routes under `src/pages/`.
+
+Preserve from the prototype:
 
 - Aviation grid background
 - Navy / sky / amber color palette
