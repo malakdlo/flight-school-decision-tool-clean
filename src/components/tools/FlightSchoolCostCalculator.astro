@@ -1,0 +1,1212 @@
+---
+import {
+  DEFAULT_COST_CALCULATOR_STATE,
+  EXTRA_FIELDS,
+  PHASE_META,
+  RATE_FIELDS,
+  TRAINING_GOALS,
+  calculateExtrasTotal,
+  calculateFlightSchoolCost,
+  calculatePhaseTotal,
+  formatCurrency,
+} from '@/lib/flightSchoolCostCalculator';
+
+const initialTotals = calculateFlightSchoolCost(DEFAULT_COST_CALCULATOR_STATE);
+const initialExtrasTotal = calculateExtrasTotal(DEFAULT_COST_CALCULATOR_STATE);
+const initialGoal = TRAINING_GOALS.find((goal) => goal.id === DEFAULT_COST_CALCULATOR_STATE.goal) || TRAINING_GOALS[1];
+---
+
+<section
+  class="fsf-calc-root"
+  data-state={JSON.stringify(DEFAULT_COST_CALCULATOR_STATE)}
+  data-goals={JSON.stringify(TRAINING_GOALS)}
+  data-phase-meta={JSON.stringify(PHASE_META)}
+  data-rate-fields={JSON.stringify(RATE_FIELDS)}
+  data-extra-fields={JSON.stringify(EXTRA_FIELDS)}
+>
+  <div class="fsf-calc-page">
+    <header class="fsf-calc-hero">
+      <span class="fsf-eyebrow">Planning Tools</span>
+      <h1>What will flight training <span>really</span> cost?</h1>
+      <p>Pick your goal, then tune the averages below to match your local schools. Your estimate updates as you type.</p>
+    </header>
+
+    <div class="fsf-calc-panel">
+      <section class="fsf-section-card fsf-goal-card">
+        <div class="fsf-section-copy">
+          <h2>Choose your training path</h2>
+          <p>Start with a common path, then adjust the assumptions below.</p>
+        </div>
+        <div class="fsf-pills" role="group" aria-label="Training goal">
+          {TRAINING_GOALS.map((goal) => (
+            <button
+              type="button"
+              class:list={['fsf-pill', goal.id === DEFAULT_COST_CALCULATOR_STATE.goal && 'is-active']}
+              data-goal={goal.id}
+            >
+              {goal.label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section class="fsf-section-card">
+        <div class="fsf-section-copy">
+          <h2>Estimated range</h2>
+          <p>A planning range based on the selected path and inputs.</p>
+        </div>
+        <div class="fsf-estimate-range" aria-label="Estimated cost range">
+          <div class="fsf-estimate-card">
+            <span>Low</span>
+            <b data-output="low">{formatCurrency(initialTotals.low)}</b>
+          </div>
+          <div class="fsf-estimate-card is-realistic">
+            <span>Realistic</span>
+            <b data-output="real">{formatCurrency(initialTotals.real)}</b>
+          </div>
+          <div class="fsf-estimate-card">
+            <span>High</span>
+            <b data-output="high">{formatCurrency(initialTotals.high)}</b>
+          </div>
+        </div>
+      </section>
+
+      <section class="fsf-section-card">
+        <div class="fsf-section-copy">
+          <h2>Your local rates</h2>
+          <p>Use current wet rental and instructor rates from schools near you.</p>
+        </div>
+        <div class="fsf-fields fsf-rate-fields">
+          {RATE_FIELDS.map((field) => (
+            <label class="fsf-field">
+              <span>{field.label}</span>
+              <span class="fsf-input-wrap is-money">
+                <input
+                  type="number"
+                  min="0"
+                  step="5"
+                  value={DEFAULT_COST_CALCULATOR_STATE.rates[field.key]}
+                  data-rate={field.key}
+                />
+                <em>$</em>
+              </span>
+            </label>
+          ))}
+        </div>
+      </section>
+
+      <section class="fsf-section-card fsf-stages-card">
+        <div class="fsf-section-copy">
+          <h2>Training cost stages</h2>
+          <p>Open each stage to review the assumptions behind your estimate.</p>
+        </div>
+        <div class="fsf-flat-list" data-sections>
+          <div data-phase-list>
+            {initialGoal.phases.map((phaseId, index) => {
+              const phaseTotal = calculatePhaseTotal(DEFAULT_COST_CALCULATOR_STATE, phaseId);
+              const isOpen = phaseId === initialGoal.phases[0];
+              return (
+                <div class:list={['fsf-flat-item', isOpen && 'is-open']} data-section={phaseId}>
+                  <button class="fsf-flat-head" type="button" aria-expanded={isOpen ? 'true' : 'false'} data-section-toggle={phaseId}>
+                    <span class="fsf-section-num">{String(index + 1).padStart(2, '0')}</span>
+                    <span class="fsf-section-title">
+                      <b>{PHASE_META[phaseId].name}</b>
+                      <small>{PHASE_META[phaseId].desc}</small>
+                    </span>
+                    <span class="fsf-section-cost">
+                      <b data-phase-cost={phaseId}>{formatCurrency(phaseTotal.real)}</b>
+                      <small data-phase-hours={phaseId}>{phaseTotal.hours} flight hrs</small>
+                    </span>
+                    <span class="fsf-caret" aria-hidden="true">▼</span>
+                  </button>
+                  <div class="fsf-flat-body" hidden={!isOpen} data-section-body={phaseId}>
+                    <div class="fsf-fields">
+                      {PHASE_META[phaseId].fields.map((field) => (
+                        <label class="fsf-field">
+                          <span>{field.label}</span>
+                          <span class:list={['fsf-input-wrap', field.unit === '$' && 'is-money']}>
+                            <input
+                              type="number"
+                              min="0"
+                              step={field.unit === '$' ? '25' : '1'}
+                              value={DEFAULT_COST_CALCULATOR_STATE.phases[phaseId][field.key] || 0}
+                              data-phase={phaseId}
+                              data-phase-field={field.key}
+                            />
+                            <em>{field.unit === '$' ? '$' : 'hrs'}</em>
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div class="fsf-flat-item" data-section="extras">
+            <button class="fsf-flat-head" type="button" aria-expanded="false" data-section-toggle="extras">
+              <span class="fsf-section-num" data-extras-num>{String(initialGoal.phases.length + 1).padStart(2, '0')}</span>
+              <span class="fsf-section-title">
+                <b>Gear, Medical & Extras</b>
+                <small>One-time costs most students forget to budget</small>
+              </span>
+              <span class="fsf-section-cost">
+                <b data-extras-cost>{formatCurrency(initialExtrasTotal)}</b>
+                <small>one-time</small>
+              </span>
+              <span class="fsf-caret" aria-hidden="true">▼</span>
+            </button>
+            <div class="fsf-flat-body" hidden data-section-body="extras">
+              <div class="fsf-fields">
+                {EXTRA_FIELDS.map((field) => (
+                  <label class="fsf-field">
+                    <span>{field.label}</span>
+                    <span class="fsf-input-wrap is-money">
+                      <input
+                        type="number"
+                        min="0"
+                        step="25"
+                        value={DEFAULT_COST_CALCULATOR_STATE.extras[field.key]}
+                        data-extra={field.key}
+                      />
+                      <em>$</em>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="fsf-section-card fsf-email-card">
+        <div class="fsf-section-copy">
+          <h2>Email me this estimate</h2>
+          <p>Send yourself a copy of this estimate and the starter checklist for comparing flight school options.</p>
+        </div>
+        <form class="fsf-email-row" novalidate>
+          <input type="email" name="email" autocomplete="email" placeholder="you@email.com" required aria-label="Email address" />
+          <button type="submit">Email my estimate</button>
+        </form>
+        <p class="fsf-form-message" aria-live="polite"></p>
+      </section>
+
+      <p class="fsf-disclaimer">
+        Flight School Friend is an independent educational resource. Estimates are planning figures only — always verify rates and requirements with your flight school and the FAA.
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  import {
+    COST_CALCULATOR_LEAD_MAGNET,
+    COST_CALCULATOR_SOURCE_PAGE,
+    calculateExtrasTotal,
+    calculateFlightSchoolCost,
+    calculatePhaseTotal,
+    formatCurrency,
+    type CostCalculatorState,
+    type ExtraInputs,
+    type PhaseId,
+    type PhaseInputs,
+    type PhaseMeta,
+    type RateInputs,
+    type TrainingGoal,
+    type TrainingGoalMeta,
+  } from '@/lib/flightSchoolCostCalculator';
+  import { debounce, pushDataLayerEvent, withUtmPayload } from '@/lib/analytics';
+  import { captureUtmParams } from '@/lib/utm';
+
+  const roots = document.querySelectorAll<HTMLElement>('.fsf-calc-root');
+
+  roots.forEach((root) => {
+    const state = JSON.parse(root.dataset.state || '{}') as CostCalculatorState;
+    const goals = JSON.parse(root.dataset.goals || '[]') as TrainingGoalMeta[];
+    const phaseMeta = JSON.parse(root.dataset.phaseMeta || '{}') as Record<PhaseId, PhaseMeta>;
+    const phaseList = root.querySelector<HTMLElement>('[data-phase-list]');
+    let currentTotals = calculateFlightSchoolCost(state);
+    let hasStarted = false;
+    const openSections = new Set<string>([currentTotals.goal.phases[0]]);
+
+    captureUtmParams();
+    render({ rebuildStages: true });
+    pushCalculatorEvent('cost_calculator_view');
+
+    const markStarted = () => {
+      if (hasStarted) {
+        return;
+      }
+      hasStarted = true;
+      pushCalculatorEvent('cost_calculator_started');
+    };
+
+    const debouncedInputEvent = debounce(() => {
+      pushCalculatorEvent('cost_calculator_input_changed');
+    }, 650);
+
+    root.querySelectorAll<HTMLButtonElement>('[data-goal]').forEach((button) => {
+      button.addEventListener('click', () => {
+        state.goal = button.dataset.goal as TrainingGoal;
+        const activeGoal = goals.find((goal) => goal.id === state.goal) || goals[1];
+        openSections.clear();
+        openSections.add(activeGoal.phases[0]);
+        markStarted();
+        render({ rebuildStages: true });
+        pushCalculatorEvent('cost_calculator_goal_selected');
+      });
+    });
+
+    root.addEventListener('input', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLInputElement)) {
+        return;
+      }
+
+      const value = Math.max(0, Number(target.value) || 0);
+
+      if (target.dataset.rate) {
+        state.rates[target.dataset.rate as keyof RateInputs] = value;
+      }
+
+      if (target.dataset.phase && target.dataset.phaseField) {
+        const phase = target.dataset.phase as PhaseId;
+        const field = target.dataset.phaseField as keyof PhaseInputs;
+        state.phases[phase][field] = value;
+      }
+
+      if (target.dataset.extra) {
+        state.extras[target.dataset.extra as keyof ExtraInputs] = value;
+      }
+
+      markStarted();
+      render();
+      debouncedInputEvent();
+    });
+
+    root.addEventListener('click', (event) => {
+      const button = (event.target as Element).closest<HTMLButtonElement>('[data-section-toggle]');
+      if (!button) {
+        return;
+      }
+
+      const section = button.dataset.sectionToggle || '';
+      if (openSections.has(section)) {
+        openSections.delete(section);
+      } else {
+        openSections.add(section);
+      }
+      applyOpenStates();
+    });
+
+    root.querySelector<HTMLFormElement>('.fsf-email-row')?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget as HTMLFormElement;
+      const email = String(new FormData(form).get('email') || '').trim();
+      const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const message = root.querySelector<HTMLElement>('.fsf-form-message');
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setFormMessage(message, 'Enter a valid email address.', 'error');
+        return;
+      }
+
+      pushCalculatorEvent('cost_calculator_email_submit');
+      const originalText = button?.textContent || 'Email my estimate';
+      button?.setAttribute('disabled', 'true');
+      if (button) {
+        button.textContent = 'Sending...';
+      }
+
+      try {
+        const response = await fetch('/api/kit/cost-calculator-subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email,
+            source_page: COST_CALCULATOR_SOURCE_PAGE,
+            lead_magnet: COST_CALCULATOR_LEAD_MAGNET,
+            training_goal: state.goal,
+            training_structure: 'claude_minimal_flow',
+            low_estimate: currentTotals.low,
+            base_estimate: currentTotals.real,
+            high_estimate: currentTotals.high,
+            ...withUtmPayload(),
+          }),
+        });
+
+        const body = await response.json().catch(() => null) as { error?: string } | null;
+        if (!response.ok) {
+          throw new Error(body?.error || 'Email capture failed.');
+        }
+
+        form.reset();
+        setFormMessage(message, 'Your estimate is on the way. Check your inbox.', 'success');
+        pushCalculatorEvent('cost_calculator_email_success');
+      } catch (error) {
+        setFormMessage(message, error instanceof Error ? error.message : 'Something went wrong. Please try again.', 'error');
+        pushCalculatorEvent('cost_calculator_email_error');
+      } finally {
+        button?.removeAttribute('disabled');
+        if (button) {
+          button.textContent = originalText;
+        }
+      }
+    });
+
+    function render({ rebuildStages = false } = {}) {
+      currentTotals = calculateFlightSchoolCost(state);
+      const activeGoal = goals.find((goal) => goal.id === state.goal) || goals[1];
+
+      root.querySelectorAll<HTMLButtonElement>('[data-goal]').forEach((button) => {
+        button.classList.toggle('is-active', button.dataset.goal === state.goal);
+      });
+
+      setText('low', formatCurrency(currentTotals.low));
+      setText('real', formatCurrency(currentTotals.real));
+      setText('high', formatCurrency(currentTotals.high));
+
+      if (rebuildStages) {
+        renderPhaseList(activeGoal);
+      }
+
+      activeGoal.phases.forEach((phaseId) => renderPhaseSummary(phaseId));
+      setText('extras-cost', formatCurrency(calculateExtrasTotal(state)));
+      const extrasNum = root.querySelector<HTMLElement>('[data-extras-num]');
+      if (extrasNum) {
+        extrasNum.textContent = String(activeGoal.phases.length + 1).padStart(2, '0');
+      }
+      applyOpenStates();
+
+      pushCalculatorEvent('cost_calculator_estimate_updated');
+    }
+
+    function renderPhaseList(goal: TrainingGoalMeta) {
+      if (!phaseList) {
+        return;
+      }
+
+      phaseList.innerHTML = goal.phases.map((phaseId, index) => phaseMarkup(phaseId, index + 1)).join('');
+    }
+
+    function phaseMarkup(phaseId: PhaseId, number: number): string {
+      const meta = phaseMeta[phaseId];
+      const total = calculatePhaseTotal(state, phaseId);
+      const isOpen = openSections.has(phaseId);
+      return `
+        <div class="fsf-flat-item${isOpen ? ' is-open' : ''}" data-section="${phaseId}">
+          <button class="fsf-flat-head" type="button" aria-expanded="${String(isOpen)}" data-section-toggle="${phaseId}">
+            <span class="fsf-section-num">${String(number).padStart(2, '0')}</span>
+            <span class="fsf-section-title">
+              <b>${escapeHtml(meta.name)}</b>
+              <small>${escapeHtml(meta.desc)}</small>
+            </span>
+            <span class="fsf-section-cost">
+              <b data-phase-cost="${phaseId}">${formatCurrency(total.real)}</b>
+              <small data-phase-hours="${phaseId}">${total.hours} flight hrs</small>
+            </span>
+            <span class="fsf-caret" aria-hidden="true">▼</span>
+          </button>
+          <div class="fsf-flat-body" ${isOpen ? '' : 'hidden'} data-section-body="${phaseId}">
+            <div class="fsf-fields">
+              ${meta.fields.map((field) => inputMarkup({
+                label: field.label,
+                unit: field.unit,
+                value: state.phases[phaseId][field.key] || 0,
+                attrs: `data-phase="${phaseId}" data-phase-field="${String(field.key)}"`,
+              })).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function inputMarkup({
+      label,
+      unit,
+      value,
+      attrs,
+    }: {
+      label: string;
+      unit: '$' | 'hrs';
+      value: number;
+      attrs: string;
+    }): string {
+      return `
+        <label class="fsf-field">
+          <span>${escapeHtml(label)}</span>
+          <span class="fsf-input-wrap${unit === '$' ? ' is-money' : ''}">
+            <input type="number" min="0" step="${unit === '$' ? '25' : '1'}" value="${value}" ${attrs}>
+            <em>${unit === '$' ? '$' : 'hrs'}</em>
+          </span>
+        </label>
+      `;
+    }
+
+    function renderPhaseSummary(phaseId: PhaseId) {
+      const total = calculatePhaseTotal(state, phaseId);
+      setText(`phase-cost:${phaseId}`, formatCurrency(total.real));
+      setText(`phase-hours:${phaseId}`, `${total.hours} flight hrs`);
+    }
+
+    function applyOpenStates() {
+      root.querySelectorAll<HTMLElement>('[data-section]').forEach((item) => {
+        const section = item.dataset.section || '';
+        const isOpen = openSections.has(section);
+        const button = item.querySelector<HTMLButtonElement>('[data-section-toggle]');
+        const body = item.querySelector<HTMLElement>('[data-section-body]');
+
+        item.classList.toggle('is-open', isOpen);
+        button?.setAttribute('aria-expanded', String(isOpen));
+        if (body) {
+          body.hidden = !isOpen;
+        }
+      });
+    }
+
+    function setText(name: string, value: string) {
+      const [attr, key] = name.includes(':') ? name.split(':') : ['output', name];
+      const selector = attr === 'phase-cost'
+        ? `[data-phase-cost="${key}"]`
+        : attr === 'phase-hours'
+          ? `[data-phase-hours="${key}"]`
+          : `[data-output="${key}"], [data-${key}]`;
+      root.querySelectorAll<HTMLElement>(selector).forEach((element) => {
+        element.textContent = value;
+      });
+    }
+
+    function pushCalculatorEvent(event: string) {
+      pushDataLayerEvent(event, {
+        source_page: COST_CALCULATOR_SOURCE_PAGE,
+        training_goal: state.goal,
+        training_structure: 'claude_minimal_flow',
+        low_estimate: currentTotals.low,
+        base_estimate: currentTotals.real,
+        high_estimate: currentTotals.high,
+      });
+    }
+
+    function setFormMessage(element: HTMLElement | null, message: string, kind: 'success' | 'error') {
+      if (!element) {
+        return;
+      }
+
+      element.textContent = message;
+      element.dataset.kind = kind;
+    }
+
+    function escapeHtml(value: string): string {
+      return value.replace(/[&<>"']/g, (char) => {
+        const entities: Record<string, string> = {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;',
+        };
+        return entities[char] || char;
+      });
+    }
+  });
+</script>
+
+<style>
+  .fsf-calc-root {
+    --fsf-navy: #0e1b2b;
+    --fsf-ink: #10203a;
+    --fsf-muted: #5b6b80;
+    --fsf-line: #e3e9f1;
+    --fsf-accent: #2563eb;
+    --fsf-accent-soft: #eff6ff;
+    color: #46566b;
+  }
+
+  .fsf-calc-page {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 4.75rem 1rem 1rem;
+  }
+
+  .fsf-calc-hero {
+    display: grid;
+    gap: 0.85rem;
+    margin-bottom: 2rem;
+  }
+
+  .fsf-eyebrow {
+    width: max-content;
+    border: 1px solid #bfdbfe;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    padding: 0.25rem 0.75rem;
+    text-transform: uppercase;
+  }
+
+  .fsf-calc-hero h1 {
+    color: var(--fsf-ink);
+    font-size: clamp(2.25rem, 5vw, 3.55rem);
+    font-weight: 850;
+    letter-spacing: 0;
+    line-height: 1.03;
+  }
+
+  .fsf-calc-hero h1 span {
+    color: var(--fsf-accent);
+    font-style: italic;
+  }
+
+  .fsf-calc-hero p {
+    max-width: 40rem;
+    color: var(--fsf-muted);
+    font-size: 1.04rem;
+    line-height: 1.65;
+  }
+
+  .fsf-calc-panel {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .fsf-section-card {
+    display: grid;
+    gap: 1rem;
+    border: 1px solid var(--fsf-line);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 1px 2px rgba(14, 27, 43, 0.035), 0 12px 30px rgba(14, 27, 43, 0.045);
+    padding: 1.15rem;
+  }
+
+  .fsf-goal-card {
+    background:
+      linear-gradient(180deg, rgba(239, 246, 255, 0.62), rgba(255, 255, 255, 0.9));
+  }
+
+  .fsf-stages-card {
+    gap: 1.05rem;
+    padding-bottom: 0.9rem;
+  }
+
+  .fsf-email-card {
+    background: #f8fbff;
+  }
+
+  .fsf-section-copy {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .fsf-section-copy h2 {
+    color: var(--fsf-ink);
+    font-size: 1.04rem;
+    font-weight: 850;
+    line-height: 1.2;
+  }
+
+  .fsf-section-copy p {
+    color: var(--fsf-muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .fsf-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .fsf-pill {
+    flex: 0 1 auto;
+    border: 1px solid #d5dee9;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #51617a;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 700;
+    line-height: 1.15;
+    padding: 0.52rem 1rem;
+    min-height: 38px;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+
+  .fsf-pill:hover {
+    border-color: var(--fsf-accent);
+    color: #1d4ed8;
+  }
+
+  .fsf-pill.is-active {
+    border-color: var(--fsf-navy);
+    background: var(--fsf-navy);
+    color: #ffffff;
+  }
+
+  .fsf-estimate-range {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .fsf-estimate-card {
+    display: grid;
+    min-height: 98px;
+    place-items: center;
+    gap: 0.15rem;
+    border: 1px solid var(--fsf-line);
+    border-radius: 12px;
+    background: #ffffff;
+    padding: 0.95rem 0.65rem;
+    text-align: center;
+  }
+
+  .fsf-estimate-card span {
+    color: #8595aa;
+    font-size: 0.74rem;
+    font-weight: 850;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .fsf-estimate-card b {
+    color: var(--fsf-ink);
+    font-size: clamp(1.1rem, 4vw, 1.35rem);
+    font-weight: 850;
+    line-height: 1.1;
+  }
+
+  .fsf-estimate-card.is-realistic {
+    border-color: var(--fsf-accent);
+    background: var(--fsf-accent-soft);
+  }
+
+  .fsf-estimate-card.is-realistic span,
+  .fsf-estimate-card.is-realistic b {
+    color: #1e3a8a;
+  }
+
+  .fsf-estimate-card.is-realistic b {
+    font-size: clamp(1.35rem, 5vw, 1.85rem);
+  }
+
+  .fsf-fields {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+
+  .fsf-rate-fields {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .fsf-field {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+
+  .fsf-field > span:first-child {
+    color: #51617a;
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .fsf-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .fsf-input-wrap input {
+    width: 100%;
+    border: 1px solid #d5dee9;
+    border-radius: 10px;
+    background: #ffffff;
+    color: var(--fsf-ink);
+    font: inherit;
+    font-weight: 700;
+    min-height: 46px;
+    outline: none;
+    padding: 0.65rem 2.45rem 0.65rem 0.75rem;
+  }
+
+  .fsf-input-wrap.is-money input {
+    padding-left: 1.7rem;
+    padding-right: 0.75rem;
+  }
+
+  .fsf-input-wrap input:focus {
+    border-color: var(--fsf-accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
+  }
+
+  .fsf-input-wrap em {
+    position: absolute;
+    right: 0.75rem;
+    color: #8595aa;
+    font-size: 0.76rem;
+    font-style: normal;
+    font-weight: 750;
+    pointer-events: none;
+  }
+
+  .fsf-input-wrap.is-money em {
+    right: auto;
+    left: 0.75rem;
+  }
+
+  .fsf-input-wrap input[type='number']::-webkit-outer-spin-button,
+  .fsf-input-wrap input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .fsf-input-wrap input[type='number'] {
+    appearance: textfield;
+  }
+
+  .fsf-flat-list {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .fsf-flat-item {
+    overflow: hidden;
+    border: 1px solid var(--fsf-line);
+    border-radius: 14px;
+    background: #ffffff;
+    transition: border-color 0.16s, box-shadow 0.16s;
+  }
+
+  .fsf-flat-item.is-open {
+    border-color: #bfdbfe;
+    box-shadow: 0 10px 24px rgba(14, 27, 43, 0.05);
+  }
+
+  .fsf-flat-head {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) minmax(7.25rem, auto) auto;
+    align-items: center;
+    gap: 0.9rem;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+    padding: 1rem 1rem;
+    text-align: left;
+  }
+
+  .fsf-flat-head:hover {
+    background: #fbfdff;
+  }
+
+  .fsf-section-num {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 800;
+  }
+
+  .fsf-flat-item.is-open .fsf-section-num {
+    background: var(--fsf-accent);
+    color: #ffffff;
+  }
+
+  .fsf-section-title {
+    display: grid;
+    flex: 1;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+
+  .fsf-section-title b {
+    color: var(--fsf-ink);
+    font-size: 0.97rem;
+    font-weight: 800;
+    line-height: 1.25;
+  }
+
+  .fsf-section-title small,
+  .fsf-section-cost small {
+    color: #6a7990;
+    font-size: 0.82rem;
+  }
+
+  .fsf-section-cost {
+    display: grid;
+    gap: 0.05rem;
+    text-align: right;
+    min-width: 7.25rem;
+  }
+
+  .fsf-section-cost b {
+    color: var(--fsf-ink);
+    font-size: 1rem;
+    font-weight: 850;
+    letter-spacing: 0;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .fsf-caret {
+    color: #9aa8bb;
+    flex: none;
+    font-size: 0.72rem;
+    transition: transform 0.18s;
+  }
+
+  .fsf-flat-item.is-open .fsf-caret {
+    transform: rotate(180deg);
+  }
+
+  .fsf-flat-body {
+    border-top: 1px solid var(--fsf-line);
+    background: #f8fbff;
+    padding: 1rem;
+  }
+
+  .fsf-email-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .fsf-email-row input {
+    min-height: 44px;
+    border: 1px solid #d5dee9;
+    border-radius: 10px;
+    background: #ffffff;
+    color: var(--fsf-ink);
+    font: inherit;
+    outline: none;
+    padding: 0.65rem 0.75rem;
+  }
+
+  .fsf-email-row input:focus {
+    border-color: var(--fsf-accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
+  }
+
+  .fsf-email-row button {
+    min-height: 44px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--fsf-accent);
+    color: #ffffff;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 750;
+    padding: 0.65rem 1.15rem;
+    white-space: nowrap;
+  }
+
+  .fsf-email-row button:hover {
+    background: #1d4ed8;
+  }
+
+  .fsf-email-row button:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  .fsf-form-message {
+    display: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 0.75rem 0.9rem;
+  }
+
+  .fsf-form-message[data-kind='success'] {
+    display: block;
+    background: #ecfdf5;
+    color: #065f46;
+  }
+
+  .fsf-form-message[data-kind='error'] {
+    display: block;
+    background: #fef2f2;
+    color: #991b1b;
+  }
+
+  .fsf-disclaimer {
+    max-width: 64ch;
+    color: #8a98ac;
+    font-size: 0.76rem;
+    line-height: 1.55;
+    padding: 0 0.25rem;
+  }
+
+  [data-phase-list] {
+    display: contents;
+  }
+
+  @media (max-width: 720px) {
+    .fsf-calc-page {
+      padding-top: 3rem;
+    }
+
+    .fsf-estimate-range,
+    .fsf-fields,
+    .fsf-rate-fields,
+    .fsf-email-row {
+      grid-template-columns: 1fr;
+    }
+
+    .fsf-flat-head {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: start;
+      gap: 0.75rem;
+    }
+
+    .fsf-section-cost {
+      grid-column: 2;
+      grid-row: 2;
+      min-width: 0;
+      text-align: left;
+    }
+
+    .fsf-caret {
+      grid-column: 3;
+      grid-row: 1 / span 2;
+      padding-top: 0.35rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .fsf-section-card {
+      border-radius: 14px;
+      padding: 0.95rem;
+    }
+
+    .fsf-pill {
+      width: 100%;
+      text-align: center;
+    }
+
+    .fsf-flat-head,
+    .fsf-flat-body {
+      padding-inline: 0.85rem;
+    }
+  }
+
+  :global(.fsf-calc-root .fsf-flat-list) {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  :global(.fsf-calc-root [data-phase-list]) {
+    display: contents;
+  }
+
+  :global(.fsf-calc-root .fsf-flat-item) {
+    overflow: hidden;
+    border: 1px solid var(--fsf-line);
+    border-radius: 14px;
+    background: #ffffff;
+    transition: border-color 0.16s, box-shadow 0.16s;
+  }
+
+  :global(.fsf-calc-root .fsf-flat-item.is-open) {
+    border-color: #bfdbfe;
+    box-shadow: 0 10px 24px rgba(14, 27, 43, 0.05);
+  }
+
+  :global(.fsf-calc-root .fsf-flat-head) {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) minmax(7.25rem, auto) auto;
+    align-items: center;
+    gap: 0.9rem;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+    padding: 1rem;
+    text-align: left;
+  }
+
+  :global(.fsf-calc-root .fsf-flat-head:hover) {
+    background: #fbfdff;
+  }
+
+  :global(.fsf-calc-root .fsf-section-num) {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 800;
+  }
+
+  :global(.fsf-calc-root .fsf-flat-item.is-open .fsf-section-num) {
+    background: var(--fsf-accent);
+    color: #ffffff;
+  }
+
+  :global(.fsf-calc-root .fsf-section-title) {
+    display: grid;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+
+  :global(.fsf-calc-root .fsf-section-title b) {
+    color: var(--fsf-ink);
+    font-size: 0.97rem;
+    font-weight: 800;
+    line-height: 1.25;
+  }
+
+  :global(.fsf-calc-root .fsf-section-title small),
+  :global(.fsf-calc-root .fsf-section-cost small) {
+    color: #6a7990;
+    font-size: 0.82rem;
+  }
+
+  :global(.fsf-calc-root .fsf-section-cost) {
+    display: grid;
+    gap: 0.05rem;
+    min-width: 7.25rem;
+    text-align: right;
+  }
+
+  :global(.fsf-calc-root .fsf-section-cost b) {
+    color: var(--fsf-ink);
+    font-size: 1rem;
+    font-weight: 850;
+    letter-spacing: 0;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  :global(.fsf-calc-root .fsf-caret) {
+    color: #9aa8bb;
+    font-size: 0.72rem;
+    transition: transform 0.18s;
+  }
+
+  :global(.fsf-calc-root .fsf-flat-item.is-open .fsf-caret) {
+    transform: rotate(180deg);
+  }
+
+  :global(.fsf-calc-root .fsf-flat-body) {
+    border-top: 1px solid var(--fsf-line);
+    background: #f8fbff;
+    padding: 1rem;
+  }
+
+  :global(.fsf-calc-root .fsf-fields) {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+
+  :global(.fsf-calc-root .fsf-field) {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+
+  :global(.fsf-calc-root .fsf-field > span:first-child) {
+    color: #51617a;
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  :global(.fsf-calc-root .fsf-input-wrap) {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  :global(.fsf-calc-root .fsf-input-wrap input) {
+    width: 100%;
+    border: 1px solid #d5dee9;
+    border-radius: 10px;
+    background: #ffffff;
+    color: var(--fsf-ink);
+    font: inherit;
+    font-weight: 700;
+    min-height: 46px;
+    outline: none;
+    padding: 0.65rem 2.45rem 0.65rem 0.75rem;
+  }
+
+  :global(.fsf-calc-root .fsf-input-wrap.is-money input) {
+    padding-left: 1.7rem;
+    padding-right: 0.75rem;
+  }
+
+  :global(.fsf-calc-root .fsf-input-wrap input:focus) {
+    border-color: var(--fsf-accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
+  }
+
+  :global(.fsf-calc-root .fsf-input-wrap em) {
+    position: absolute;
+    right: 0.75rem;
+    color: #8595aa;
+    font-size: 0.76rem;
+    font-style: normal;
+    font-weight: 750;
+    pointer-events: none;
+  }
+
+  :global(.fsf-calc-root .fsf-input-wrap.is-money em) {
+    right: auto;
+    left: 0.75rem;
+  }
+
+  @media (max-width: 720px) {
+    :global(.fsf-calc-root .fsf-fields) {
+      grid-template-columns: 1fr;
+    }
+
+    :global(.fsf-calc-root .fsf-flat-head) {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: start;
+      gap: 0.75rem;
+    }
+
+    :global(.fsf-calc-root .fsf-section-cost) {
+      grid-column: 2;
+      grid-row: 2;
+      min-width: 0;
+      text-align: left;
+    }
+
+    :global(.fsf-calc-root .fsf-caret) {
+      grid-column: 3;
+      grid-row: 1 / span 2;
+      padding-top: 0.35rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    :global(.fsf-calc-root .fsf-flat-head),
+    :global(.fsf-calc-root .fsf-flat-body) {
+      padding-inline: 0.85rem;
+    }
+  }
+</style>

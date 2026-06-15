@@ -20,6 +20,25 @@ export interface CreateOrUpdateKitSubscriberInput {
   utmCampaign?: string;
 }
 
+export interface CreateOrUpdateCostCalculatorSubscriberInput {
+  email: string;
+  firstName?: string;
+  sourcePage?: string;
+  leadMagnet?: string;
+  trainingGoal?: string;
+  trainingStructure?: string;
+  lowEstimate?: string;
+  baseEstimate?: string;
+  highEstimate?: string;
+  monthlyBudget?: string;
+  lessonsPerWeek?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  utmContent?: string;
+  utmTerm?: string;
+}
+
 export interface KitSubscriberResult {
   id: string;
   emailAddress?: string;
@@ -122,6 +141,68 @@ export async function createOrUpdateKitSubscriber(
   return subscriberFromResponse(body);
 }
 
+export async function createOrUpdateCostCalculatorSubscriber(
+  input: CreateOrUpdateCostCalculatorSubscriberInput,
+): Promise<KitSubscriberResult> {
+  const fields: Record<string, string> = {};
+
+  const dynamicFields = [
+    [fieldKey('KIT_FIELD_SOURCE_PAGE', 'source_page'), input.sourcePage],
+    [fieldKey('KIT_FIELD_LEAD_MAGNET', 'lead_magnet'), input.leadMagnet],
+    [fieldKey('KIT_FIELD_TRAINING_GOAL', 'training_goal'), input.trainingGoal],
+    [fieldKey('KIT_FIELD_TRAINING_STRUCTURE', 'training_structure'), input.trainingStructure],
+    [fieldKey('KIT_FIELD_LOW_ESTIMATE', 'low_estimate'), input.lowEstimate],
+    [fieldKey('KIT_FIELD_BASE_ESTIMATE', 'base_estimate'), input.baseEstimate],
+    [fieldKey('KIT_FIELD_HIGH_ESTIMATE', 'high_estimate'), input.highEstimate],
+    [fieldKey('KIT_FIELD_MONTHLY_BUDGET', 'monthly_budget'), input.monthlyBudget],
+    [fieldKey('KIT_FIELD_LESSONS_PER_WEEK', 'lessons_per_week'), input.lessonsPerWeek],
+    [fieldKey('KIT_FIELD_UTM_SOURCE', 'utm_source'), input.utmSource],
+    [fieldKey('KIT_FIELD_UTM_MEDIUM', 'utm_medium'), input.utmMedium],
+    [fieldKey('KIT_FIELD_UTM_CAMPAIGN', 'utm_campaign'), input.utmCampaign],
+    [fieldKey('KIT_FIELD_UTM_CONTENT', 'utm_content'), input.utmContent],
+    [fieldKey('KIT_FIELD_UTM_TERM', 'utm_term'), input.utmTerm],
+  ] as const;
+
+  for (const [key, value] of dynamicFields) {
+    const normalized = optionalString(value);
+    if (normalized) {
+      fields[key] = normalized;
+    }
+  }
+
+  const payload: Record<string, unknown> = {
+    email_address: input.email,
+    fields,
+  };
+
+  const firstName = optionalString(input.firstName);
+  if (firstName) {
+    payload.first_name = firstName;
+  }
+
+  let body: unknown;
+  try {
+    body = await kitFetch('/subscribers', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  } catch (error) {
+    if (import.meta.env.DEV && Object.keys(fields).length > 0) {
+      console.warn('Kit custom field submission failed; retrying cost calculator subscriber without custom fields.', error);
+    }
+
+    const fallbackPayload = { ...payload };
+    delete fallbackPayload.fields;
+
+    body = await kitFetch('/subscribers', {
+      method: 'POST',
+      body: JSON.stringify(fallbackPayload),
+    });
+  }
+
+  return subscriberFromResponse(body);
+}
+
 export async function addSubscriberToKitForm(subscriberId: string, referrer?: string): Promise<void> {
   const formId = getEnv('KIT_FORM_ID');
   if (!formId) {
@@ -135,6 +216,23 @@ export async function addSubscriberToKitForm(subscriberId: string, referrer?: st
     });
   } catch (error) {
     console.warn('Kit form subscription failed; continuing lead capture.', error);
+  }
+}
+
+export async function addSubscriberToCostCalculatorKitForm(subscriberId: string, referrer?: string): Promise<void> {
+  const formId = getEnv('KIT_FORM_ID_COST_CALCULATOR') || getEnv('KIT_FORM_ID');
+  if (!formId) {
+    console.warn('Skipping Kit form subscription because no cost calculator form id is configured.');
+    return;
+  }
+
+  try {
+    await kitFetch(`/forms/${encodeURIComponent(formId)}/subscribers/${encodeURIComponent(subscriberId)}`, {
+      method: 'POST',
+      body: JSON.stringify(optionalString(referrer) ? { referrer } : {}),
+    });
+  } catch (error) {
+    console.warn('Kit cost calculator form subscription failed; continuing lead capture.', error);
   }
 }
 
@@ -162,6 +260,18 @@ export async function applyQuizLeadTags({
     'KIT_TAG_SOURCE_FSF_SITE',
     'KIT_TAG_SOURCE_QUIZ_RESULT_PAGE',
     getSegmentTagEnvName(segment),
+  ];
+
+  for (const envName of tagEnvNames) {
+    await tagKitSubscriber(subscriberId, getEnv(envName));
+  }
+}
+
+export async function applyCostCalculatorLeadTags(subscriberId: string): Promise<void> {
+  const tagEnvNames = [
+    'KIT_TAG_ID_COST_CALCULATOR',
+    'KIT_TAG_ID_FLIGHT_SCHOOL_DECISION_TOOL',
+    'KIT_TAG_SOURCE_FSF_SITE',
   ];
 
   for (const envName of tagEnvNames) {
