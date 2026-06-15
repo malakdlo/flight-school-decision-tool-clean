@@ -10,12 +10,14 @@
     "deploy:pages": "npm run build && wrangler pages deploy dist"
   },
   "dependencies": {
-    "astro": "latest",
+    "@astrojs/cloudflare": "^13.7.0",
     "@tailwindcss/vite": "latest",
+    "astro": "latest",
     "tailwindcss": "latest"
   },
   "devDependencies": {
     "@astrojs/check": "latest",
+    "@cloudflare/workers-types": "^4.20260615.1",
     "typescript": "latest",
     "vite": "^7",
     "wrangler": "latest"

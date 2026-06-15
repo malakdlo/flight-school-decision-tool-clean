@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import EmailCaptureForm from '@/components/EmailCaptureForm.astro';
 ---
 
 <BaseLayout
@@ -50,15 +51,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
       </div>
     </div>
 
-    <div class="bg-slate-900 text-white p-8 md:p-12 rounded-3xl mb-16 text-center">
-      <h3 class="text-2xl font-bold mb-4">Email me the pre-flight-school checklist</h3>
-      <p class="text-slate-400 mb-6">Get this checklist and next steps sent directly to your inbox.</p>
-      <form id="email-form" class="max-w-md mx-auto flex flex-col sm:flex-row gap-2">
-        <input type="email" placeholder="Your email address" required class="flex-grow px-4 py-3 rounded-lg text-slate-900 outline-none focus:ring-2 focus:ring-sky-500" />
-        <button type="submit" class="px-6 py-3 bg-sky-600 hover:bg-sky-500 font-bold rounded-lg transition">Send Checklist</button>
-      </form>
-      <p id="email-success" class="hidden text-green-400 font-medium mt-4">Got it — your checklist would be sent here in the live version.</p>
-    </div>
+    <EmailCaptureForm quizSegment="research_first" />
 
     <div class="mb-12 border-t border-slate-200 pt-12">
       <h3 class="text-xl font-bold text-slate-900 mb-6">Related Resources</h3>
@@ -78,11 +71,3 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
     </div>
   </section>
 </BaseLayout>
-
-<script>
-  document.getElementById('email-form')?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    (e.target as HTMLElement).classList.add('hidden');
-    document.getElementById('email-success')?.classList.remove('hidden');
-  });
-</script>

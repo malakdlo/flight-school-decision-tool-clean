@@ -1,0 +1,143 @@
+---
+import { isSegmentSlug, type SegmentSlug } from '@/lib/segments';
+
+interface Props {
+  quizSegment: SegmentSlug;
+  headline?: string;
+  subheadline?: string;
+}
+
+const {
+  quizSegment,
+  headline = 'Email me my personalized flight school decision plan',
+  subheadline = 'Get your quiz result, next-step checklist, and research roadmap sent to your inbox.',
+} = Astro.props;
+
+if (!isSegmentSlug(quizSegment)) {
+  throw new Error(`Unsupported EmailCaptureForm quizSegment: ${quizSegment}`);
+}
+---
+
+<section class="mb-16 rounded-2xl border border-slate-200 bg-slate-950 p-1 shadow-xl shadow-slate-200/70">
+  <div class="rounded-[0.875rem] bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.22),transparent_34%),linear-gradient(135deg,#0f172a,#111827)] px-5 py-7 text-white sm:px-8 md:px-10 md:py-9">
+    <div class="mx-auto max-w-2xl text-center">
+      <p class="mb-3 text-xs font-bold uppercase tracking-widest text-sky-200">Flight plan delivery</p>
+      <h2 class="text-2xl font-extrabold leading-tight text-white md:text-3xl">{headline}</h2>
+      <p class="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-300 md:text-base">{subheadline}</p>
+    </div>
+
+    <form class="fsf-email-capture mx-auto mt-7 grid max-w-2xl gap-3 sm:grid-cols-[1fr_1.25fr_auto]" data-quiz-segment={quizSegment}>
+      <div>
+        <label class="sr-only" for={`first-name-${quizSegment}`}>First name</label>
+        <input
+          id={`first-name-${quizSegment}`}
+          name="firstName"
+          type="text"
+          autocomplete="given-name"
+          placeholder="First name"
+          class="h-12 w-full rounded-lg border border-white/10 bg-white px-4 text-sm font-medium text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-300 focus:ring-4 focus:ring-sky-300/25"
+        />
+      </div>
+      <div>
+        <label class="sr-only" for={`email-${quizSegment}`}>Email address</label>
+        <input
+          id={`email-${quizSegment}`}
+          name="email"
+          type="email"
+          autocomplete="email"
+          required
+          placeholder="you@example.com"
+          class="h-12 w-full rounded-lg border border-white/10 bg-white px-4 text-sm font-medium text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-300 focus:ring-4 focus:ring-sky-300/25"
+        />
+      </div>
+      <button
+        type="submit"
+        class="btn-hover h-12 rounded-lg bg-sky-500 px-5 text-sm font-extrabold text-white transition hover:bg-sky-400 focus:outline-none focus:ring-4 focus:ring-sky-300/30 disabled:cursor-not-allowed disabled:opacity-70"
+      >
+        Send my plan
+      </button>
+    </form>
+
+    <p class="fsf-email-capture-message mx-auto mt-4 hidden max-w-2xl rounded-lg px-4 py-3 text-center text-sm font-semibold" aria-live="polite"></p>
+  </div>
+</section>
+
+<script>
+  type DataLayerWindow = Window & {
+    dataLayer?: Array<Record<string, unknown>>;
+  };
+
+  const pushEvent = (event: string, quizSegment: string) => {
+    const dataWindow = window as DataLayerWindow;
+    dataWindow.dataLayer?.push({ event, quizSegment });
+  };
+
+  const setMessage = (form: HTMLFormElement, message: string, kind: 'success' | 'error') => {
+    const panel = form.closest('section');
+    const messageEl = panel?.querySelector<HTMLParagraphElement>('.fsf-email-capture-message');
+
+    if (!messageEl) {
+      return;
+    }
+
+    messageEl.textContent = message;
+    messageEl.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-900', 'bg-red-50', 'text-red-900');
+    messageEl.classList.add(
+      kind === 'success' ? 'bg-emerald-50' : 'bg-red-50',
+      kind === 'success' ? 'text-emerald-900' : 'text-red-900',
+    );
+  };
+
+  document.querySelectorAll<HTMLFormElement>('.fsf-email-capture').forEach((form) => {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const formData = new FormData(form);
+      const quizSegment = form.dataset.quizSegment || '';
+      const urlParams = new URLSearchParams(window.location.search);
+
+      pushEvent('fsf_email_capture_submit', quizSegment);
+
+      button?.setAttribute('disabled', 'true');
+      const originalButtonText = button?.textContent || 'Send my plan';
+      if (button) {
+        button.textContent = 'Sending...';
+      }
+
+      try {
+        const response = await fetch('/api/lead-capture', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            firstName: String(formData.get('firstName') || ''),
+            email: String(formData.get('email') || ''),
+            quizSegment,
+            sourcePage: window.location.pathname,
+            utmSource: urlParams.get('utm_source'),
+            utmMedium: urlParams.get('utm_medium'),
+            utmCampaign: urlParams.get('utm_campaign'),
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Email capture request failed.');
+        }
+
+        form.reset();
+        setMessage(form, 'Your plan is on the way. Check your inbox.', 'success');
+        pushEvent('fsf_email_capture_success', quizSegment);
+      } catch {
+        setMessage(form, 'Something went wrong. Please try again.', 'error');
+        pushEvent('fsf_email_capture_error', quizSegment);
+      } finally {
+        button?.removeAttribute('disabled');
+        if (button) {
+          button.textContent = originalButtonText;
+        }
+      }
+    });
+  });
+</script>
