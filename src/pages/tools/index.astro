@@ -4,13 +4,13 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 
 <BaseLayout
   title="Flight School Planning Tools | Flight School Friend"
-  description="Practical planning tools for estimating cost, comparing schools, and tracking training progress. Template previews for now."
+  description="Practical planning tools for estimating flight training costs and choosing what to do next before you spend thousands on flight school."
 >
   <section class="max-w-6xl mx-auto px-4 py-20 md:py-24">
     <div class="text-center mb-16">
       <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">Flight School Planning Tools</h1>
-      <p class="text-lg text-slate-600 max-w-3xl mx-auto mb-4 leading-relaxed">Practical planning tools for estimating cost, comparing schools, and tracking training progress. These tools are template previews for now.</p>
-      <p class="text-slate-500 mb-8 max-w-2xl mx-auto">Some tools are coming soon. Start with the Flight School Decision Tool if you are not sure what to use first.</p>
+      <p class="text-lg text-slate-600 max-w-3xl mx-auto mb-4 leading-relaxed">Practical planning tools for estimating cost and choosing what to do next before you spend thousands on flight school.</p>
+      <p class="text-slate-500 mb-8 max-w-2xl mx-auto">Start with the cost calculator or take the decision quiz if you are not sure what to use first.</p>
       <a href="/flight-school-decision-tool/quiz/" class="inline-block px-8 py-4 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl text-lg transition shadow-md">Start Here</a>
     </div>
 
@@ -28,34 +28,12 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
         <p class="text-slate-500 text-sm mb-6">Estimate aircraft, instructor, checkride, gear, and monthly training costs before choosing a flight school.</p>
         <span class="text-sky-600 font-bold uppercase text-sm tracking-wider">Use calculator &rarr;</span>
       </a>
-
-      <a href="/tools/flight-school-research-scorecard/" class="block bg-white border border-slate-200 hover:border-slate-300 rounded-2xl p-8 transition shadow-sm">
-        <span class="inline-block bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-widest">Template Preview</span>
-        <h3 class="text-xl font-bold text-slate-900 mb-3">Flight School Research Scorecard</h3>
-        <p class="text-slate-500 text-sm mb-6">Compare schools side-by-side using pricing transparency, aircraft availability, instructor fit, scheduling, safety culture, and goal fit.</p>
-        <span class="text-slate-700 font-bold uppercase text-sm tracking-wider">Preview scorecard &rarr;</span>
-      </a>
-
-      <a href="/tools/private-pilot-progress-tracker/" class="block bg-white border border-slate-200 hover:border-slate-300 rounded-2xl p-8 transition shadow-sm">
-        <span class="inline-block bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-widest">Template Preview</span>
-        <h3 class="text-xl font-bold text-slate-900 mb-3">Private Pilot Progress Tracker</h3>
-        <p class="text-slate-500 text-sm mb-6">Track milestones from first lesson through solo, cross-country, written test, checkride prep, and private pilot certification.</p>
-        <span class="text-slate-700 font-bold uppercase text-sm tracking-wider">Preview tracker &rarr;</span>
-      </a>
     </div>
 
-    <div class="bg-slate-900 text-white rounded-3xl p-8 md:p-12">
-      <h2 class="text-2xl font-bold mb-6 text-center">Future tool ideas</h2>
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-        {['Discovery Flight Prep Checklist','AME Readiness Planner','Part 61 vs Part 141 Decision Matrix','Checkride Prep Planner','Maneuver Overview Library','Flight Training Budget Tracker'].map(t => (
-          <div class="bg-slate-800 p-4 rounded-xl text-center text-sm font-medium text-slate-300 border border-slate-700">{t}</div>
-        ))}
-      </div>
-      <div class="text-center border-t border-slate-700 pt-8">
-        <h3 class="font-bold text-xl mb-3">Not sure which tool to use?</h3>
-        <p class="text-slate-400 mb-6 text-sm">Take the Flight School Decision Tool and get a recommended starting path.</p>
-        <a href="/flight-school-decision-tool/quiz/" class="inline-block px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-lg transition">Start Here</a>
-      </div>
+    <div class="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+      <h2 class="text-2xl font-bold text-slate-900 mb-3">More tools are coming.</h2>
+      <p class="text-slate-500 max-w-2xl mx-auto mb-6">Research scorecards, progress tracking, and checkride planning tools will appear here after they are ready for public use.</p>
+      <a href="/flight-school-decision-tool/quiz/" class="inline-block px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg transition">Get a recommended starting path</a>
     </div>
   </section>
 </BaseLayout>

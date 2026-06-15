@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro check && astro build",
-    "preview": "astro preview",
-    "deploy:pages": "npm run build && wrangler pages deploy dist"
+    "preview": "astro preview"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.7.0",

@@ -13,12 +13,26 @@ import { site } from '@/config/site';
 
     <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
       <a href="/guides/" class="hover:text-sky-600 transition">Guides</a>
+      <div class="relative group">
+        <a href="/tools/" class="hover:text-sky-600 transition">Tools</a>
+        <div class="invisible absolute left-1/2 top-full z-50 w-64 -translate-x-1/2 pt-3 opacity-0 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+          <div class="rounded-xl border border-slate-200 bg-white p-2 text-sm shadow-xl shadow-slate-200/70">
+            <a href="/tools/flight-school-cost-calculator/" class="block rounded-lg px-3 py-3 hover:bg-sky-50 hover:text-sky-700 transition">
+              <span class="block font-bold text-slate-900">Flight School Cost Calculator</span>
+              <span class="mt-1 block text-xs leading-5 text-slate-500">Estimate aircraft, instructor, checkride, gear, and monthly costs.</span>
+            </a>
+          </div>
+        </div>
+      </div>
       <a href="/about/" class="hover:text-sky-600 transition">About</a>
       <a href="/flight-school-decision-tool/quiz/" class="bg-sky-600 text-white px-5 py-2.5 rounded-lg font-bold hover:bg-sky-700 transition btn-hover shadow-sm">
         Start Here
       </a>
     </div>
 
-    <a href="/flight-school-decision-tool/quiz/" class="md:hidden bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Start Here</a>
+    <div class="md:hidden flex items-center gap-2">
+      <a href="/tools/flight-school-cost-calculator/" class="text-xs font-bold text-slate-600 hover:text-sky-600 transition">Cost Calculator</a>
+      <a href="/flight-school-decision-tool/quiz/" class="bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Start Here</a>
+    </div>
   </div>
 </nav>
