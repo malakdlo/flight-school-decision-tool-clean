@@ -1,5 +1,7 @@
 ---
 import {
+  COST_CALCULATOR_LEAD_MAGNET,
+  COST_CALCULATOR_SOURCE_PAGE,
   DEFAULT_COST_CALCULATOR_STATE,
   EXTRA_FIELDS,
   PHASE_META,
@@ -14,6 +16,8 @@ import {
 const initialTotals = calculateFlightSchoolCost(DEFAULT_COST_CALCULATOR_STATE);
 const initialExtrasTotal = calculateExtrasTotal(DEFAULT_COST_CALCULATOR_STATE);
 const initialGoal = TRAINING_GOALS.find((goal) => goal.id === DEFAULT_COST_CALCULATOR_STATE.goal) || TRAINING_GOALS[1];
+const kitFormId = '9565964';
+const kitFormAction = `https://app.kit.com/forms/${kitFormId}/subscriptions`;
 ---
 
 <section
@@ -185,10 +189,23 @@ const initialGoal = TRAINING_GOALS.find((goal) => goal.id === DEFAULT_COST_CALCU
           <h2>Email me this estimate</h2>
           <p>Send yourself a copy of this estimate and the starter checklist for comparing flight school options.</p>
         </div>
-        <form class="fsf-email-row" novalidate>
-          <input type="email" name="email" autocomplete="email" placeholder="you@email.com" required aria-label="Email address" />
+        <form class="fsf-email-row" action={kitFormAction} method="post" target="kit-cost-calculator-submit" novalidate>
+          <input type="email" name="email_address" autocomplete="email" placeholder="you@email.com" required aria-label="Email address" />
+          <input type="hidden" name="fields[source_page]" value={COST_CALCULATOR_SOURCE_PAGE} />
+          <input type="hidden" name="fields[lead_magnet]" value={COST_CALCULATOR_LEAD_MAGNET} />
+          <input type="hidden" name="fields[training_goal]" value="" data-kit-field="training_goal" />
+          <input type="hidden" name="fields[training_structure]" value="plain_kit_html_form" />
+          <input type="hidden" name="fields[low_estimate]" value="" data-kit-field="low_estimate" />
+          <input type="hidden" name="fields[base_estimate]" value="" data-kit-field="base_estimate" />
+          <input type="hidden" name="fields[high_estimate]" value="" data-kit-field="high_estimate" />
+          <input type="hidden" name="fields[utm_source]" value="" data-kit-field="utm_source" />
+          <input type="hidden" name="fields[utm_medium]" value="" data-kit-field="utm_medium" />
+          <input type="hidden" name="fields[utm_campaign]" value="" data-kit-field="utm_campaign" />
+          <input type="hidden" name="fields[utm_content]" value="" data-kit-field="utm_content" />
+          <input type="hidden" name="fields[utm_term]" value="" data-kit-field="utm_term" />
           <button type="submit">Email my estimate</button>
         </form>
+        <iframe class="fsf-hidden-frame" name="kit-cost-calculator-submit" title="Kit cost calculator signup response"></iframe>
         <p class="fsf-form-message" aria-live="polite"></p>
       </section>
 
@@ -201,7 +218,6 @@ const initialGoal = TRAINING_GOALS.find((goal) => goal.id === DEFAULT_COST_CALCU
 
 <script>
   import {
-    COST_CALCULATOR_LEAD_MAGNET,
     COST_CALCULATOR_SOURCE_PAGE,
     calculateExtrasTotal,
     calculateFlightSchoolCost,
@@ -216,7 +232,7 @@ const initialGoal = TRAINING_GOALS.find((goal) => goal.id === DEFAULT_COST_CALCU
     type TrainingGoal,
     type TrainingGoalMeta,
   } from '@/lib/flightSchoolCostCalculator';
-  import { debounce, pushDataLayerEvent, withUtmPayload } from '@/lib/analytics';
+  import { debounce, pushDataLayerEvent } from '@/lib/analytics';
   import { captureUtmParams } from '@/lib/utm';
 
   const roots = document.querySelectorAll<HTMLElement>('.fsf-calc-root');
@@ -300,16 +316,24 @@ const initialGoal = TRAINING_GOALS.find((goal) => goal.id === DEFAULT_COST_CALCU
       applyOpenStates();
     });
 
-    root.querySelector<HTMLFormElement>('.fsf-email-row')?.addEventListener('submit', async (event) => {
-      event.preventDefault();
+    root.querySelector<HTMLFormElement>('.fsf-email-row')?.addEventListener('submit', (event) => {
       const form = event.currentTarget as HTMLFormElement;
-      const email = String(new FormData(form).get('email') || '').trim();
+      const email = String(new FormData(form).get('email_address') || '').trim();
       const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
       const message = root.querySelector<HTMLElement>('.fsf-form-message');
 
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        event.preventDefault();
         setFormMessage(message, 'Enter a valid email address.', 'error');
         return;
+      }
+
+      setHiddenField(form, 'training_goal', state.goal);
+      setHiddenField(form, 'low_estimate', String(currentTotals.low));
+      setHiddenField(form, 'base_estimate', String(currentTotals.real));
+      setHiddenField(form, 'high_estimate', String(currentTotals.high));
+      for (const [key, value] of Object.entries(captureUtmParams())) {
+        setHiddenField(form, key, value || '');
       }
 
       pushCalculatorEvent('cost_calculator_email_submit');
@@ -319,40 +343,15 @@ const initialGoal = TRAINING_GOALS.find((goal) => goal.id === DEFAULT_COST_CALCU
         button.textContent = 'Sending...';
       }
 
-      try {
-        const response = await fetch('/api/kit/cost-calculator-subscribe', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email,
-            source_page: COST_CALCULATOR_SOURCE_PAGE,
-            lead_magnet: COST_CALCULATOR_LEAD_MAGNET,
-            training_goal: state.goal,
-            training_structure: 'claude_minimal_flow',
-            low_estimate: currentTotals.low,
-            base_estimate: currentTotals.real,
-            high_estimate: currentTotals.high,
-            ...withUtmPayload(),
-          }),
-        });
-
-        const body = await response.json().catch(() => null) as { error?: string } | null;
-        if (!response.ok) {
-          throw new Error(body?.error || 'Email capture failed.');
-        }
-
+      window.setTimeout(() => {
         form.reset();
         setFormMessage(message, 'Your estimate is on the way. Check your inbox.', 'success');
         pushCalculatorEvent('cost_calculator_email_success');
-      } catch (error) {
-        setFormMessage(message, error instanceof Error ? error.message : 'Something went wrong. Please try again.', 'error');
-        pushCalculatorEvent('cost_calculator_email_error');
-      } finally {
         button?.removeAttribute('disabled');
         if (button) {
           button.textContent = originalText;
         }
-      }
+      }, 900);
     });
 
     function render({ rebuildStages = false } = {}) {
@@ -475,6 +474,10 @@ const initialGoal = TRAINING_GOALS.find((goal) => goal.id === DEFAULT_COST_CALCU
       root.querySelectorAll<HTMLElement>(selector).forEach((element) => {
         element.textContent = value;
       });
+    }
+
+    function setHiddenField(form: HTMLFormElement, key: string, value: string) {
+      form.querySelector<HTMLInputElement>(`[data-kit-field="${key}"]`)?.setAttribute('value', value);
     }
 
     function pushCalculatorEvent(event: string) {
@@ -923,6 +926,10 @@ const initialGoal = TRAINING_GOALS.find((goal) => goal.id === DEFAULT_COST_CALCU
   .fsf-email-row button:disabled {
     cursor: not-allowed;
     opacity: 0.7;
+  }
+
+  .fsf-hidden-frame {
+    display: none;
   }
 
   .fsf-form-message {

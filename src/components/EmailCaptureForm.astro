@@ -16,6 +16,10 @@ const {
 if (!isSegmentSlug(quizSegment)) {
   throw new Error(`Unsupported EmailCaptureForm quizSegment: ${quizSegment}`);
 }
+
+const kitFormId = '9565964';
+const kitFormAction = `https://app.kit.com/forms/${kitFormId}/subscriptions`;
+const iframeName = `kit-result-submit-${quizSegment}`;
 ---
 
 <section class="mb-16 rounded-2xl border border-slate-200 bg-slate-950 p-1 shadow-xl shadow-slate-200/70">
@@ -26,12 +30,18 @@ if (!isSegmentSlug(quizSegment)) {
       <p class="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-300 md:text-base">{subheadline}</p>
     </div>
 
-    <form class="fsf-email-capture mx-auto mt-7 grid max-w-2xl gap-3 sm:grid-cols-[1fr_1.25fr_auto]" data-quiz-segment={quizSegment}>
+    <form
+      class="fsf-email-capture mx-auto mt-7 grid max-w-2xl gap-3 sm:grid-cols-[1fr_1.25fr_auto]"
+      action={kitFormAction}
+      method="post"
+      target={iframeName}
+      data-quiz-segment={quizSegment}
+    >
       <div>
         <label class="sr-only" for={`first-name-${quizSegment}`}>First name</label>
         <input
           id={`first-name-${quizSegment}`}
-          name="firstName"
+          name="fields[first_name]"
           type="text"
           autocomplete="given-name"
           placeholder="First name"
@@ -42,7 +52,7 @@ if (!isSegmentSlug(quizSegment)) {
         <label class="sr-only" for={`email-${quizSegment}`}>Email address</label>
         <input
           id={`email-${quizSegment}`}
-          name="email"
+          name="email_address"
           type="email"
           autocomplete="email"
           required
@@ -50,6 +60,11 @@ if (!isSegmentSlug(quizSegment)) {
           class="h-12 w-full rounded-lg border border-white/10 bg-white px-4 text-sm font-medium text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-300 focus:ring-4 focus:ring-sky-300/25"
         />
       </div>
+      <input type="hidden" name="fields[quiz_segment]" value={quizSegment} />
+      <input type="hidden" name="fields[source_page]" value="" data-kit-field="source_page" />
+      <input type="hidden" name="fields[utm_source]" value="" data-kit-field="utm_source" />
+      <input type="hidden" name="fields[utm_medium]" value="" data-kit-field="utm_medium" />
+      <input type="hidden" name="fields[utm_campaign]" value="" data-kit-field="utm_campaign" />
       <button
         type="submit"
         class="btn-hover h-12 rounded-lg bg-sky-500 px-5 text-sm font-extrabold text-white transition hover:bg-sky-400 focus:outline-none focus:ring-4 focus:ring-sky-300/30 disabled:cursor-not-allowed disabled:opacity-70"
@@ -58,6 +73,7 @@ if (!isSegmentSlug(quizSegment)) {
       </button>
     </form>
 
+    <iframe class="hidden" name={iframeName} title="Kit email signup response"></iframe>
     <p class="fsf-email-capture-message mx-auto mt-4 hidden max-w-2xl rounded-lg px-4 py-3 text-center text-sm font-semibold" aria-live="polite"></p>
   </div>
 </section>
@@ -89,55 +105,39 @@ if (!isSegmentSlug(quizSegment)) {
   };
 
   document.querySelectorAll<HTMLFormElement>('.fsf-email-capture').forEach((form) => {
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-
+    form.addEventListener('submit', (event) => {
       const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
-      const formData = new FormData(form);
+      const email = String(new FormData(form).get('email_address') || '').trim();
       const quizSegment = form.dataset.quizSegment || '';
       const urlParams = new URLSearchParams(window.location.search);
 
-      pushEvent('fsf_email_capture_submit', quizSegment);
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        event.preventDefault();
+        setMessage(form, 'Enter a valid email address.', 'error');
+        return;
+      }
 
+      form.querySelector<HTMLInputElement>('[data-kit-field="source_page"]')?.setAttribute('value', window.location.pathname);
+      form.querySelector<HTMLInputElement>('[data-kit-field="utm_source"]')?.setAttribute('value', urlParams.get('utm_source') || '');
+      form.querySelector<HTMLInputElement>('[data-kit-field="utm_medium"]')?.setAttribute('value', urlParams.get('utm_medium') || '');
+      form.querySelector<HTMLInputElement>('[data-kit-field="utm_campaign"]')?.setAttribute('value', urlParams.get('utm_campaign') || '');
+
+      pushEvent('fsf_email_capture_submit', quizSegment);
       button?.setAttribute('disabled', 'true');
       const originalButtonText = button?.textContent || 'Send my plan';
       if (button) {
         button.textContent = 'Sending...';
       }
 
-      try {
-        const response = await fetch('/api/lead-capture', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            firstName: String(formData.get('firstName') || ''),
-            email: String(formData.get('email') || ''),
-            quizSegment,
-            sourcePage: window.location.pathname,
-            utmSource: urlParams.get('utm_source'),
-            utmMedium: urlParams.get('utm_medium'),
-            utmCampaign: urlParams.get('utm_campaign'),
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Email capture request failed.');
-        }
-
+      window.setTimeout(() => {
         form.reset();
         setMessage(form, 'Your plan is on the way. Check your inbox.', 'success');
         pushEvent('fsf_email_capture_success', quizSegment);
-      } catch {
-        setMessage(form, 'Something went wrong. Please try again.', 'error');
-        pushEvent('fsf_email_capture_error', quizSegment);
-      } finally {
         button?.removeAttribute('disabled');
         if (button) {
           button.textContent = originalButtonText;
         }
-      }
+      }, 900);
     });
   });
 </script>
