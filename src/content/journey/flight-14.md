@@ -10,7 +10,7 @@ airport: "[TODO: e.g., KRVS]"
 summary: "[TODO: one sentence]"
 lesson: "[TODO: the one thing you'd tell someone a flight behind you]"
 relatedTool: { label: "[TODO or delete]", href: "/tools/" }
-draft: false
+draft: true
 ---
 
 ## The Flight

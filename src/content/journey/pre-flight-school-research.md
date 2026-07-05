@@ -5,7 +5,7 @@ stage: pre-flight-school
 summary: "The research sprint that turned a layoff into a flight school decision and the first version of the 28-day framework."
 lesson: "[TODO: the one thing you'd tell someone starting flight school research]"
 relatedTool: { label: "Take the Decision Quiz", href: "/flight-school-decision-tool/quiz/" }
-draft: false
+draft: true
 ---
 
 ## The Flight

@@ -201,7 +201,11 @@ const journeyPosts = (await getCollection('journey', ({ data }) => !data.draft))
         <p class="text-lg leading-8 text-slate-600">Every lesson gets a logbook entry — what happened, what I got wrong, and what I'd tell someone one flight behind me.</p>
       </div>
       <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-        {journeyPosts.map((post) => (
+        {journeyPosts.length === 0 ? (
+          <div class="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-sm leading-6 text-slate-600 md:col-span-3">
+            Flight-by-flight posts are drafted now and will appear here as soon as the first entries are ready.
+          </div>
+        ) : journeyPosts.map((post) => (
           <a href={postPath(post)} class="block rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-sky-300">
             <p class="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500">Flight {post.data.flightNumber} · {post.data.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
             <h3 class="mb-2 text-lg font-bold text-slate-900">{post.data.title}</h3>
