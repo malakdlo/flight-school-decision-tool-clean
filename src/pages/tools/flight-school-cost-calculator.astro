@@ -4,10 +4,20 @@ import FlightSchoolCostCalculator from '@/components/tools/FlightSchoolCostCalcu
 
 const title = 'Flight School Cost Calculator | Flight School Friend';
 const description = 'Estimate private pilot, instrument, and career flight training costs with a beginner-friendly calculator built for people comparing flight school options.';
-const canonical = 'https://www.flightschoolfriend.com/tools/flight-school-cost-calculator/';
+const canonical = 'https://flightschoolfriend.com/tools/flight-school-cost-calculator/';
+const structuredData = {
+  '@type': 'WebApplication',
+  '@id': 'https://flightschoolfriend.com/tools/flight-school-cost-calculator/#webapp',
+  name: 'Flight School Cost Calculator',
+  url: canonical,
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Any',
+  description,
+  author: { '@id': 'https://flightschoolfriend.com/#person' },
+};
 ---
 
-<BaseLayout title={title} description={description} canonical={canonical}>
+<BaseLayout title={title} description={description} canonical={canonical} structuredData={structuredData}>
   <section class="px-4 pb-14">
     <FlightSchoolCostCalculator />
   </section>

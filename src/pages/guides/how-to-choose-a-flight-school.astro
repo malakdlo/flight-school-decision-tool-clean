@@ -1,10 +1,48 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const canonical = 'https://flightschoolfriend.com/guides/how-to-choose-a-flight-school/';
+const structuredData = [
+  {
+    '@type': 'Article',
+    '@id': `${canonical}#article`,
+    headline: "How to Choose a Flight School: A Beginner's Checklist",
+    description: 'A practical checklist for comparing flight schools by aircraft, instructors, scheduling, pricing, and safety culture.',
+    dateModified: '2026-06-01',
+    author: { '@id': 'https://flightschoolfriend.com/#person' },
+    mainEntityOfPage: canonical,
+  },
+  {
+    '@type': 'FAQPage',
+    '@id': `${canonical}#faq`,
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'What should I compare when choosing a flight school?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Compare aircraft availability, instructor fit, scheduling, maintenance, pricing transparency, school structure, safety culture, and whether the school fits your goal.',
+        },
+      },
+    ],
+  },
+  {
+    '@type': 'BreadcrumbList',
+    '@id': `${canonical}#breadcrumbs`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://flightschoolfriend.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Guides', item: 'https://flightschoolfriend.com/guides/' },
+      { '@type': 'ListItem', position: 3, name: 'How to Choose a Flight School', item: canonical },
+    ],
+  },
+];
 ---
 
 <BaseLayout
   title="How to Choose a Flight School: Beginner Checklist | Flight School Friend"
-  description="Learn how to compare flight schools by cost, aircraft availability, instructor fit, safety culture, scheduling, Part 61 vs Part 141, and checkride readiness."
+  description="Compare flight schools by cost, aircraft availability, instructor fit, safety culture, scheduling, structure, and checkride readiness."
+  canonical={canonical}
+  structuredData={structuredData}
 >
   <div class="bg-white pb-24">
     <div class="max-w-6xl mx-auto px-4 py-8">
@@ -57,7 +95,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
               <input type="email" placeholder="Your email address" required class="flex-grow px-4 py-3 rounded-lg text-slate-900 outline-none border border-slate-200 focus:ring-2 focus:ring-sky-500" />
               <button type="submit" class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-lg transition">Email me the school checklist</button>
             </form>
-            <p id="mid-email-success" class="hidden text-green-600 font-medium mt-4">Got it — this checklist would be sent in the live version.</p>
+            <p id="mid-email-success" class="hidden text-green-600 font-medium mt-4">Got it — check your inbox for the checklist.</p>
           </div>
 
           <h2 id="scheduling">Scheduling and Aircraft Availability</h2>

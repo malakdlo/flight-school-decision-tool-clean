@@ -1,10 +1,48 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const canonical = 'https://flightschoolfriend.com/guides/private-pilot-requirements/';
+const structuredData = [
+  {
+    '@type': 'Article',
+    '@id': `${canonical}#article`,
+    headline: 'Private Pilot Requirements: What You Need Before, During, and After Training',
+    description: 'A beginner-friendly checklist of private pilot eligibility, documents, training, tests, solo prep, and checkride steps.',
+    dateModified: '2026-06-01',
+    author: { '@id': 'https://flightschoolfriend.com/#person' },
+    mainEntityOfPage: canonical,
+  },
+  {
+    '@type': 'FAQPage',
+    '@id': `${canonical}#faq`,
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'What are the basic private pilot requirements?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Requirements include eligibility, training, aeronautical knowledge, flight experience, solo preparation, a knowledge test, and a practical test. Verify current rules with the FAA and your instructor.',
+        },
+      },
+    ],
+  },
+  {
+    '@type': 'BreadcrumbList',
+    '@id': `${canonical}#breadcrumbs`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://flightschoolfriend.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Guides', item: 'https://flightschoolfriend.com/guides/' },
+      { '@type': 'ListItem', position: 3, name: 'Private Pilot Requirements', item: canonical },
+    ],
+  },
+];
 ---
 
 <BaseLayout
   title="Private Pilot Requirements: FAA PPL Checklist | Flight School Friend"
-  description="A beginner-friendly checklist of private pilot requirements, including age, English, student pilot certificate, medical, flight hours, written test, solo, and checkride."
+  description="A beginner-friendly checklist of private pilot requirements, documents, medical, flight hours, tests, solo prep, and checkride steps."
+  canonical={canonical}
+  structuredData={structuredData}
 >
   <div class="bg-white pb-24">
     <div class="max-w-6xl mx-auto px-4 py-8">
@@ -58,7 +96,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
               <input type="email" placeholder="Your email address" required class="flex-grow px-4 py-3 rounded-lg text-slate-900 outline-none border border-slate-200 focus:ring-2 focus:ring-sky-500" />
               <button type="submit" class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-lg transition">Email me the PPL checklist</button>
             </form>
-            <p id="mid-email-success" class="hidden text-green-600 font-medium mt-4">Got it — this checklist would be sent in the live version.</p>
+            <p id="mid-email-success" class="hidden text-green-600 font-medium mt-4">Got it — check your inbox for the checklist.</p>
           </div>
 
           <h2 id="medical-note">Medical certificate / BasicMed planning note</h2>

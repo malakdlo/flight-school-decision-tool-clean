@@ -1,10 +1,48 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const canonical = 'https://flightschoolfriend.com/guides/flight-school-cost/';
+const structuredData = [
+  {
+    '@type': 'Article',
+    '@id': `${canonical}#article`,
+    headline: 'Flight School Cost Guide: What It Really Costs to Become a Private Pilot',
+    description: 'A beginner-friendly guide to private pilot training costs, hidden fees, and realistic budgeting.',
+    dateModified: '2026-06-01',
+    author: { '@id': 'https://flightschoolfriend.com/#person' },
+    mainEntityOfPage: canonical,
+  },
+  {
+    '@type': 'FAQPage',
+    '@id': `${canonical}#faq`,
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'Can I get a loan for flight school?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Some Part 141 university programs may qualify for student aid, while Part 61 students usually use private loans, personal financing, or savings. Verify current options with the school and lender.',
+        },
+      },
+    ],
+  },
+  {
+    '@type': 'BreadcrumbList',
+    '@id': `${canonical}#breadcrumbs`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://flightschoolfriend.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Guides', item: 'https://flightschoolfriend.com/guides/' },
+      { '@type': 'ListItem', position: 3, name: 'Flight School Cost', item: canonical },
+    ],
+  },
+];
 ---
 
 <BaseLayout
   title="Flight School Cost Guide: Private Pilot Training Costs | Flight School Friend"
-  description="A beginner-friendly guide to flight school cost, private pilot training expenses, hidden fees, and how to estimate your realistic budget before you start."
+  description="A beginner-friendly guide to private pilot training costs, hidden fees, and estimating a realistic flight school budget."
+  canonical={canonical}
+  structuredData={structuredData}
 >
   <div class="bg-white pb-24">
     <div class="max-w-6xl mx-auto px-4 py-8">
@@ -77,7 +115,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
               <input type="email" placeholder="Your email address" required class="flex-grow px-4 py-3 rounded-lg text-slate-900 outline-none border border-slate-200 focus:ring-2 focus:ring-sky-500" />
               <button type="submit" class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-lg transition">Email me the checklist</button>
             </form>
-            <p id="mid-email-success" class="hidden text-green-600 font-medium mt-4">Got it — this checklist would be sent in the live version.</p>
+            <p id="mid-email-success" class="hidden text-green-600 font-medium mt-4">Got it — check your inbox for the checklist.</p>
           </div>
 
           <h2 id="fixed-costs">Fixed costs and hidden fees</h2>
@@ -93,7 +131,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
           <p>Flight schools often advertise the FAA legal minimum of 40 flight hours (for Part 61) to make their programs look cheaper. The national average to complete a private pilot certificate is actually closer to 65–75 hours. Budgeting for 40 hours is a recipe for running out of money before your checkride.</p>
 
           <h2 id="estimate-budget">How to estimate your budget before calling schools</h2>
-          <p>Call local schools and ask for their wet rate (fuel included) for the primary trainer aircraft, and the hourly instructor rate. Multiply the total hourly cost by 70. Add $1,500 for gear, exams, and medical fees. That is your realistic budget target.</p>
+          <p>Call local schools and ask for their wet rate (fuel included) for the primary trainer aircraft, and the hourly instructor rate. Multiply the total hourly cost by 70. Add $1,500 for gear, exams, and medical fees. That is your realistic budget target. You can also <a href="/tools/flight-school-cost-calculator/">run the flight school cost calculator</a> with your local rates to compare low, realistic, and high ranges.</p>
 
           <h2 id="common-mistakes">Common cost mistakes</h2>
           <ul>

@@ -1,0 +1,3 @@
+# Cloudflare Pages will serve this as a 301 host redirect. If the Pages
+# dashboard has a competing rule, mirror this redirect there too.
+https://www.flightschoolfriend.com/* https://flightschoolfriend.com/:splat 301!

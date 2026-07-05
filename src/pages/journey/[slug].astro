@@ -37,9 +37,19 @@ const metaParts = [
   post.data.aircraft,
   post.data.airport,
 ].filter(Boolean);
+const canonical = `https://flightschoolfriend.com${postPath(post)}`;
+const structuredData = {
+  '@type': 'BlogPosting',
+  '@id': `${canonical}#article`,
+  headline: post.data.title,
+  description: post.data.summary,
+  datePublished: post.data.date.toISOString(),
+  author: { '@id': 'https://flightschoolfriend.com/#person' },
+  mainEntityOfPage: canonical,
+};
 ---
 
-<BaseLayout title={`${post.data.title} — Flight School Friend`} description={post.data.summary}>
+<BaseLayout title={`${post.data.title} — Flight School Friend`} description={post.data.summary} canonical={canonical} structuredData={structuredData}>
   <article class="bg-white">
     <header class="mx-auto max-w-4xl px-4 py-16 md:py-24">
       <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm md:p-10">
