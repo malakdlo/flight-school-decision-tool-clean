@@ -2,17 +2,13 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import FounderNote from '@/components/FounderNote.astro';
 import KitCapture from '@/components/KitCapture.astro';
+import { getCollection } from 'astro:content';
 
-const journeyPosts: Array<{
-  slug: string;
-  data: {
-    flightNumber?: number;
-    date: Date;
-    title: string;
-    summary: string;
-    hoursThisFlight?: number;
-  };
-}> = [];
+const postPath = (post: { id: string; slug?: string }) => `/journey/${post.slug ?? post.id.replace(/\.mdx?$/, '')}/`;
+const journeyPosts = (await getCollection('journey', ({ data }) => !data.draft))
+  .filter((post) => post.data.stage === 'ppl')
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
 ---
 
 <BaseLayout
@@ -205,12 +201,8 @@ const journeyPosts: Array<{
         <p class="text-lg leading-8 text-slate-600">Every lesson gets a logbook entry — what happened, what I got wrong, and what I'd tell someone one flight behind me.</p>
       </div>
       <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-        {journeyPosts.length === 0 ? (
-          <div class="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-500 md:col-span-3">
-            Journey posts are being wired in the content collection.
-          </div>
-        ) : journeyPosts.map((post) => (
-          <a href={`/journey/${post.slug}/`} class="block rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-sky-300">
+        {journeyPosts.map((post) => (
+          <a href={postPath(post)} class="block rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-sky-300">
             <p class="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500">Flight {post.data.flightNumber} · {post.data.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
             <h3 class="mb-2 text-lg font-bold text-slate-900">{post.data.title}</h3>
             <p class="mb-4 text-sm text-slate-600">{post.data.summary}</p>

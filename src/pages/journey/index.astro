@@ -1,0 +1,87 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import KitCapture from '@/components/KitCapture.astro';
+
+const postPath = (post: { id: string; slug?: string }) => `/journey/${post.slug ?? post.id.replace(/\.mdx?$/, '')}/`;
+const formatDate = (date: Date) => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+const posts = (await getCollection('journey', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const preFlightPosts = posts.filter((post) => post.data.stage === 'pre-flight-school');
+const pplPosts = posts.filter((post) => post.data.stage === 'ppl');
+---
+
+<BaseLayout
+  title="The Flight School Journey — Flight School Friend"
+  description="Follow a real PPL training journey flight by flight — from layoff to knowledge test to first solo — with the lessons and free tools built along the way."
+>
+  <section class="bg-white">
+    <div class="mx-auto max-w-6xl px-4 py-20 md:py-28">
+      <span class="mb-5 inline-block rounded-full bg-sky-100 px-3 py-1 text-xs font-bold uppercase tracking-widest text-sky-800">The Flight School Journey</span>
+      <h1 class="mb-8 text-4xl font-extrabold tracking-tight text-slate-900 md:text-6xl">From laid off to lift off.</h1>
+      <div class="max-w-4xl space-y-5 text-lg leading-8 text-slate-600">
+        <p>I started researching flight school on March 9, 2026 — a few weeks after a layoff, with a year of savings, tired of the corporate grind, and done postponing the thing I'd wanted since I was a kid. I would have been a pilot at 21: I scored high on the ASVAB, but the Air Force turned me away over asthma I'd had at age 9 and hadn't dealt with since. So this time I decided it was now or never.</p>
+        <p>Thirty days later I passed the FAA knowledge test. Two days after that, I took my first training flight. This page is the logbook of everything since — every flight, every mistake, every tool I built along the way. If you're one flight behind me, it's written for you.</p>
+      </div>
+
+      <div class="mt-10 grid gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 font-mono text-xs font-bold uppercase tracking-wider text-slate-600 md:grid-cols-4">
+        <div><span class="text-slate-900">MAR 9</span> — Started researching</div>
+        <div><span class="text-slate-900">APR 6</span> — Passed FAA Knowledge Test</div>
+        <div><span class="text-slate-900">APR 8</span> — First training flight</div>
+        <div class="text-slate-400"><span>[TODO: solo date]</span> — First solo <span class="rounded-full bg-amber-100 px-2 py-1 text-[10px] text-amber-800">upcoming</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-y border-slate-200 bg-slate-50 py-20">
+    <div class="mx-auto max-w-6xl px-4">
+      <div class="mb-14">
+        <h2 class="mb-6 text-3xl font-extrabold text-slate-900">Pre-Flight School</h2>
+        <div class="grid gap-4">
+          {preFlightPosts.map((post) => (
+            <a href={postPath(post)} class="block rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-sky-300">
+              <p class="mb-2 font-mono text-xs font-bold uppercase tracking-widest text-slate-500">{formatDate(post.data.date)}</p>
+              <h3 class="mb-2 text-xl font-bold text-slate-900">{post.data.title}</h3>
+              <p class="text-sm leading-6 text-slate-600">{post.data.summary}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h2 class="mb-6 text-3xl font-extrabold text-slate-900">PPL Training</h2>
+        <div class="grid gap-4">
+          {pplPosts.map((post) => (
+            <a href={postPath(post)} class="block rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-sky-300">
+              <p class="mb-2 font-mono text-xs font-bold uppercase tracking-widest text-slate-500">
+                FLIGHT {post.data.flightNumber} · {formatDate(post.data.date)} · {post.data.hoursThisFlight ?? 0} HRS
+              </p>
+              <h3 class="mb-2 text-xl font-bold text-slate-900">{post.data.title}</h3>
+              <p class="text-sm leading-6 text-slate-600">{post.data.summary}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 py-20">
+    <KitCapture
+      id="journey-newsletter"
+      heading="Follow the journey by email"
+      body="New flights, new tools, no spam."
+      buttonLabel="Subscribe"
+      microcopy="No spam. Unsubscribe anytime."
+      theme="dark"
+      hiddenFields={[
+        { name: 'fields[source_page]', value: '/journey/', dynamic: 'source_page' },
+        { name: 'fields[tag]', value: 'newsletter' },
+        { name: 'fields[utm_source]', dynamic: 'utm_source' },
+        { name: 'fields[utm_medium]', dynamic: 'utm_medium' },
+        { name: 'fields[utm_campaign]', dynamic: 'utm_campaign' },
+      ]}
+    />
+  </section>
+</BaseLayout>

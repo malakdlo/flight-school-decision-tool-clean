@@ -1,0 +1,101 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import KitCapture from '@/components/KitCapture.astro';
+
+const postSlug = (post: { id: string; slug?: string }) => post.slug ?? post.id.replace(/\.mdx?$/, '');
+const postPath = (post: { id: string; slug?: string }) => `/journey/${postSlug(post)}/`;
+const formatDate = (date: Date) => date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+export async function getStaticPaths() {
+  const posts = await getCollection('journey', ({ data }) => !data.draft);
+
+  return posts.map((post) => ({
+    params: { slug: post.id.replace(/\.mdx?$/, '') },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const posts = (await getCollection('journey', ({ data }) => !data.draft))
+  .sort((a, b) => {
+    const aNumber = a.data.flightNumber ?? -1;
+    const bNumber = b.data.flightNumber ?? -1;
+    if (aNumber !== bNumber) return aNumber - bNumber;
+    return a.data.date.valueOf() - b.data.date.valueOf();
+  });
+const currentIndex = posts.findIndex((item) => item.id === post.id);
+const previousPost = currentIndex > 0 ? posts[currentIndex - 1] : undefined;
+const nextPost = currentIndex >= 0 && currentIndex < posts.length - 1 ? posts[currentIndex + 1] : undefined;
+
+const metaParts = [
+  formatDate(post.data.date),
+  post.data.hoursThisFlight !== undefined ? `${post.data.hoursThisFlight} hours this flight` : undefined,
+  post.data.totalHours !== undefined ? `${post.data.totalHours} total hours` : undefined,
+  post.data.aircraft,
+  post.data.airport,
+].filter(Boolean);
+---
+
+<BaseLayout title={`${post.data.title} — Flight School Friend`} description={post.data.summary}>
+  <article class="bg-white">
+    <header class="mx-auto max-w-4xl px-4 py-16 md:py-24">
+      <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm md:p-10">
+        <p class="mb-4 font-mono text-xs font-bold uppercase tracking-widest text-sky-700">{post.data.stage.replaceAll('-', ' ')} logbook</p>
+        <h1 class="mb-5 text-4xl font-extrabold tracking-tight text-slate-900 md:text-5xl">
+          {post.data.flightNumber ? `Flight ${post.data.flightNumber} — ` : ''}{post.data.title}
+        </h1>
+        <p class="font-mono text-xs font-bold uppercase tracking-widest text-slate-500">{metaParts.join(' · ')}</p>
+      </div>
+    </header>
+
+    <div class="guide-content mx-auto max-w-3xl px-4 pb-10">
+      <Content />
+
+      {post.data.lesson && (
+        <aside class="my-10 rounded-2xl border-l-4 border-sky-500 bg-sky-50 p-6">
+          <p class="mb-2 text-xs font-bold uppercase tracking-widest text-sky-800">What I learned</p>
+          <p class="text-lg font-bold leading-8 text-slate-900">{post.data.lesson}</p>
+        </aside>
+      )}
+
+      {post.data.relatedTool && (
+        <aside class="my-10 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <p class="mb-2 text-xs font-bold uppercase tracking-widest text-slate-500">Tool From This Flight</p>
+          <a href={post.data.relatedTool.href} class="text-lg font-bold text-sky-700 hover:underline">{post.data.relatedTool.label} →</a>
+        </aside>
+      )}
+
+      <nav class="mt-12 grid gap-4 border-t border-slate-200 pt-8 md:grid-cols-2" aria-label="Journey post navigation">
+        {previousPost ? (
+          <a href={postPath(previousPost)} class="rounded-xl border border-slate-200 p-4 text-sm font-bold text-slate-700 hover:border-sky-300">← {previousPost.data.title}</a>
+        ) : <div></div>}
+        {nextPost && (
+          <a href={postPath(nextPost)} class="rounded-xl border border-slate-200 p-4 text-right text-sm font-bold text-slate-700 hover:border-sky-300">{nextPost.data.title} →</a>
+        )}
+      </nav>
+
+      <a href="/journey/" class="mt-8 inline-block text-sm font-bold text-sky-700 hover:underline">← All journey posts</a>
+    </div>
+  </article>
+
+  <section class="mx-auto max-w-6xl px-4 py-16">
+    <KitCapture
+      id={`journey-post-${postSlug(post)}`}
+      heading="Follow the journey by email"
+      body="New flights, new tools, no spam."
+      buttonLabel="Subscribe"
+      microcopy="No spam. Unsubscribe anytime."
+      theme="dark"
+      hiddenFields={[
+        { name: 'fields[source_page]', dynamic: 'source_page' },
+        { name: 'fields[tag]', value: 'newsletter' },
+        { name: 'fields[utm_source]', dynamic: 'utm_source' },
+        { name: 'fields[utm_medium]', dynamic: 'utm_medium' },
+        { name: 'fields[utm_campaign]', dynamic: 'utm_campaign' },
+      ]}
+    />
+  </section>
+</BaseLayout>
