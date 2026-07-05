@@ -1,0 +1,13 @@
+---
+interface Props {
+  status: 'live' | 'coming-soon';
+}
+
+const { status } = Astro.props;
+const label = status === 'live' ? 'Live' : 'Coming soon — get notified';
+const classes = status === 'live'
+  ? 'bg-green-100 text-green-800'
+  : 'bg-amber-100 text-amber-800';
+---
+
+<span class:list={['inline-block rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider', classes]}>{label}</span>
