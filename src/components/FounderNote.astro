@@ -1,18 +1,36 @@
+---
+interface Props {
+  headline?: string;
+  body?: string;
+  showLinks?: boolean;
+}
+
+const {
+  headline = "I'm not an instructor yet — I'm a student, and that's the point.",
+  body = "I started researching flight school after a layoff, passed the FAA knowledge test 30 days later, and I'm now deep in PPL training. Every tool on this site is something I built because I needed it.",
+  showLinks = true,
+} = Astro.props;
+---
+
 <section class="border-y border-sky-100 bg-sky-50/70">
   <div class="mx-auto max-w-6xl px-4 py-8">
     <div class="grid gap-3 md:grid-cols-[1fr_auto] md:items-center">
       <div>
-        <p class="text-base font-extrabold text-slate-900">I'm not an instructor yet — I'm a student, and that's the point.</p>
+        <p class="text-base font-extrabold text-slate-900">{headline}</p>
         <p class="mt-2 max-w-4xl text-sm leading-6 text-slate-600">
-          I started researching flight school after a layoff, passed the FAA knowledge test 30 days later, and I'm now deep in PPL training. Every tool on this site is something I built because I needed it.
+          {body}
         </p>
       </div>
-      <p class="text-sm font-bold text-sky-700">
-        Follow the whole journey →
-        <a href="/journey/" class="underline decoration-sky-300 underline-offset-4 hover:text-sky-900">Journey</a>
-        ·
-        <a href="https://www.instagram.com/privatepilotnotebook/" target="_blank" rel="noopener" class="underline decoration-sky-300 underline-offset-4 hover:text-sky-900">@privatepilotnotebook</a>
-      </p>
+      {
+        showLinks && (
+          <p class="text-sm font-bold text-sky-700">
+            Follow the whole journey →
+            <a href="/journey/" class="underline decoration-sky-300 underline-offset-4 hover:text-sky-900">Journey</a>
+            ·
+            <a href="https://www.instagram.com/privatepilotnotebook/" target="_blank" rel="noopener" class="underline decoration-sky-300 underline-offset-4 hover:text-sky-900">@privatepilotnotebook</a>
+          </p>
+        )
+      }
     </div>
   </div>
 </section>

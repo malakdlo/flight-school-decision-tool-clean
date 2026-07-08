@@ -12,7 +12,8 @@ export default defineConfig({
         !page.includes('/flight-school-decision-tool/results/') &&
         !page.includes('/guides/flight-schools-tulsa/') &&
         !page.includes('/guides/discovery-flight-tulsa/') &&
-        !page.includes('/guides/ppl-cost-oklahoma/'),
+        !page.includes('/guides/ppl-cost-oklahoma/') &&
+        !page.includes('/thank-you/download/'),
     }),
   ],
   vite: {
