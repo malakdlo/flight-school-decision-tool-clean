@@ -1,0 +1,311 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import KitCapture from '@/components/KitCapture.astro';
+
+const canonical = 'https://flightschoolfriend.com/journey/how-im-studying-pre-solo/';
+const title = "How I'm Studying for My Pre-Solo Written (at 15 Hours)";
+const description = "One stage check from first solo. The exact process, tools, and free resources I'm using to prep for the pre-solo written — from a student pilot still in it.";
+
+type ImageSlot = { src: string; alt: string };
+const pendingImage = (): ImageSlot | undefined => undefined;
+const heroImage = pendingImage();
+const inlineImage = pendingImage();
+
+const atcPrompt = `You are a tower controller at [YOUR AIRPORT — ID and airspace class, e.g. "KRVS, Class D"].
+I'm a student pilot practicing radio calls in a [YOUR AIRCRAFT], callsign [YOUR TAIL NUMBER].
+
+Run me through a full session: I'll make every call myself, one at a time, from
+initial taxi to shutdown. After each of my calls, respond exactly as the controller
+would — then briefly break character to grade my call (phraseology, required
+elements, readback accuracy) before we continue.
+
+Every few calls, throw a realistic curveball with no warning: extend downwind,
+traffic to follow, runway change, "say again," a frequency handoff. Keep the pace
+realistic. Start by reading me the current ATIS.`;
+
+const landingPrompt = `Act as a CFI drilling me on landing decision scenarios. I'm a pre-solo student
+flying a [YOUR AIRCRAFT] at [YOUR AIRPORT, TPA ____ ft MSL].
+
+One scenario at a time: gusting crosswind on final, ballooned flare, aircraft
+ahead not clearing the runway, high and fast, sudden sink on short final. I'll
+tell you what I'd do. Grade my answer 1–10, tell me what a CFI would want to
+hear, and don't move on until I've corrected anything unsafe. Mix in
+"continue or go around?" judgment calls — and make going around NOT always
+the automatic answer, so I have to actually reason.`;
+
+const quizPrompt = `Quiz me for my pre-solo written test (FAR 61.87). My aircraft is a [MAKE/MODEL];
+here are my V-speeds and key limitations from my POH: [PASTE THEM]. My airport
+is [ID, airspace class, TPA, tower/CTAF frequency].
+
+Ask one question at a time — mix multiple choice and free-response — across the
+three 61.87(b) subject areas: applicable Parts 61/91 regulations, airspace and
+procedures for MY airport, and MY aircraft's numbers and limitations. Include at
+least two emergency scenarios where the ORDER of my actions matters. Grade every
+answer, cite the FAR or POH section, and keep a running score. At the end, tell
+me my weakest area and what to review — and remind me the real test is written,
+administered, and reviewed by my CFI.`;
+
+const structuredData = {
+  '@type': 'BlogPosting',
+  '@id': `${canonical}#article`,
+  headline: title,
+  description,
+  datePublished: '2026-07-08',
+  dateModified: '2026-07-08',
+  author: { '@id': 'https://flightschoolfriend.com/#person' },
+  mainEntityOfPage: canonical,
+};
+---
+
+<BaseLayout title={`${title} — Flight School Friend`} description={description} canonical={canonical} structuredData={structuredData}>
+  <article class="bg-white">
+    <header class="mx-auto max-w-4xl px-4 py-16 md:py-24">
+      <p class="mb-4 font-mono text-xs font-bold uppercase tracking-widest text-sky-700">Journey resource · Flight 14 · ~15.0 hrs · Stage check Friday</p>
+      <h1 class="mb-6 text-4xl font-extrabold tracking-tight text-slate-900 md:text-5xl">{title}</h1>
+      <p class="max-w-3xl text-lg leading-8 text-slate-600">{description}</p>
+    </header>
+
+    <div class="journey-study-content mx-auto max-w-3xl px-4 pb-10">
+      <p>I'm one stage check away from flying an airplane alone for the first time. Pre-solo prep is hard — it's the point where everything stops being theoretical and guarded by your CFI, and you have to actually <em>know</em> it. This is the exact process I'm using, every tool in it, and what I'd tell someone one flight behind me.</p>
+
+      <figure class="journey-photo-slot my-10">
+        {heroImage ? (
+          <img src={heroImage.src} alt={heroImage.alt} loading="eager" class="h-full w-full rounded-xl object-cover" />
+        ) : (
+          <div class="flex aspect-[16/10] items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center">
+            <div>
+              <p class="mb-2 font-mono text-xs font-bold uppercase tracking-widest text-slate-500">Hero photo slot</p>
+              <p class="text-sm leading-6 text-slate-600">Study desk photo: POH open, kneeboard, sectional visible.</p>
+            </div>
+          </div>
+        )}
+      </figure>
+
+      <p>None of this replaces your CFI. It's just what's working for a student who is very much still in it.</p>
+
+      <hr />
+
+      <h2>The order I did things in (and would do again)</h2>
+
+      <p><strong>1. Gathered before I studied.</strong> I pulled my aircraft's V-speeds and limitations out of the POH, my field's numbers out of the Chart Supplement (KRVS — Class D, under the Tulsa Class C shelf, which makes the airspace section spicy), and my school's solo limitations sheet. Two-thirds of the pre-solo written is about <em>your</em> plane and <em>your</em> airport, so a generic question bank only gets you a third of the way. I keep all of it on one reference sheet.</p>
+
+      <p><strong>2. Made the numbers automatic before making the concepts deep.</strong> V-speeds, TPA, frequencies — flashcard-level recall first. It felt backwards, but once the numbers were automatic, every scenario question got easier because I wasn't doing two kinds of thinking at once.</p>
+
+      <p><strong>3. Drilled the emergency flows out loud, in order.</strong> Engine failure, engine fire, lost comms. My CFI cares about sequence, not lists — "best glide FIRST" — so I chair-fly these sitting in a kitchen chair, hands moving, saying it out loud. Chair flying feels ridiculous for about ninety seconds and then it just becomes practice.</p>
+
+      <p><strong>4. Turned my mistakes into study topics.</strong> Flight 14 I zeroed in on a mistake that could get me killed during power-on stalls. That went straight to the top of my study list — not because it'll be on the written, but because the written review is a conversation, and my CFI knows exactly what I've been sloppy on. Study your own debriefs.</p>
+
+      <p><strong>5. Self-tested in writing before the real thing.</strong> Answering out loud lets you fool yourself. Writing answers down shows you the gaps.</p>
+
+      <hr />
+
+      <h2>The tools I'm actually using</h2>
+
+      <p><strong>Chair flying + LiveATC.</strong> Free, and the single highest-value combo I've found. I stream my own field's frequencies on <a href="https://www.liveatc.net" target="_blank" rel="noopener noreferrer">LiveATC.net</a> while chair-flying the pattern, and practice my readbacks against real traffic. It's how radio calls went from the scariest part of flying to just another checklist item.</p>
+
+      <figure class="journey-photo-slot my-10">
+        {inlineImage ? (
+          <img src={inlineImage.src} alt={inlineImage.alt} loading="lazy" class="h-full w-full rounded-xl object-cover" />
+        ) : (
+          <div class="flex aspect-[4/3] items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center">
+            <div>
+              <p class="mb-2 font-mono text-xs font-bold uppercase tracking-widest text-slate-500">Inline photo slot</p>
+              <p class="text-sm leading-6 text-slate-600">Chair-flying setup, or Obsidian/notes screen on the iPad.</p>
+            </div>
+          </div>
+        )}
+      </figure>
+
+      <p><strong>Claude as my ATC curveball trainer.</strong> I kept fumbling radio calls whenever the controller said anything I didn't expect — so instead of only rehearsing perfect calls, I practice against curveballs. This is the exact prompt I run in Claude (fill in your own brackets):</p>
+
+      <figure class="prompt-block">
+        <figcaption>
+          <span>ATC curveball trainer</span>
+          <button type="button" data-copy-prompt>Copy</button>
+        </figcaption>
+        <pre><code>{atcPrompt}</code></pre>
+      </figure>
+
+      <p><strong>Claude as my landing-scenario CFI.</strong> The pre-solo review leans hard on "what would you do if…" questions, and this is my rep-builder for exactly those:</p>
+
+      <figure class="prompt-block">
+        <figcaption>
+          <span>Landing-scenario CFI</span>
+          <button type="button" data-copy-prompt>Copy</button>
+        </figcaption>
+        <pre><code>{landingPrompt}</code></pre>
+      </figure>
+
+      <p><strong>Claude as my pre-solo written quizzer.</strong> The newest part of my routine — built around <em>my</em> aircraft and <em>my</em> airport, because two-thirds of the real written is exactly that:</p>
+
+      <figure class="prompt-block">
+        <figcaption>
+          <span>Pre-solo written quizzer</span>
+          <button type="button" data-copy-prompt>Copy</button>
+        </figcaption>
+        <pre><code>{quizPrompt}</code></pre>
+      </figure>
+
+      <p>One habit that makes all three work: give it your real numbers. A quiz about a generic trainer at a generic airport is study theater — the whole point of the pre-solo written is that it's about <em>your</em> plane at <em>your</em> field.</p>
+
+      <p><strong>NotebookLM + Obsidian for capture.</strong> Every post-flight debrief note, every "look that up later" from a lesson goes into Obsidian; NotebookLM lets me question my own notes when I'm reviewing. My logbook tells me what I flew — my notes tell me what I didn't understand yet.</p>
+
+      <p><strong>My CFI.</strong> Obvious, but real: I bring my written self-test answers to lessons and ask which ones are quiz-shallow. The review with your instructor is the actual test — everything above is just so that conversation goes well.</p>
+
+      <hr />
+
+      <h2>What I'd tell someone one flight behind me</h2>
+
+      <p>Don't study for a generic pre-solo written, because you won't take one. Study your POH, your chart, and your school's rules — then use question banks to find the holes. Say the emergency flows out loud until the order is boring. And write your practice answers down, because the gap between "I know that" and "I can produce that" is exactly the gap your CFI is going to find.</p>
+
+      <p>Stage check is Friday. I'll report back.</p>
+
+      <hr />
+
+      <p><em>I'm a student pilot documenting my training in public — not an instructor. Everything here is my study process, not flight instruction. Your CFI and your POH win every disagreement.</em></p>
+
+      <p><em>More from this topic: <a href="/guides/pre-solo-written/">the second-person version of this, with the full checklists</a> · <a href="https://instagram.com/privatepilotnotebook" target="_blank" rel="noopener noreferrer">@privatepilotnotebook</a></em></p>
+    </div>
+  </article>
+
+  <section class="mx-auto max-w-6xl px-4 py-16">
+    <KitCapture
+      id="journey-how-im-studying-pre-solo-newsletter"
+      heading="Follow the journey by email"
+      body="New flights, new tools, no spam."
+      buttonLabel="Subscribe"
+      microcopy="No spam. Unsubscribe anytime."
+      theme="dark"
+      hiddenFields={[
+        { name: 'fields[source_page]', value: '/journey/how-im-studying-pre-solo/', dynamic: 'source_page' },
+        { name: 'fields[tag]', value: 'newsletter' },
+        { name: 'fields[ok_location]', value: 'journey_how_im_studying_pre_solo' },
+        { name: 'fields[utm_source]', dynamic: 'utm_source' },
+        { name: 'fields[utm_medium]', dynamic: 'utm_medium' },
+        { name: 'fields[utm_campaign]', dynamic: 'utm_campaign' },
+      ]}
+    />
+  </section>
+</BaseLayout>
+
+<style>
+  .journey-study-content {
+    color: #334155;
+    font-size: 1.0625rem;
+    line-height: 1.75;
+  }
+
+  .journey-study-content p {
+    margin-bottom: 1.25rem;
+  }
+
+  .journey-study-content h2 {
+    border-bottom: 1px solid #e2e8f0;
+    color: #0f172a;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .journey-study-content strong {
+    color: #0f172a;
+    font-weight: 800;
+  }
+
+  .journey-study-content a {
+    color: #0369a1;
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: #7dd3fc;
+    text-underline-offset: 4px;
+  }
+
+  .journey-study-content hr {
+    border: 0;
+    border-top: 1px solid #e2e8f0;
+    margin: 2.5rem 0;
+  }
+
+  .journey-photo-slot {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .prompt-block {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 0.75rem;
+    box-shadow: 0 18px 35px rgba(15, 23, 42, 0.16);
+    color: #e2e8f0;
+    margin: 1.5rem 0 2rem;
+    overflow: hidden;
+  }
+
+  .prompt-block figcaption {
+    align-items: center;
+    background: #1e293b;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+  }
+
+  .prompt-block figcaption span {
+    color: #cbd5e1;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .prompt-block button {
+    background: #0284c7;
+    border-radius: 0.5rem;
+    color: #ffffff;
+    font-size: 0.8125rem;
+    font-weight: 800;
+    padding: 0.45rem 0.75rem;
+    transition: background-color 0.2s ease;
+  }
+
+  .prompt-block button:hover,
+  .prompt-block button:focus-visible {
+    background: #0ea5e9;
+  }
+
+  .prompt-block pre {
+    font-size: 0.875rem;
+    line-height: 1.65;
+    margin: 0;
+    overflow-x: auto;
+    padding: 1.25rem;
+    white-space: pre-wrap;
+  }
+
+  .prompt-block code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-prompt]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const block = button.closest('.prompt-block');
+      const code = block?.querySelector('code')?.textContent ?? '';
+      const originalLabel = button.textContent ?? 'Copy';
+
+      try {
+        await navigator.clipboard.writeText(code);
+        button.textContent = 'Copied';
+      } catch {
+        button.textContent = 'Copy failed';
+      }
+
+      window.setTimeout(() => {
+        button.textContent = originalLabel;
+      }, 1800);
+    });
+  });
+</script>
