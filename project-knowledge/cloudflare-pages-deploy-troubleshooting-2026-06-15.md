@@ -21,6 +21,12 @@ The repo is connected to Cloudflare Pages auto-deploy through GitHub. GitHub che
 
 Update after reviewing the Cloudflare failed deployment log: `npm run build` succeeds in Cloudflare. The failure happens after the Astro build, when Cloudflare Pages reads the generated `dist/server/wrangler.json` deploy configuration.
 
+## Current Deploy Memory
+
+As of 2026-07-08, pushing to `main` with `git push` is enough to trigger Cloudflare Pages auto-deploy for the live site. Do not run a manual Wrangler deploy for normal site updates. After a push, the new route may return a temporary 404 while Cloudflare builds and publishes; wait a few minutes and recheck the live URL before assuming deployment failed.
+
+Example from 2026-07-08: commit `182f137` added `/tools/28-day-research-tracker/`. The route returned 404 immediately after push, then went live through the automatic Cloudflare Pages deploy without a manual Wrangler deploy.
+
 ## Deployment Timeline
 
 - `77ec2cf` - `Production QA cleanup: sitemap, unused file removal, verified clean`
