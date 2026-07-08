@@ -1,0 +1,28 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+type Guide = CollectionEntry<'guides'>;
+
+interface Props {
+  guides: Guide[];
+}
+
+const { guides } = Astro.props;
+---
+
+{
+  guides.length > 0 ? (
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {guides.map(({ data }) => (
+        <a href={data.href} class="group block bg-slate-50 border border-slate-200 hover:border-sky-300 rounded-2xl p-8 transition shadow-sm hover:shadow-md">
+          <span class={`inline-block ${data.categoryClasses} text-xs font-bold px-3 py-1 rounded-full mb-4`}>{data.category}</span>
+          <h2 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-sky-700 transition">{data.title}</h2>
+          <p class="text-slate-600 mb-6">{data.description}</p>
+          <span class="text-sky-600 font-bold uppercase text-sm tracking-wider">Read Guide &rarr;</span>
+        </a>
+      ))}
+    </div>
+  ) : (
+    <p class="text-slate-600">First guides landing here soon &mdash; the newsletter hears first.</p>
+  )
+}

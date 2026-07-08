@@ -1,0 +1,28 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import GuideCardGrid from '@/components/GuideCardGrid.astro';
+import { getCollection } from 'astro:content';
+
+const guides = (await getCollection('guides', ({ data }) => !data.draft && ['ppl-student', 'both'].includes(data.audience))).sort(
+  (a, b) => a.data.order - b.data.order
+);
+---
+
+<BaseLayout
+  title="Guides for PPL Students | Flight School Friend"
+  description="Guides for the training you're in right now, written one stage ahead of where you are."
+>
+  <section class="max-w-6xl mx-auto px-4 py-20 text-center">
+    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded-full mb-6 tracking-widest uppercase border border-slate-200">
+      PPL Students
+    </span>
+    <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">Guides for PPL Students</h1>
+    <p class="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+      Guides for the training you're in right now &mdash; written one stage ahead of where you are, not from an armchair.
+    </p>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-4 pb-24">
+    <GuideCardGrid guides={guides} />
+  </section>
+</BaseLayout>

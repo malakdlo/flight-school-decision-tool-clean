@@ -20,4 +20,18 @@ const journey = defineCollection({
   }),
 });
 
-export const collections = { journey };
+const guides = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/guides' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    href: z.string(),
+    category: z.string(),
+    categoryClasses: z.string(),
+    audience: z.enum(['researching', 'ppl-student', 'both']),
+    order: z.number(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { journey, guides };

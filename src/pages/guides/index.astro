@@ -1,5 +1,12 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import GuideAudienceLinks from '@/components/GuideAudienceLinks.astro';
+import GuideCardGrid from '@/components/GuideCardGrid.astro';
+import { getCollection } from 'astro:content';
+
+const guides = (await getCollection('guides', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order
+);
 ---
 
 <BaseLayout
@@ -28,38 +35,11 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
   </section>
 
   <section class="max-w-6xl mx-auto px-4 pb-24">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <a href="/guides/flight-school-cost/" class="group block bg-slate-50 border border-slate-200 hover:border-sky-300 rounded-2xl p-8 transition shadow-sm hover:shadow-md">
-        <span class="inline-block bg-sky-100 text-sky-800 text-xs font-bold px-3 py-1 rounded-full mb-4">Cost & Budget</span>
-        <h2 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-sky-700 transition">Flight School Cost Guide</h2>
-        <p class="text-slate-600 mb-6">Understand realistic private pilot training costs, common hidden expenses, and how to estimate your budget before calling schools.</p>
-        <span class="text-sky-600 font-bold uppercase text-sm tracking-wider">Read Guide &rarr;</span>
-      </a>
-      <a href="/guides/part-61-vs-part-141/" class="group block bg-slate-50 border border-slate-200 hover:border-sky-300 rounded-2xl p-8 transition shadow-sm hover:shadow-md">
-        <span class="inline-block bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full mb-4">Training Paths</span>
-        <h2 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-sky-700 transition">Part 61 vs Part 141 Guide</h2>
-        <p class="text-slate-600 mb-6">Compare flexible and structured training paths, including cost, timeline, schedule, and student fit.</p>
-        <span class="text-sky-600 font-bold uppercase text-sm tracking-wider">Read Guide &rarr;</span>
-      </a>
-      <a href="/guides/how-to-choose-a-flight-school/" class="group block bg-slate-50 border border-slate-200 hover:border-sky-300 rounded-2xl p-8 transition shadow-sm hover:shadow-md">
-        <span class="inline-block bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full mb-4">School Selection</span>
-        <h2 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-sky-700 transition">How to Choose a Flight School</h2>
-        <p class="text-slate-600 mb-6">Use a practical checklist to compare schools by instructor fit, aircraft availability, scheduling, pricing transparency, and safety culture.</p>
-        <span class="text-sky-600 font-bold uppercase text-sm tracking-wider">Read Guide &rarr;</span>
-      </a>
-      <a href="/guides/private-pilot-requirements/" class="group block bg-slate-50 border border-slate-200 hover:border-sky-300 rounded-2xl p-8 transition shadow-sm hover:shadow-md">
-        <span class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full mb-4">Requirements</span>
-        <h2 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-sky-700 transition">Private Pilot Requirements Guide</h2>
-        <p class="text-slate-600 mb-6">Understand the main steps, documents, training requirements, tests, and checkride path for private pilot training.</p>
-        <span class="text-sky-600 font-bold uppercase text-sm tracking-wider">Read Guide &rarr;</span>
-      </a>
-      <a href="/guides/pre-solo-written/" class="group block bg-slate-50 border border-slate-200 hover:border-sky-300 rounded-2xl p-8 transition shadow-sm hover:shadow-md">
-        <span class="inline-block bg-sky-100 text-sky-800 text-xs font-bold px-3 py-1 rounded-full mb-4">Solo Prep</span>
-        <h2 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-sky-700 transition">Pre-Solo Written & Oral Review Guide</h2>
-        <p class="text-slate-600 mb-6">Everything to gather before your pre-solo written — and what your CFI is really listening for in the review.</p>
-        <span class="text-sky-600 font-bold uppercase text-sm tracking-wider">Read Guide &rarr;</span>
-      </a>
+    <div class="mb-8">
+      <GuideAudienceLinks />
     </div>
+
+    <GuideCardGrid guides={guides} />
 
     <div class="mt-16 bg-slate-900 text-white rounded-3xl p-10 md:p-16 text-center">
       <h2 class="text-3xl font-bold mb-4">Not sure which guide fits your situation?</h2>
