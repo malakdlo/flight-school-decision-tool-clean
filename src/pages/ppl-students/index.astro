@@ -1,46 +1,31 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import KitCapture from '@/components/KitCapture.astro';
 import StatusBadge from '@/components/StatusBadge.astro';
 ---
 
 <BaseLayout
   title="PPL Student Tools — Flight School Friend"
-  description="Free and upcoming tools for PPL students, including training trackers, guide links, and the flight-by-flight journey."
+  description="Free tools for PPL students, including solo prep resources, training trackers, guide links, and the flight-by-flight journey."
 >
   <section class="mx-auto max-w-6xl px-4 py-20 md:py-28">
     <span class="mb-5 inline-block rounded-full bg-sky-100 px-3 py-1 text-xs font-bold uppercase tracking-widest text-sky-800">PPL Students</span>
     <h1 class="mb-5 max-w-3xl text-4xl font-extrabold tracking-tight text-slate-900 md:text-5xl">Tools for the training you're in right now.</h1>
-    <p class="max-w-2xl text-lg leading-8 text-slate-600">Follow the journey, track progress, and get notified as new PPL student tools come online.</p>
+    <p class="max-w-2xl text-lg leading-8 text-slate-600">Use live solo prep tools, follow the journey, and keep your next training step easier to see.</p>
   </section>
 
   <section class="mx-auto max-w-6xl px-4 pb-24">
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {[
-        ['ATC Comms Trainer', 'Practice common radio calls and flows before you are under headset pressure.', 'atc-comms-trainer'],
-        ['Landing Scenarios Trainer', 'Work through pattern, flare, wind, and go-around decision scenarios.', 'landing-scenarios-trainer'],
-        ['PPL Flight Tracker Sheet', 'Track lessons, hours, maneuvers, solo prep, and checkride readiness.', 'ppl-flight-tracker-sheet'],
-      ].map(([title, body, slug]) => (
-        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <StatusBadge status="coming-soon" />
-          <h2 class="mt-4 mb-2 text-xl font-bold text-slate-900">{title}</h2>
-          <p class="mb-5 text-sm leading-6 text-slate-600">{body}</p>
-          <KitCapture
-            id={`${slug}-waitlist`}
-            heading="Get notified"
-            buttonLabel="Notify me"
-            microcopy="No spam. Unsubscribe anytime."
-            hiddenFields={[
-              { name: 'fields[source_page]', dynamic: 'source_page' },
-              { name: 'fields[tag]', value: 'tool_waitlist' },
-              { name: 'fields[tool_slug]', value: slug },
-              { name: 'fields[utm_source]', dynamic: 'utm_source' },
-              { name: 'fields[utm_medium]', dynamic: 'utm_medium' },
-              { name: 'fields[utm_campaign]', dynamic: 'utm_campaign' },
-            ]}
-          />
-        </div>
-      ))}
+      <a href="/tools/ppl-solo-prep-pack/" class="block rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-sky-300">
+        <StatusBadge status="live" />
+        <h2 class="mt-4 mb-2 text-xl font-bold text-slate-900">PPL Solo — Full Prep Pack</h2>
+        <p class="text-sm leading-6 text-slate-600">The complete solo prep system: tracking sheets, study questions, and guides in one free pack.</p>
+      </a>
+
+      <a href="/tools/ppl-solo-flight-tracker/" class="block rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-sky-300">
+        <StatusBadge status="live" />
+        <h2 class="mt-4 mb-2 text-xl font-bold text-slate-900">PPL Solo — Flight Tracker Sheet</h2>
+        <p class="text-sm leading-6 text-slate-600">Track every §61.87(d) requirement between you and your first solo. Free Google Sheet.</p>
+      </a>
 
       <a href="/guides/private-pilot-requirements/" class="block rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-sky-300">
         <StatusBadge status="live" />

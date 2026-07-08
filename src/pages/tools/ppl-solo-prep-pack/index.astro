@@ -1,0 +1,92 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const title = 'PPL Solo Full Prep Pack | Flight School Friend';
+const description = 'Get the free PPL solo prep pack with tracking sheets, pre-solo study questions, and study guides for your first solo prep.';
+const canonical = 'https://flightschoolfriend.com/tools/ppl-solo-prep-pack/';
+const structuredData = {
+  '@type': 'CreativeWork',
+  '@id': 'https://flightschoolfriend.com/tools/ppl-solo-prep-pack/#pack',
+  name: 'PPL Solo — Full Prep Pack',
+  url: canonical,
+  description,
+  author: { '@id': 'https://flightschoolfriend.com/#person' },
+  isAccessibleForFree: true,
+};
+
+const sheets = [
+  {
+    title: 'PPL Solo — Flight Tracker Sheet',
+    body: 'Use the Dashboard, §61.87(d) tracker, flight lesson log, solo requirements, and topic reference tabs to keep your solo readiness visible.',
+  },
+  {
+    title: 'PPL Solo — Pre-Solo Study Questions',
+    body: 'Use the flight cheat sheet, written study table, and sources & notes tabs to organize your pre-solo written prep.',
+  },
+];
+
+const docs = [
+  {
+    title: 'PPL Solo — Study Guide',
+    body: 'Use the chair flying guide, pre-flight checklists, cheat sheets, and Claude prompts to quiz yourself before you fly.',
+  },
+];
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} structuredData={structuredData}>
+  <section class="mx-auto max-w-5xl px-4 py-16 md:py-24">
+    <div class="grid gap-10 lg:grid-cols-[1fr_380px] lg:items-start">
+      <div>
+        <span class="mb-5 inline-block rounded-full bg-sky-100 px-3 py-1 text-xs font-bold uppercase tracking-widest text-sky-800">Free Solo Prep Pack</span>
+        <h1 class="max-w-3xl text-4xl font-extrabold tracking-tight text-slate-950 md:text-5xl">PPL Solo — Full Prep Pack</h1>
+        <p class="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
+          Get everything for solo prep in one download: the tracking sheets, the study material, and the guides you can use to organize your own first solo prep.
+        </p>
+        <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
+          Instead of scattering your notes across tabs, docs, and memory, you get one page with every link so you can keep the whole system close while you train.
+        </p>
+      </div>
+
+      <aside class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <p class="text-xs font-extrabold uppercase tracking-widest text-sky-700">Get the pack</p>
+        <h2 class="mt-3 text-2xl font-extrabold text-slate-950">Send yourself every link.</h2>
+        <p class="mt-3 text-sm leading-6 text-slate-600">
+          One email, one page with every link. You'll be redirected to your download page the moment you subscribe.
+        </p>
+        <div class="mt-6">
+          <script is:inline async data-uid="0bedfa8ee3" src="https://my-flight-school-friend.kit.com/0bedfa8ee3/index.js"></script>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-5xl px-4 pb-20">
+    <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
+      <h2 class="text-2xl font-extrabold text-slate-950">What's in the pack</h2>
+
+      <div class="mt-8">
+        <h3 class="text-lg font-extrabold text-slate-950">Sheets</h3>
+        <div class="mt-4 grid gap-4 md:grid-cols-2">
+          {sheets.map((sheet) => (
+            <article class="rounded-xl border border-slate-200 bg-slate-50 p-5">
+              <h4 class="font-bold text-slate-950">{sheet.title}</h4>
+              <p class="mt-2 text-sm leading-6 text-slate-600">{sheet.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <div class="mt-8">
+        <h3 class="text-lg font-extrabold text-slate-950">Docs</h3>
+        <div class="mt-4 grid gap-4">
+          {docs.map((doc) => (
+            <article class="rounded-xl border border-slate-200 bg-slate-50 p-5">
+              <h4 class="font-bold text-slate-950">{doc.title}</h4>
+              <p class="mt-2 text-sm leading-6 text-slate-600">{doc.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

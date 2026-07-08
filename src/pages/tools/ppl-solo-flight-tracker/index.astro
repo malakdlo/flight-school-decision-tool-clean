@@ -1,0 +1,81 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const title = 'PPL Solo Flight Tracker Sheet | Flight School Friend';
+const description = 'Get the free Google Sheet that helps you track every PPL pre-solo maneuver, lesson, landing, endorsement, and knowledge item before your first solo.';
+const canonical = 'https://flightschoolfriend.com/tools/ppl-solo-flight-tracker/';
+const structuredData = {
+  '@type': 'CreativeWork',
+  '@id': 'https://flightschoolfriend.com/tools/ppl-solo-flight-tracker/#sheet',
+  name: 'PPL Solo — Flight Tracker Sheet',
+  url: canonical,
+  description,
+  author: { '@id': 'https://flightschoolfriend.com/#person' },
+  isAccessibleForFree: true,
+};
+
+const tabs = [
+  {
+    title: 'Dashboard',
+    body: "See your whole solo picture on one tab: progress, hours, and what's left.",
+  },
+  {
+    title: '§61.87(d) Tracker',
+    body: 'Track every required maneuver from introduced to practiced to solid.',
+  },
+  {
+    title: 'Flight Lesson Log',
+    body: 'Keep a running log of each flight with your own debrief notes.',
+  },
+  {
+    title: 'Solo Requirements',
+    body: 'Keep the non-maneuver items in view: endorsements, pre-solo written, and medical.',
+  },
+  {
+    title: 'Topic Reference',
+    body: 'Know where each requirement lives in the FAR/AIM and your POH.',
+  },
+];
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} structuredData={structuredData}>
+  <section class="mx-auto max-w-5xl px-4 py-16 md:py-24">
+    <div class="grid gap-10 lg:grid-cols-[1fr_380px] lg:items-start">
+      <div>
+        <span class="mb-5 inline-block rounded-full bg-sky-100 px-3 py-1 text-xs font-bold uppercase tracking-widest text-sky-800">Free Google Sheet</span>
+        <h1 class="max-w-3xl text-4xl font-extrabold tracking-tight text-slate-950 md:text-5xl">PPL Solo — Flight Tracker Sheet</h1>
+        <p class="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
+          Between you and your first solo sits a specific list: every §61.87(d) maneuver your CFI has to train and endorse, plus the flights, landings, and knowledge to back it up.
+        </p>
+        <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
+          You should not have to track that list in your head. This free Google Sheet helps you track it on paper, see what is already solid, and know what still needs your CFI's attention.
+        </p>
+      </div>
+
+      <aside class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <p class="text-xs font-extrabold uppercase tracking-widest text-sky-700">Get the sheet</p>
+        <h2 class="mt-3 text-2xl font-extrabold text-slate-950">Send yourself the tracker.</h2>
+        <p class="mt-3 text-sm leading-6 text-slate-600">
+          Drop your email below and you'll be redirected straight to your own copy. Google will prompt you to save it to your Drive.
+        </p>
+        <div class="mt-6">
+          <script is:inline async data-uid="f9cde96a44" src="https://my-flight-school-friend.kit.com/f9cde96a44/index.js"></script>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-5xl px-4 pb-20">
+    <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
+      <h2 class="text-2xl font-extrabold text-slate-950">What's inside</h2>
+      <div class="mt-6 grid gap-4 md:grid-cols-2">
+        {tabs.map((tab) => (
+          <article class="rounded-xl border border-slate-200 bg-slate-50 p-5 last:md:col-span-2">
+            <h3 class="font-bold text-slate-950">{tab.title}</h3>
+            <p class="mt-2 text-sm leading-6 text-slate-600">{tab.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
