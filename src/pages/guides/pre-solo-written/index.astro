@@ -1,0 +1,412 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import KitCapture from '@/components/KitCapture.astro';
+
+const canonical = 'https://flightschoolfriend.com/guides/pre-solo-written/';
+const title = 'The Pre-Solo Written & Oral Review: What to Gather, What to Expect';
+const description = 'What FAR 61.87(b) actually requires, checklists for what to gather from your POH and Chart Supplement, a 26-question practice bank, and what your CFI is listening for in the review.';
+
+const structuredData = [
+  {
+    '@type': 'Article',
+    '@id': `${canonical}#article`,
+    headline: title,
+    description,
+    dateModified: '2026-07-08',
+    author: { '@id': 'https://flightschoolfriend.com/#person' },
+    mainEntityOfPage: canonical,
+  },
+  {
+    '@type': 'BreadcrumbList',
+    '@id': `${canonical}#breadcrumbs`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://flightschoolfriend.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Guides', item: 'https://flightschoolfriend.com/guides/' },
+      { '@type': 'ListItem', position: 3, name: 'Pre-Solo Written', item: canonical },
+    ],
+  },
+];
+
+const checklistSections = [
+  {
+    heading: "From your aircraft's POH/AFM",
+    items: [
+      {
+        title: 'V-speeds, from memory-level familiarity:',
+        body: 'Vso, Vs1, Vr, Vx, Vy, Va (and how it changes with weight), Vfe, Vno, Vne, best glide',
+      },
+      { title: 'Weight and fuel:', body: 'max gross weight, usable fuel (not total), fuel grade' },
+      { title: 'Airspeed indicator markings:', body: 'what each arc means and its boundary speeds' },
+      {
+        title: 'Emergency procedures (Section 3):',
+        body: 'engine failure in flight, engine fire, electrical fire, radio failure - know the flow and order, not just the existence of a checklist',
+      },
+      {
+        title: 'Normal procedures numbers:',
+        body: 'rotation, climb-out, approach speeds by flap setting, demonstrated crosswind component',
+      },
+      { title: 'Limitations section:', body: 'anything placarded, prohibited maneuvers, flap-extension speeds' },
+    ],
+  },
+  {
+    heading: 'From the Chart Supplement (for your home field)',
+    items: [
+      { body: 'Field elevation and traffic pattern altitude' },
+      { body: 'Runway numbers, lengths, and surface' },
+      { body: 'Every frequency you use: ATIS/AWOS, ground, tower or CTAF, approach if applicable' },
+      { body: 'Pattern direction per runway (left standard - is any runway right traffic?)' },
+      { body: 'Hours of tower operation and what the airspace becomes when the tower closes' },
+      { body: 'Any noted restrictions, noise abatement, or local remarks' },
+    ],
+  },
+  {
+    heading: 'From the sectional chart',
+    items: [
+      { body: "Your field's airspace class, its ceiling, and its lateral boundaries" },
+      { body: 'Every airspace within your solo practice area: shelves above you, adjacent fields, the floor of any overlying Class B/C/E' },
+      { body: 'Nearby obstacles and their heights' },
+      { body: 'Where the practice area sits relative to airspace boundaries - the "am I still legal here?" question' },
+    ],
+  },
+  {
+    heading: 'From your flight school / CFI',
+    items: [
+      {
+        body: "The school's solo limitations sheet (wind limits, crosswind limits, visibility/ceiling minimums, fuel minimums - these are usually stricter than the FARs and your CFI will test them)",
+      },
+      { body: 'Local procedures: preferred pattern entries, departure procedures, run-up areas, where solo students may and may not go' },
+      { body: "What your specific solo endorsement will and won't permit" },
+    ],
+  },
+];
+
+const farAimRows = [
+  ['61.87', 'The solo requirements themselves, including the 90-day endorsement'],
+  ['61.89', 'Student pilot limitations - no passengers, visibility minimums, surface reference'],
+  ['91.3', 'PIC authority and emergency deviation - solo, YOU are the PIC'],
+  ['91.103', 'Required preflight action'],
+  ['91.107', 'Belts and harnesses'],
+  ['91.113', 'Right-of-way rules'],
+  ['91.117', 'Speed limits'],
+  ['91.119', 'Minimum safe altitudes'],
+  ['91.123', 'Compliance with ATC instructions'],
+  ['91.125', 'Light gun signals (memorize the table)'],
+  ['91.126-91.131', 'Operations by airspace class - study the class of YOUR field hardest'],
+  ['91.151', 'VFR fuel reserves'],
+  ['91.155', 'VFR weather minimums by airspace'],
+  ['91.203 / 91.9', 'Required documents (ARROW)'],
+  ['91.409', 'Inspections, including the 100-hour rule for aircraft used for hire'],
+  ['AIM 4-3, 6-4-2', 'Pattern operations, transponder emergency codes'],
+];
+
+const testDayChecklists = [
+  {
+    heading: 'Your paperwork',
+    items: [
+      'Student pilot certificate',
+      'Medical certificate (current for your class and age)',
+      'Government-issued photo ID',
+      'Logbook, up to date, with all training entries',
+      'Any endorsements already given (your CFI adds the pre-solo written and 90-day solo endorsements after this process)',
+    ],
+  },
+  {
+    heading: "The aircraft's paperwork (ARROW)",
+    items: [
+      'Airworthiness certificate - visible to passengers and crew',
+      'Registration',
+      'Radio station license (international flights only - but know why)',
+      'Operating limitations - POH/AFM and placards',
+      'Weight and balance data - current for this specific airframe',
+    ],
+  },
+  {
+    heading: 'Yourself (IMSAFE)',
+    items: ['Illness, Medication, Stress, Alcohol, Fatigue, Emotion'],
+  },
+];
+
+const questionGroups = [
+  {
+    heading: 'Regulations',
+    start: 1,
+    questions: [
+      'Who may a student pilot carry as a passenger on a solo flight?',
+      'How long is a solo endorsement valid, and what is it specific to?',
+      'What are the fuel reserve requirements for day VFR? Night?',
+      'What visibility does a student pilot need for solo flight, day and night - and what does "visual reference to the surface" prohibit?',
+      'Two aircraft are converging; two aircraft are on final. Who yields, in each case?',
+      'What documents must be aboard the aircraft, and which inspections must be current for a rental trainer?',
+      'As PIC in an emergency, what may you deviate from, and what might you have to do afterward?',
+      'What are the minimum safe altitudes over congested and non-congested areas?',
+      'Recite the light gun signals - in flight and on the ground.',
+      'What preflight information does 91.103 require for a local flight?',
+    ],
+  },
+  {
+    heading: 'Airspace (answer for YOUR field)',
+    start: 11,
+    questions: [
+      'What class of airspace is your airport in? What are its dimensions, floor to ceiling?',
+      'What must you establish or receive before entering it? What counts as "established two-way communications"?',
+      'What are the VFR weather minimums inside it? In the airspace directly above it? In your practice area?',
+      'What does your airspace become when the tower closes, and how do procedures change?',
+      'What are the emergency transponder codes, and when would you use each?',
+      'Describe the hold-short markings and when you may cross them.',
+    ],
+  },
+  {
+    heading: 'Your aircraft',
+    start: 17,
+    questions: [
+      'Recite every V-speed and what it means operationally - not just the number, but when you fly it.',
+      'What happens to Va as the aircraft gets lighter, and why does that matter on a solo flight?',
+      'What is your usable fuel, and how long can you actually fly with legal reserves?',
+      'What speed do you fly on final, and where does that number come from?',
+      "Walk through the engine-failure flow. Then the engine-fire flow. What's the critical difference?",
+      "What is the demonstrated crosswind component - and what is YOUR school's solo crosswind limit?",
+    ],
+  },
+  {
+    heading: 'Local procedures',
+    start: 23,
+    questions: [
+      "What is the TPA, and what's the pattern direction for each runway?",
+      'What frequencies do you use, in order, from startup to leaving the pattern?',
+      'Where are you allowed to go on your solo, per your endorsement - and what weather ends the flight?',
+      'Lost comms in the pattern at your field: what exactly do you do?',
+    ],
+  },
+];
+
+const cfiSignals = [
+  {
+    title: 'Order, not just content, on emergencies.',
+    body: '"Pitch for best glide" as your third step is a wrong answer even if it\'s on your list. CFIs listen for the flow in sequence, because under stress you\'ll only get the sequence you drilled.',
+  },
+  {
+    title: 'Judgment answers, not recital answers.',
+    body: 'Expect follow-ups like "OK, the reg says 3 miles - would you launch solo in 4 miles of haze?" The right answer usually involves your personal limits and the school\'s limits, not the legal floor.',
+  },
+  {
+    title: 'Your numbers, cold.',
+    body: "Fumbling for Vy or the TPA signals you'll be fumbling for them at 400 feet on climb-out. The aircraft and airport sections should be automatic.",
+  },
+  {
+    title: 'Knowing what you may NOT do.',
+    body: 'The solo endorsement is a permission slip with edges. CFIs want to hear you state the edges unprompted: no passengers, the wind limits, where you can go, what weather turns you around.',
+  },
+  {
+    title: 'Honesty over bluffing.',
+    body: '"I don\'t know, but I\'d look in Section 3 of the POH" is a passing answer. A confident wrong answer is the one that delays solos - it tells your instructor you\'ll improvise instead of verify.',
+  },
+];
+
+const selfChecks = [
+  {
+    title: 'Planning.',
+    body: 'Can you obtain and interpret a weather briefing, read a METAR and TAF without an app decoding it, check NOTAMs for your field, run a weight & balance for you solo (lighter aircraft - different numbers), and pull takeoff/landing distances from the performance charts?',
+  },
+  {
+    title: 'Aircraft.',
+    body: "Can you complete a preflight without the checklist prompting you where to look, verify fuel quantity and grade yourself, run the run-up and know what an abnormal mag drop actually looks like, and name the point at which you'd refuse the airplane?",
+  },
+  {
+    title: 'Flight.',
+    body: 'Can you hold pattern altitude within 100 feet, hold approach speed within 5 knots, fly a stabilized approach and recognize an unstabilized one early, execute a go-around without hesitation, and land consistently enough that your last several were boring?',
+  },
+  {
+    title: 'Communications.',
+    body: 'Can you copy ATIS in one listen, make every standard call from startup to shutdown without a script, read back instructions correctly, and handle the unexpected - "extend downwind," "number two behind the Cherokee," a frequency you didn\'t anticipate?',
+  },
+  {
+    title: 'Decision-making.',
+    body: 'Can you run IMSAFE and PAVE honestly, state your school\'s solo limits and your own personal minimums unprompted, and name the specific conditions under which you would cancel your own solo?',
+  },
+];
+---
+
+<BaseLayout
+  title={`${title} | Flight School Friend`}
+  description={description}
+  canonical={canonical}
+  structuredData={structuredData}
+>
+  <div class="bg-white pb-24">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+      <div class="text-sm text-slate-500 mb-8 font-medium">
+        <a href="/" class="hover:text-sky-600 transition">Home</a> &rarr;
+        <a href="/guides/" class="hover:text-sky-600 transition">Guides</a> &rarr;
+        <span class="text-slate-900">Pre-Solo Written</span>
+      </div>
+
+      <div class="mb-12">
+        <span class="inline-block bg-sky-100 text-sky-800 text-xs font-bold px-3 py-1 rounded-full mb-4">Solo Prep</span>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">{title}</h1>
+        <div class="flex items-center gap-4 text-sm text-slate-500 font-medium mb-8">
+          <span>Reading time: 12 mins</span>
+          <span>&bull;</span>
+          <span>Updated: July 2026</span>
+        </div>
+        <a href="/flight-school-decision-tool/quiz/" class="inline-block px-6 py-3 bg-sky-600 text-white font-bold rounded-lg hover:bg-sky-500 transition">Take the Flight School Decision Tool</a>
+      </div>
+
+      <div class="bg-slate-50 border-l-4 border-sky-500 p-6 rounded-r-2xl mb-12 shadow-sm">
+        <h3 class="font-bold text-slate-900 text-lg mb-2">The Short Answer</h3>
+        <p class="text-slate-700 font-medium">Before your CFI signs you off to fly an airplane alone, FAR 61.87(b) requires a CFI-administered knowledge test and review. Your airport, your aircraft, and your local solo limits are the test.</p>
+      </div>
+
+      <div class="flex flex-col lg:flex-row gap-12 relative items-start">
+        <div class="lg:w-2/3 guide-content">
+          <p><em>A Flight School Friend guide - For student pilots approaching first solo</em></p>
+
+          <p>Before your CFI signs you off to fly an airplane alone, FAR 61.87(b) requires you to pass a pre-solo knowledge test. Unlike the FAA knowledge test, this one is written and administered by <strong>your CFI</strong>, graded by your CFI, and - this is the part people miss - <strong>reviewed with you until every wrong answer is corrected</strong>. That review conversation is effectively a mini oral exam, and it's where your instructor decides whether your knowledge is solo-deep or quiz-shallow.</p>
+
+          <p>This guide walks through what to gather before you sit down to study, checklists to run before test day, the question territory you should expect, and what your CFI is actually listening for during the review.</p>
+
+          <h2 id="regulation">Part 1 - What the regulation actually requires</h2>
+          <p>61.87(b) says the test must cover three subject areas:</p>
+          <ul>
+            <li><strong>Applicable sections of Parts 61 and 91</strong> - the rules that govern you as a student pilot and the flight itself</li>
+            <li><strong>Airspace rules and procedures for the airport where the solo will be performed</strong> - your field, your chart, your frequencies</li>
+            <li><strong>Flight characteristics and operational limitations of the make and model you'll solo in</strong> - your specific aircraft's numbers, not "a trainer" in general</li>
+          </ul>
+          <p>Notice what that means: two of the three sections <strong>cannot be studied from a generic source</strong>. Your airport and your aircraft are the test. That's why the gathering step below matters more than any question bank.</p>
+
+          <h2 id="gather">Part 2 - Gather these before you study anything</h2>
+          {checklistSections.map((section) => (
+            <div class="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+              <h3 class="!mt-0">{section.heading}</h3>
+              <div class="space-y-3">
+                {section.items.map((item) => (
+                  <div class="flex gap-3 rounded-lg bg-white p-3 text-sm leading-6 text-slate-700 ring-1 ring-slate-200">
+                    <span class="mt-1 h-4 w-4 flex-none rounded border-2 border-sky-500 bg-white" aria-hidden="true"></span>
+                    <p class="!mb-0">
+                      {'title' in item && item.title && <strong>{item.title} </strong>}
+                      {item.body}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          <h3>From the FAR/AIM - sections worth reading in full</h3>
+          <div class="overflow-x-auto mb-8">
+            <table class="min-w-full bg-white">
+              <thead>
+                <tr>
+                  <th>Section</th>
+                  <th>Why it's on every pre-solo written</th>
+                </tr>
+              </thead>
+              <tbody>
+                {farAimRows.map(([section, why]) => (
+                  <tr>
+                    <td><strong>{section}</strong></td>
+                    <td>{why}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <h2 id="test-day">Part 3 - Test-day checklists</h2>
+          {testDayChecklists.map((section) => (
+            <div class="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+              <h3 class="!mt-0">{section.heading}</h3>
+              <div class="space-y-3">
+                {section.items.map((item) => (
+                  <div class="flex gap-3 rounded-lg bg-white p-3 text-sm leading-6 text-slate-700 ring-1 ring-slate-200">
+                    <span class="mt-1 h-4 w-4 flex-none rounded border-2 border-sky-500 bg-white" aria-hidden="true"></span>
+                    <p class="!mb-0">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          <h2 id="questions">Part 4 - The question territory</h2>
+          <p>Every school writes its own test, so no bank matches yours exactly. But nearly all pre-solo writtens draw from this territory. Answer these in writing before test day and you'll have covered most of the ground.</p>
+
+          {questionGroups.map((group) => (
+            <section class="mb-8">
+              <h3>{group.heading}</h3>
+              <ol class="list-decimal pl-6 text-slate-700 space-y-2" start={group.start}>
+                {group.questions.map((question) => (
+                  <li>{question}</li>
+                ))}
+              </ol>
+            </section>
+          ))}
+
+          <div class="my-12">
+            <KitCapture
+              id="pre-solo-written-guide"
+              heading="Want the pre-solo written prep checklist?"
+              body="Get the study checklist and review prompts sent to your inbox before you sit down with your CFI."
+              buttonLabel="Send the checklist"
+              microcopy="Free. Unsubscribe anytime."
+              hiddenFields={[
+                { name: 'fields[source_page]', value: '/guides/pre-solo-written/' },
+                { name: 'fields[ok_location]', value: 'pre_solo_written_guide' },
+                { name: 'fields[lead_magnet]', value: 'pre_solo_written_prep' },
+                { name: 'fields[utm_source]', dynamic: 'utm_source' },
+                { name: 'fields[utm_medium]', dynamic: 'utm_medium' },
+                { name: 'fields[utm_campaign]', dynamic: 'utm_campaign' },
+              ]}
+            />
+          </div>
+
+          <h2 id="review">Part 5 - What your CFI is actually looking for in the review</h2>
+          <p>The graded sheet is the entry ticket. The review conversation is the real assessment. Instructors consistently probe for the same things:</p>
+          {cfiSignals.map((signal) => (
+            <p><strong>{signal.title}</strong> {signal.body}</p>
+          ))}
+          <p>The whole point of 61.87(b)'s review requirement is that you walk away with zero known gaps. Treat wrong answers during the review as free instruction, not lost points - your CFI already expects a few, and how you handle correction is itself part of the assessment.</p>
+
+          <h2 id="self-check">Part 6 - The final self-check: can you...?</h2>
+          <p>The written covers what you know. This covers what you can <em>do</em>. Run it honestly the week of your stage check - every "not yet" is a conversation to have with your CFI before solo day, not after.</p>
+          {selfChecks.map((check) => (
+            <p><strong>{check.title}</strong> {check.body}</p>
+          ))}
+          <p>That last one is the quiet test inside every pre-solo review: instructors aren't only checking whether you can fly the airplane alone - they're checking whether you'll make the no-go call alone.</p>
+
+          <div class="mt-12 pt-8 border-t border-slate-200 text-sm text-slate-500">
+            <p><em>This guide is decision-support and study material only — it is not flight instruction, and it doesn't replace your CFI, your POH, or the current FARs. Your pre-solo written is administered and graded by your instructor per 14 CFR 61.87(b). Verify every number against your own aircraft's documentation.</em></p>
+            <p><em>Flight School Friend - a friend for every leg of the flight school journey.</em></p>
+          </div>
+        </div>
+
+        <div class="lg:w-1/3 w-full">
+          <div class="sticky top-24 bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <h3 class="font-bold text-slate-900 mb-4 uppercase tracking-wider text-sm border-b border-slate-200 pb-2">In this guide</h3>
+            <ul class="space-y-3 text-sm text-slate-600 font-medium">
+              <li><a href="#regulation" class="hover:text-sky-600 transition">What 61.87(b) requires</a></li>
+              <li><a href="#gather" class="hover:text-sky-600 transition">What to gather</a></li>
+              <li><a href="#test-day" class="hover:text-sky-600 transition">Test-day checklists</a></li>
+              <li><a href="#questions" class="hover:text-sky-600 transition">26-question practice bank</a></li>
+              <li><a href="#review" class="hover:text-sky-600 transition">What your CFI listens for</a></li>
+              <li><a href="#self-check" class="hover:text-sky-600 transition">Final self-check</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-16 pt-12 border-t border-slate-200">
+        <h2 class="text-2xl font-bold text-slate-900 mb-6">Related Guides</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <a href="/guides/private-pilot-requirements/" class="block bg-white border border-slate-200 hover:border-sky-300 rounded-xl p-6 transition shadow-sm"><h3 class="font-bold text-slate-900 mb-2">Private Pilot Requirements</h3><p class="text-sm text-slate-500">Understand the main steps and FAA requirements.</p></a>
+          <a href="/guides/how-to-choose-a-flight-school/" class="block bg-white border border-slate-200 hover:border-sky-300 rounded-xl p-6 transition shadow-sm"><h3 class="font-bold text-slate-900 mb-2">How to Choose a Flight School</h3><p class="text-sm text-slate-500">Use a practical checklist to compare schools.</p></a>
+          <a href="/guides/flight-school-cost/" class="block bg-white border border-slate-200 hover:border-sky-300 rounded-xl p-6 transition shadow-sm"><h3 class="font-bold text-slate-900 mb-2">Flight School Cost Guide</h3><p class="text-sm text-slate-500">Understand realistic private pilot training costs.</p></a>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 text-white rounded-3xl p-8 md:p-16 text-center mt-16">
+        <h2 class="text-3xl font-bold mb-4">Want a personalized starting path?</h2>
+        <p class="text-slate-400 mb-8 max-w-2xl mx-auto text-lg">Take the Flight School Decision Tool to get a recommended roadmap based on your situation.</p>
+        <a href="/flight-school-decision-tool/quiz/" class="inline-block px-8 py-4 bg-sky-600 hover:bg-sky-500 font-bold rounded-xl text-lg transition shadow-md">Start Here</a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
