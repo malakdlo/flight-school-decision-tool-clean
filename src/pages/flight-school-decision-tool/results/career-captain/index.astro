@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import EmailCaptureForm from '@/components/EmailCaptureForm.astro';
+
+const quizPlanFormId = '9569639';
+const quizPlanFormAction = `https://app.kit.com/forms/${quizPlanFormId}/subscriptions`;
 ---
 
 <BaseLayout
@@ -59,7 +61,39 @@ import EmailCaptureForm from '@/components/EmailCaptureForm.astro';
       </div>
     </div>
 
-    <EmailCaptureForm quizSegment="career_captain" />
+    <section class="mb-16 rounded-2xl border border-slate-200 bg-slate-950 p-1 shadow-xl shadow-slate-200/70">
+      <div class="rounded-[0.875rem] bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.22),transparent_34%),linear-gradient(135deg,#0f172a,#111827)] px-5 py-7 text-white sm:px-8 md:px-10 md:py-9">
+        <div class="mx-auto max-w-2xl text-center">
+          <p class="mb-3 text-xs font-bold uppercase tracking-widest text-sky-200">Free PDF plan</p>
+          <h2 class="text-2xl font-extrabold leading-tight text-white md:text-3xl">Want the full plan?</h2>
+          <p class="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-300 md:text-base">
+            Your quiz result gives you a starting path. The free 28-Day Flight School Decision Plan gives you the whole route: a structured four-week framework for deciding whether flight training is right for you before you spend a dollar on lessons. Drop your email and it's yours instantly (PDF).
+          </p>
+        </div>
+
+        <form class="mx-auto mt-7 grid max-w-2xl gap-3 sm:grid-cols-[1fr_auto]" action={quizPlanFormAction} method="post">
+          <label class="sr-only" for="email-career-captain-plan">Email address</label>
+          <input
+            id="email-career-captain-plan"
+            name="email_address"
+            type="email"
+            autocomplete="email"
+            required
+            placeholder="you@example.com"
+            class="h-12 w-full rounded-lg border border-white/10 bg-white px-4 text-sm font-medium text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-300 focus:ring-4 focus:ring-sky-300/25"
+          />
+          <input type="hidden" name="fields[quiz_segment]" value="career_captain" />
+          <input type="hidden" name="fields[source_page]" value="/flight-school-decision-tool/results/career-captain/" />
+          <input type="hidden" name="fields[lead_magnet]" value="28_day_flight_school_decision_plan" />
+          <button
+            type="submit"
+            class="btn-hover h-12 rounded-lg bg-sky-500 px-5 text-sm font-extrabold text-white transition hover:bg-sky-400 focus:outline-none focus:ring-4 focus:ring-sky-300/30"
+          >
+            Send me the plan
+          </button>
+        </form>
+      </div>
+    </section>
 
     <div class="mb-12 border-t border-slate-200 pt-12">
       <h3 class="text-xl font-bold text-slate-900 mb-6">Related Resources</h3>
