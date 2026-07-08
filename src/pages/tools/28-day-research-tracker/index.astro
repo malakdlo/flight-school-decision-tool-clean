@@ -1,0 +1,106 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const title = '28-Day Flight School Research Tracker | Flight School Friend';
+const description = 'Get the free four-week Google Sheet for researching flight schools, instructors, costs, financing, medical, and time before you start training.';
+const canonical = 'https://flightschoolfriend.com/tools/28-day-research-tracker/';
+const kitFormId = '9659130';
+const kitFormAction = `https://app.kit.com/forms/${kitFormId}/subscriptions`;
+const structuredData = {
+  '@type': 'CreativeWork',
+  '@id': 'https://flightschoolfriend.com/tools/28-day-research-tracker/#tracker',
+  name: '28-Day Flight School Research Tracker',
+  url: canonical,
+  description,
+  author: { '@id': 'https://flightschoolfriend.com/#person' },
+  isAccessibleForFree: true,
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} structuredData={structuredData}>
+  <section class="mx-auto max-w-5xl px-4 py-16 md:py-24">
+    <div class="grid gap-10 lg:grid-cols-[1fr_380px] lg:items-start">
+      <div>
+        <span class="mb-5 inline-block rounded-full bg-sky-100 px-3 py-1 text-xs font-bold uppercase tracking-widest text-sky-800">Free Google Sheet</span>
+        <h1 class="max-w-3xl text-4xl font-extrabold tracking-tight text-slate-950 md:text-5xl">The 28-Day Flight School Research Tracker</h1>
+        <p class="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
+          Deciding whether to start flight training is a research project: schools, instructors, costs, financing, medical, time. This free Google Sheet turns that pile of unknowns into a four-week plan you can actually finish.
+        </p>
+        <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
+          Instead of 40 open browser tabs, you get one sheet that tells you what to research each week, where to log what you find, and how to compare schools side-by-side when you're done. By day 28 you're not "still thinking about it"; you have real local numbers and a decision.
+        </p>
+      </div>
+
+      <aside class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <p class="text-xs font-extrabold uppercase tracking-widest text-sky-700">Get the tracker</p>
+        <h2 class="mt-3 text-2xl font-extrabold text-slate-950">Send yourself the sheet.</h2>
+        <p class="mt-3 text-sm leading-6 text-slate-600">Drop your email and Kit will redirect you straight to your own copy of the sheet. Google will prompt you to save it to your Drive.</p>
+        <form class="mt-6 space-y-3" action={kitFormAction} method="post" data-kit-tracker-form>
+          <label class="sr-only" for="email-28-day-tracker">Email address</label>
+          <input
+            id="email-28-day-tracker"
+            name="email_address"
+            type="email"
+            autocomplete="email"
+            required
+            placeholder="you@example.com"
+            class="h-12 w-full rounded-lg border border-slate-200 bg-white px-4 text-sm font-medium text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-300 focus:ring-4 focus:ring-sky-300/25"
+          />
+          <input type="hidden" name="fields[source_page]" value="/tools/28-day-research-tracker/" data-kit-field="source_page" />
+          <input type="hidden" name="fields[utm_source]" value="" data-kit-field="utm_source" />
+          <input type="hidden" name="fields[utm_medium]" value="" data-kit-field="utm_medium" />
+          <input type="hidden" name="fields[utm_campaign]" value="" data-kit-field="utm_campaign" />
+          <button type="submit" class="btn-hover h-12 w-full rounded-lg bg-sky-600 px-5 text-sm font-extrabold text-white transition hover:bg-sky-500 focus:outline-none focus:ring-4 focus:ring-sky-300/30">
+            Get the tracker
+          </button>
+        </form>
+      </aside>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-5xl px-4 pb-20">
+    <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
+      <h2 class="text-2xl font-extrabold text-slate-950">What's inside</h2>
+      <div class="mt-6 grid gap-4 md:grid-cols-2">
+        <div class="rounded-xl border border-slate-200 bg-slate-50 p-5">
+          <h3 class="font-bold text-slate-950">Start Here: Guided Overview</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Use the sheet without wondering where to begin.</p>
+        </div>
+        <div class="rounded-xl border border-slate-200 bg-slate-50 p-5">
+          <h3 class="font-bold text-slate-950">28-Day Scorecard</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Work through the research in weekly chunks instead of trying to solve everything at once.</p>
+        </div>
+        <div class="rounded-xl border border-slate-200 bg-slate-50 p-5">
+          <h3 class="font-bold text-slate-950">Cost Calculator</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Turn local aircraft, instructor, and training assumptions into a realistic estimate.</p>
+        </div>
+        <div class="rounded-xl border border-slate-200 bg-slate-50 p-5">
+          <h3 class="font-bold text-slate-950">School Comparison Tracker</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Compare schools side-by-side after you collect the details that matter.</p>
+        </div>
+        <div class="rounded-xl border border-slate-200 bg-slate-50 p-5 md:col-span-2">
+          <h3 class="font-bold text-slate-950">CFI Comparison Tracker</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Keep notes on instructor fit, communication, availability, and teaching style.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-kit-tracker-form]').forEach((form) => {
+    form.addEventListener('submit', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+
+      form.querySelector<HTMLInputElement>('[data-kit-field="source_page"]')?.setAttribute('value', window.location.pathname);
+      form.querySelector<HTMLInputElement>('[data-kit-field="utm_source"]')?.setAttribute('value', urlParams.get('utm_source') || '');
+      form.querySelector<HTMLInputElement>('[data-kit-field="utm_medium"]')?.setAttribute('value', urlParams.get('utm_medium') || '');
+      form.querySelector<HTMLInputElement>('[data-kit-field="utm_campaign"]')?.setAttribute('value', urlParams.get('utm_campaign') || '');
+
+      window.dataLayer?.push({
+        event: 'fsf_kit_capture_submit',
+        captureId: '28-day-research-tracker',
+      });
+    });
+  });
+</script>

@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import KitCapture from '@/components/KitCapture.astro';
 import StatusBadge from '@/components/StatusBadge.astro';
 ---
 
@@ -28,49 +27,17 @@ import StatusBadge from '@/components/StatusBadge.astro';
         <p class="text-sm leading-6 text-slate-600">Estimate low, realistic, and high training cost ranges using local aircraft and instructor rates.</p>
       </a>
 
-      <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <StatusBadge status="live" />
-        <h2 class="mt-4 mb-2 text-xl font-bold text-slate-900">28-Day Decision Program</h2>
-        <p class="mb-5 text-sm leading-6 text-slate-600">Get the free day-by-day framework for deciding whether flight training is right for you.</p>
-        <KitCapture
-          id="research-28-day-program"
-          heading="Get the 28-day program"
-          buttonLabel="Send it"
-          microcopy="Free. Unsubscribe anytime."
-          hiddenFields={[
-            { name: 'fields[source_page]', dynamic: 'source_page' },
-            { name: 'fields[utm_source]', dynamic: 'utm_source' },
-            { name: 'fields[utm_medium]', dynamic: 'utm_medium' },
-            { name: 'fields[utm_campaign]', dynamic: 'utm_campaign' },
-          ]}
-        />
-      </div>
-
       <a href="/guides/" class="block rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-sky-300">
         <StatusBadge status="live" />
         <h2 class="mt-4 mb-2 text-xl font-bold text-slate-900">Flight School Research Guides</h2>
         <p class="text-sm leading-6 text-slate-600">Read practical guides on cost, Part 61 vs Part 141, school fit, and private pilot requirements.</p>
       </a>
 
-      <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <StatusBadge status="coming-soon" />
-        <h2 class="mt-4 mb-2 text-xl font-bold text-slate-900">Research Tracker Sheet</h2>
-        <p class="mb-5 text-sm leading-6 text-slate-600">A simple sheet for comparing flight schools, rates, questions, and next steps.</p>
-        <KitCapture
-          id="research-tracker-waitlist"
-          heading="Get notified"
-          buttonLabel="Notify me"
-          microcopy="No spam. Unsubscribe anytime."
-          hiddenFields={[
-            { name: 'fields[source_page]', dynamic: 'source_page' },
-            { name: 'fields[tag]', value: 'tool_waitlist' },
-            { name: 'fields[tool_slug]', value: 'research-tracker-sheet' },
-            { name: 'fields[utm_source]', dynamic: 'utm_source' },
-            { name: 'fields[utm_medium]', dynamic: 'utm_medium' },
-            { name: 'fields[utm_campaign]', dynamic: 'utm_campaign' },
-          ]}
-        />
-      </div>
+      <a href="/tools/28-day-research-tracker/" class="block rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-sky-300">
+        <StatusBadge status="live" />
+        <h2 class="mt-4 mb-2 text-xl font-bold text-slate-900">28-Day Research Tracker</h2>
+        <p class="text-sm leading-6 text-slate-600">A four-week Google Sheet that turns "should I do this?" into a researched decision. Free.</p>
+      </a>
     </div>
   </section>
 </BaseLayout>
