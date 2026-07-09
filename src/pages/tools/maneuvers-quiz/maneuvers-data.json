@@ -1,0 +1,2115 @@
+{
+  "_meta": {
+    "source": "Private_Pilot_Maneuver_Guide_Extracted.xlsx (Malak-verified extraction of physical card set)",
+    "generated": "2026-07-09",
+    "rule": "CONTENT IS LOCKED. Do not author, edit, reword, or correct any objective, step label, or value. Structural rendering only. Content fixes happen in this file, by Malak.",
+    "disclaimer_note": "Study aid only - always follow your school's procedures, your POH, and your instructor.",
+    "maneuver_count": 31,
+    "step_count": 280,
+    "structured_questions": "One per maneuver, DRAFTED BY CLAUDE from the locked step data. Malak must review each: fix wording/values, then set reviewed: true. Codex must not author, edit, or add questions."
+  },
+  "categories": [
+    "Ground Operations",
+    "Basic Flight",
+    "Slow Flight & Stalls",
+    "Ground Reference",
+    "Takeoffs",
+    "Traffic Pattern / Landings",
+    "Emergency / Navigation"
+  ],
+  "maneuvers": [
+    {
+      "id": "taxiing",
+      "page": 1,
+      "category": "Ground Operations",
+      "name": "Taxiing",
+      "objective": "To safely and accurately control the airplane during all ground operations.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Engine",
+          "value": "Start"
+        },
+        {
+          "n": 2,
+          "label": "Clearance",
+          "value": "Obtain"
+        },
+        {
+          "n": 3,
+          "label": "Power",
+          "value": "Minimum Required"
+        },
+        {
+          "n": 4,
+          "label": "Brake Check",
+          "value": "Perform"
+        },
+        {
+          "n": 5,
+          "label": "Taxi Check",
+          "value": "Perform"
+        },
+        {
+          "n": 6,
+          "label": "Flight Controls",
+          "value": "Position for Effects of Wind"
+        },
+        {
+          "n": 7,
+          "label": "Directional Control",
+          "value": "Maintain Centerline with Nosewheel Steering"
+        },
+        {
+          "n": 8,
+          "label": "Brake Usage",
+          "value": "Minimal with Power at Idle"
+        },
+        {
+          "n": 9,
+          "label": "Stop",
+          "value": "Power to Idle, Equal Pressure on Brakes"
+        }
+      ],
+      "structured": {
+        "type": "missing-step",
+        "removedIndex": 5,
+        "prompt": "One step is missing from this flow. Which one?",
+        "decoys": [
+          "Flaps — Set to 10°",
+          "Transponder — Squawk Altitude",
+          "Mixture — Full Rich"
+        ],
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "straight-and-level",
+      "page": 2,
+      "category": "Basic Flight",
+      "name": "Straight and Level",
+      "objective": "To maintain a constant altitude, heading, and airspeed during coordinated flight.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Power",
+          "value": "2300 RPM"
+        },
+        {
+          "n": 2,
+          "label": "Attitude",
+          "value": "Establish and Maintain with Primary Flight Controls"
+        },
+        {
+          "n": 3,
+          "label": "Trim",
+          "value": "At Desired Airspeed, to Relieve Control Pressure"
+        }
+      ],
+      "structured": {
+        "type": "sequence",
+        "prompt": "Put these steps in order.",
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "climb",
+      "page": 3,
+      "category": "Basic Flight",
+      "name": "Climb",
+      "objective": "To maintain the flight attitude, airspeed, and coordination for best altitude gain with climb power.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Power",
+          "value": "Full"
+        },
+        {
+          "n": 2,
+          "label": "Attitude",
+          "value": "Establish and Maintain at Vx, Vy, or Cruise Climb with Primary Flight Controls"
+        },
+        {
+          "n": 3,
+          "label": "Trim",
+          "value": "At Desired Airspeed, to Relieve Control Pressure"
+        },
+        {
+          "n": 4,
+          "label": "Recover",
+          "value": "Level Off at Assigned Altitude with Coordinated Use of Flight Controls"
+        }
+      ],
+      "structured": {
+        "type": "sequence",
+        "prompt": "Put these steps in order.",
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "descent",
+      "page": 4,
+      "category": "Basic Flight",
+      "name": "Descent",
+      "objective": "To maintain the flight attitude, airspeed, and coordination for desired descent.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Power",
+          "value": "Carburetor Heat On; 1700 RPM"
+        },
+        {
+          "n": 2,
+          "label": "Attitude",
+          "value": "Establish and Maintain for Descent with Primary Flight Controls"
+        },
+        {
+          "n": 3,
+          "label": "Trim",
+          "value": "At Desired Airspeed, to Relieve Control Pressure"
+        },
+        {
+          "n": 4,
+          "label": "Recover",
+          "value": "Level Off at Assigned Altitude with Coordinated Use of Flight Controls"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Power setup for a descent?",
+        "options": [
+          "Carburetor Heat On; 1700 RPM",
+          "Carburetor Heat Off; 1700 RPM",
+          "Carburetor Heat On; 1500 RPM",
+          "Throttle Idle; Carburetor Heat On"
+        ],
+        "correctIndex": 0,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "level-off",
+      "page": 5,
+      "category": "Basic Flight",
+      "name": "Level Off",
+      "objective": "To return the airplane to straight and level coordinated flight following a climb or descent.",
+      "steps": [
+        {
+          "n": 1,
+          "phase": "Climb",
+          "label": "Attitude",
+          "value": "Establish and Maintain Straight and Level Flight with Primary Flight Controls"
+        },
+        {
+          "n": 1,
+          "phase": "Descent",
+          "label": "Power",
+          "value": "Carburetor Heat Off; 2300 RPM"
+        },
+        {
+          "n": 2,
+          "phase": "Climb",
+          "label": "Power",
+          "value": "2300 RPM at Desired Airspeed"
+        },
+        {
+          "n": 2,
+          "phase": "Descent",
+          "label": "Attitude",
+          "value": "Establish and Maintain with Primary Flight Controls"
+        },
+        {
+          "n": 3,
+          "phase": "Climb",
+          "label": "Trim",
+          "value": "To Relieve Control Pressure"
+        },
+        {
+          "n": 3,
+          "phase": "Descent",
+          "label": "Trim",
+          "value": "To Relieve Control Pressure"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Leveling off from a descent — power?",
+        "options": [
+          "Carburetor Heat Off; 2300 RPM",
+          "Carburetor Heat On; 2300 RPM",
+          "Carburetor Heat Off; 1700 RPM",
+          "Full Power"
+        ],
+        "correctIndex": 0,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "level-turn",
+      "page": 6,
+      "category": "Basic Flight",
+      "name": "Level Turn",
+      "objective": "To maintain altitude, coordination, and airspeed while holding a constant bank angle in either direction.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Power",
+          "value": "2300 RPM"
+        },
+        {
+          "n": 2,
+          "label": "Attitude",
+          "value": "Establish and Maintain with Primary Flight Controls"
+        },
+        {
+          "n": 3,
+          "label": "Recover",
+          "value": "Rollout on Assigned Heading with Coordinated Use of Flight Controls"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Power for a level turn?",
+        "options": [
+          "2100 RPM",
+          "2500 RPM",
+          "2300 RPM",
+          "Full"
+        ],
+        "correctIndex": 2,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "climbing-turn",
+      "page": 7,
+      "category": "Basic Flight",
+      "name": "Climbing Turn",
+      "objective": "To maintain the flight attitude for a coordinated turn in climbing flight.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Power",
+          "value": "Full"
+        },
+        {
+          "n": 2,
+          "label": "Attitude",
+          "value": "Establish and Maintain with Primary Flight Controls"
+        },
+        {
+          "n": 3,
+          "label": "Trim",
+          "value": "At Desired Airspeed, to Relieve Control Pressure"
+        },
+        {
+          "n": 4,
+          "label": "Recover",
+          "value": "On Assigned Heading and Altitude with Coordinated Use of Flight Controls"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Power for a climbing turn?",
+        "options": [
+          "2300 RPM",
+          "Full",
+          "2500 RPM",
+          "1700 RPM"
+        ],
+        "correctIndex": 1,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "descending-turn",
+      "page": 8,
+      "category": "Basic Flight",
+      "name": "Descending Turn",
+      "objective": "To maintain the flight attitude for a coordinated turn in descending flight.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Power",
+          "value": "Carburetor Heat On; 1700 RPM"
+        },
+        {
+          "n": 2,
+          "label": "Attitude",
+          "value": "Establish and Maintain with Primary Flight Controls"
+        },
+        {
+          "n": 3,
+          "label": "Trim",
+          "value": "At Desired Airspeed, to Relieve Control Pressure"
+        },
+        {
+          "n": 4,
+          "label": "Recover",
+          "value": "On Assigned Heading and Altitude with Coordinated Use of Flight Controls"
+        }
+      ],
+      "structured": {
+        "type": "missing-step",
+        "removedIndex": 0,
+        "prompt": "One step is missing from this flow. Which one?",
+        "decoys": [
+          "Power — Full",
+          "Power — Carburetor Heat Off; 2300 RPM",
+          "Power — Throttle Idle"
+        ],
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "slow-flight-clean",
+      "page": 9,
+      "category": "Slow Flight & Stalls",
+      "name": "Slow Flight (Clean)",
+      "objective": "To establish, maintain, and maneuver the airplane while coordinated at airspeeds and configurations required for takeoffs, landings, and go-arounds.",
+      "steps": [
+        {
+          "n": 1,
+          "phase": "Entry",
+          "label": "HASELL/HELL",
+          "value": "Complete"
+        },
+        {
+          "n": 2,
+          "label": "Power",
+          "value": "Carburetor Heat On; 1500 RPM"
+        },
+        {
+          "n": 3,
+          "label": "Pitch",
+          "value": "To Maintain Altitude Until 55 Knots"
+        },
+        {
+          "n": 4,
+          "label": "Pitch",
+          "value": "For 55 Knots"
+        },
+        {
+          "n": 5,
+          "phase": "Maneuver",
+          "label": "Power",
+          "value": "For Altitude (= 2000 RPM)"
+        },
+        {
+          "n": 6,
+          "label": "Maneuver",
+          "value": "Two 90° Coordinated Turns at 10° Bank"
+        },
+        {
+          "n": 7,
+          "phase": "Recover",
+          "label": "Power",
+          "value": "Mixture Rich; Throttle Full; Carburetor Heat Off"
+        },
+        {
+          "n": 8,
+          "label": "Attitude",
+          "value": "Maintain Altitude, Heading, and Coordination"
+        },
+        {
+          "n": 9,
+          "label": "Configuration",
+          "value": "67 Knots Verify Flaps 0°"
+        },
+        {
+          "n": 10,
+          "label": "Straight and Level",
+          "value": "Establish"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Slow flight (clean) — pitch to maintain altitude until what speed?",
+        "options": [
+          "45 Knots",
+          "55 Knots",
+          "50 Knots",
+          "60 Knots"
+        ],
+        "correctIndex": 1,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "slow-flight-dirty",
+      "page": 10,
+      "category": "Slow Flight & Stalls",
+      "name": "Slow Flight (Dirty)",
+      "objective": "To establish, maintain, and maneuver the airplane while coordinated at airspeeds and configurations required for takeoffs, landings, and go-arounds.",
+      "steps": [
+        {
+          "n": 1,
+          "phase": "Entry",
+          "label": "HASELL/HELL",
+          "value": "Complete"
+        },
+        {
+          "n": 2,
+          "label": "Power",
+          "value": "Carburetor Heat On; 1500 RPM"
+        },
+        {
+          "n": 3,
+          "label": "Pitch",
+          "value": "To Maintain Altitude Until 45 Knots"
+        },
+        {
+          "n": 4,
+          "label": "Configuration",
+          "value": "Verify Below Vfe; Add Full Flaps in 10° Increments"
+        },
+        {
+          "n": 5,
+          "label": "Pitch",
+          "value": "For 45 Knots"
+        },
+        {
+          "n": 6,
+          "phase": "Maneuver",
+          "label": "Power",
+          "value": "For Altitude (= 2200 RPM)"
+        },
+        {
+          "n": 7,
+          "label": "Maneuver",
+          "value": "Two 90° Coordinated Turns at 10° Bank"
+        },
+        {
+          "n": 8,
+          "phase": "Recover",
+          "label": "Power",
+          "value": "Mixture Rich; Throttle Full; Carburetor Heat Off"
+        },
+        {
+          "n": 9,
+          "label": "Attitude",
+          "value": "Maintain Altitude, Heading, and Coordination"
+        },
+        {
+          "n": 10,
+          "label": "Configuration",
+          "value": "Flaps 20° Immediately; At 55 Knots Flaps 10°; At 67 Knots Flaps 0°"
+        },
+        {
+          "n": 11,
+          "label": "Straight and Level",
+          "value": "Establish"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Flap retraction schedule on slow flight (dirty) recovery?",
+        "options": [
+          "Flaps 0° Immediately",
+          "Flaps 20° Immediately; At 55 Knots Flaps 10°; At 67 Knots Flaps 0°",
+          "Flaps 10° Immediately; At 45 Knots Flaps 0°",
+          "Hold Full Flaps Until 67 Knots, Then Flaps 0°"
+        ],
+        "correctIndex": 1,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "power-off-stall",
+      "page": 11,
+      "category": "Slow Flight & Stalls",
+      "name": "Power-Off Stall",
+      "objective": "To familiarize the pilot with the conditions that produce stalls during landing, to assist in recognizing an approaching stall, and to develop the habit of taking prompt and corrective action for recovery.",
+      "steps": [
+        {
+          "n": 1,
+          "phase": "Entry",
+          "label": "HASELL/HELL",
+          "value": "Complete"
+        },
+        {
+          "n": 2,
+          "label": "Power",
+          "value": "Carburetor Heat On; 1500 RPM"
+        },
+        {
+          "n": 3,
+          "label": "Pitch",
+          "value": "To Maintain Altitude"
+        },
+        {
+          "n": 4,
+          "label": "Configuration",
+          "value": "Verify Below Vfe; Add Full Flaps in 10° Increments"
+        },
+        {
+          "n": 5,
+          "label": "Power",
+          "value": "At 60 Knots, Idle"
+        },
+        {
+          "n": 6,
+          "label": "Pitch",
+          "value": "To Maintain Altitude"
+        },
+        {
+          "n": 7,
+          "phase": "Recover",
+          "label": "Pitch",
+          "value": "Reduce Angle of Attack"
+        },
+        {
+          "n": 8,
+          "label": "Power",
+          "value": "Mixture Rich; Throttle Full; Carburetor Heat Off"
+        },
+        {
+          "n": 9,
+          "label": "Attitude",
+          "value": "Smoothly Establish for Vy"
+        },
+        {
+          "n": 10,
+          "label": "Configuration",
+          "value": "Flaps 20° Immediately; At 55 Knots and Positive Rate Flaps 10°; At 67 Knots and Positive Rate Flaps 0°"
+        },
+        {
+          "n": 11,
+          "label": "Altitude",
+          "value": "Climb to Entry Altitude"
+        },
+        {
+          "n": 12,
+          "label": "Straight and Level",
+          "value": "Establish"
+        }
+      ],
+      "structured": {
+        "type": "spot-error",
+        "shownOrder": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          7,
+          6,
+          8,
+          9,
+          10,
+          11
+        ],
+        "wrongPositionIndexInShown": 6,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "power-on-stall",
+      "page": 12,
+      "category": "Slow Flight & Stalls",
+      "name": "Power-On Stall",
+      "objective": "To familiarize the pilot with the conditions that produce stalls during takeoff, to assist in recognizing an approaching stall, and to develop the habit of taking prompt and corrective action for recovery.",
+      "steps": [
+        {
+          "n": 1,
+          "phase": "Entry",
+          "label": "HASELL/HELL",
+          "value": "Complete"
+        },
+        {
+          "n": 2,
+          "label": "Power",
+          "value": "Carburetor Heat On; 1500 RPM"
+        },
+        {
+          "n": 3,
+          "label": "Pitch",
+          "value": "To Maintain Altitude"
+        },
+        {
+          "n": 4,
+          "label": "Power",
+          "value": "At 60 Knots, 2100 RPM"
+        },
+        {
+          "n": 5,
+          "label": "Pitch",
+          "value": "Slight Nose High Attitude and Maintain Until Stall Occurs"
+        },
+        {
+          "n": 6,
+          "label": "Coordination",
+          "value": "Maintain"
+        },
+        {
+          "n": 7,
+          "phase": "Recover",
+          "label": "Pitch",
+          "value": "Reduce Angle of Attack"
+        },
+        {
+          "n": 8,
+          "label": "Power",
+          "value": "Mixture Rich; Throttle Full; Carburetor Heat Off"
+        },
+        {
+          "n": 9,
+          "label": "Attitude",
+          "value": "Smoothly Establish for Vy"
+        },
+        {
+          "n": 10,
+          "label": "Configuration",
+          "value": "Verify Positive Rate; 67 Knots Verify Flaps 0°"
+        },
+        {
+          "n": 11,
+          "label": "Altitude",
+          "value": "Climb to Entry Altitude"
+        },
+        {
+          "n": 12,
+          "label": "Straight and Level",
+          "value": "Establish"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Power-on stall entry — power at 60 knots?",
+        "options": [
+          "2100 RPM",
+          "1500 RPM",
+          "1900 RPM",
+          "2300 RPM"
+        ],
+        "correctIndex": 0,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "steep-turns",
+      "page": 13,
+      "category": "Basic Flight",
+      "name": "Steep Turns",
+      "objective": "To complete two 360° turns with proper control technique using 45° of bank while maintaining altitude, coordination, orientation, and division of attention.",
+      "steps": [
+        {
+          "n": 1,
+          "phase": "Entry",
+          "label": "HASELL/HELL",
+          "value": "Complete"
+        },
+        {
+          "n": 2,
+          "label": "Heading",
+          "value": "Cardinal/Section Line"
+        },
+        {
+          "n": 3,
+          "label": "Power",
+          "value": "2300 RPM"
+        },
+        {
+          "n": 4,
+          "label": "Airspeed",
+          "value": "Below Va"
+        },
+        {
+          "n": 5,
+          "label": "Attitude",
+          "value": "Level Left Turn, 45° Bank"
+        },
+        {
+          "n": 6,
+          "phase": "Through 30° Bank",
+          "label": "Power",
+          "value": "Increase to Maintain Airspeed"
+        },
+        {
+          "n": 7,
+          "label": "Attitude",
+          "value": "Increase Back Pressure to Maintain Altitude"
+        },
+        {
+          "n": 8,
+          "label": "Coordination",
+          "value": "Maintain"
+        },
+        {
+          "n": 9,
+          "phase": "Rollout",
+          "label": "Attitude",
+          "value": "Reduce Bank 20° Before Target Heading; Reduce Back Pressure Through 30° Bank"
+        },
+        {
+          "n": 10,
+          "label": "Power",
+          "value": "Decrease to Maintain Airspeed"
+        },
+        {
+          "n": 11,
+          "label": "Coordination",
+          "value": "Maintain"
+        },
+        {
+          "n": 12,
+          "label": "Straight and Level",
+          "value": "Establish"
+        }
+      ],
+      "category_source": "Performance / Advanced",
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Steep turns — when do you begin the rollout?",
+        "options": [
+          "Reduce Bank 20° Before Target Heading",
+          "Reduce Bank 10° Before Target Heading",
+          "Reduce Bank 30° Before Target Heading",
+          "On the Target Heading"
+        ],
+        "correctIndex": 0,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "rectangular-course",
+      "page": 14,
+      "category": "Ground Reference",
+      "name": "Rectangular Course",
+      "objective": "To maintain a rectangular course while correcting for wind and maintaining altitude. Attention should be divided between airplane control, ground track, and maintaining coordinated flight.",
+      "steps": [
+        {
+          "n": 1,
+          "phase": "Entry",
+          "label": "HASELL/HELL",
+          "value": "Complete"
+        },
+        {
+          "n": 2,
+          "label": "Power",
+          "value": "2300 RPM"
+        },
+        {
+          "n": 3,
+          "label": "Altitude",
+          "value": "1000' AGL"
+        },
+        {
+          "n": 4,
+          "label": "Field",
+          "value": "1 Mile x 1/2 Mile; Oriented With the Wind; Safe for Landing"
+        },
+        {
+          "n": 5,
+          "label": "Entry",
+          "value": "Midfield 45° to Downwind; Establish Downwind 1/4 Mile Away"
+        },
+        {
+          "n": 6,
+          "phase": "Maneuver",
+          "label": "Wind Correction",
+          "value": "As Needed"
+        },
+        {
+          "n": 7,
+          "label": "Turn",
+          "value": "Abeam Field Boundary"
+        },
+        {
+          "n": 8,
+          "label": "Rollout",
+          "value": "Abeam Field Boundary, 1/4 Mile Away; With Wind Correction as Needed"
+        },
+        {
+          "n": 9,
+          "label": "Continue",
+          "value": "7 & 8 Until Two Circuits Complete"
+        },
+        {
+          "n": 10,
+          "phase": "Exit",
+          "label": "Exit",
+          "value": "Downwind"
+        },
+        {
+          "n": 11,
+          "label": "Climb",
+          "value": "Appropriate and Safe VFR Altitude"
+        },
+        {
+          "n": 12,
+          "label": "Straight and Level",
+          "value": "Establish"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Rectangular course — how do you enter?",
+        "options": [
+          "Upwind, Perpendicular to the Field",
+          "On a Base-Equivalent Leg, 1/2 Mile Away",
+          "Directly Over the Field, Then Circle",
+          "Midfield 45° to Downwind; Establish Downwind 1/4 Mile Away"
+        ],
+        "correctIndex": 3,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "turns-around-a-point",
+      "page": 15,
+      "category": "Ground Reference",
+      "name": "Turns Around a Point",
+      "objective": "To maintain a circular ground track with a uniform radius from a point while correcting for wind drift and maintaining altitude. Attention should be divided between airplane control, ground track, and maintaining coordinated flight.",
+      "steps": [
+        {
+          "n": 1,
+          "phase": "Entry",
+          "label": "HASELL/HELL",
+          "value": "Complete"
+        },
+        {
+          "n": 2,
+          "label": "Power",
+          "value": "2300 RPM"
+        },
+        {
+          "n": 3,
+          "label": "Altitude",
+          "value": "1000' AGL"
+        },
+        {
+          "n": 4,
+          "label": "Point",
+          "value": "Easily Identifiable, Safe Landing Assured"
+        },
+        {
+          "n": 5,
+          "label": "Entry",
+          "value": "Downwind 1/4 Mile to Right of Point"
+        },
+        {
+          "n": 6,
+          "phase": "Maneuver",
+          "label": "Turn",
+          "value": "Abeam Point"
+        },
+        {
+          "n": 7,
+          "label": "Bank",
+          "value": "Adjust to Maintain Constant Radius; 45° Maximum Bank"
+        },
+        {
+          "n": 8,
+          "label": "Continue",
+          "value": "Until 2 circuits are Complete"
+        },
+        {
+          "n": 9,
+          "phase": "Exit",
+          "label": "Exit",
+          "value": "Downwind"
+        },
+        {
+          "n": 10,
+          "label": "Climb",
+          "value": "Appropriate and Safe VFR Altitude"
+        },
+        {
+          "n": 11,
+          "label": "Straight and Level",
+          "value": "Establish"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Turns around a point — how do you enter?",
+        "options": [
+          "Downwind 1/4 Mile to Right of Point",
+          "Upwind 1/4 Mile to Left of Point",
+          "Downwind 1 Mile to Right of Point",
+          "Directly Over the Point"
+        ],
+        "correctIndex": 0,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "s-turns-across-a-road",
+      "page": 16,
+      "category": "Ground Reference",
+      "name": "S-Turns Across a Road",
+      "objective": "To maintain a ground track with ground references while correcting for wind drift and maintaining altitude. Attention should be divided between airplane control, ground track, and maintaining coordinated flight.",
+      "steps": [
+        {
+          "n": 1,
+          "phase": "Entry",
+          "label": "HASELL/HELL",
+          "value": "Complete"
+        },
+        {
+          "n": 2,
+          "label": "Power",
+          "value": "2300 RPM"
+        },
+        {
+          "n": 3,
+          "label": "Altitude",
+          "value": "1000' AGL"
+        },
+        {
+          "n": 4,
+          "label": "Road",
+          "value": "At Least 2 Miles, Perpendicular to Wind"
+        },
+        {
+          "n": 5,
+          "label": "Entry",
+          "value": "Downwind, First Turn is to Left"
+        },
+        {
+          "n": 6,
+          "phase": "Maneuver",
+          "label": "Turn",
+          "value": "Over Road"
+        },
+        {
+          "n": 7,
+          "label": "Bank",
+          "value": "Adjust to Maintain 1/4 Mile Semicircle; 45° Maximum Bank"
+        },
+        {
+          "n": 8,
+          "label": "Wings Level",
+          "value": "Over Road and Perpendicular"
+        },
+        {
+          "n": 9,
+          "label": "Turn",
+          "value": "Opposite Direction"
+        },
+        {
+          "n": 10,
+          "label": "Continue",
+          "value": "7 & 8 Until \"S\" is Complete"
+        },
+        {
+          "n": 11,
+          "phase": "Exit",
+          "label": "Exit",
+          "value": "Downwind"
+        },
+        {
+          "n": 12,
+          "label": "Climb",
+          "value": "Appropriate and Safe VFR Altitude"
+        },
+        {
+          "n": 13,
+          "label": "Straight and Level",
+          "value": "Establish"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "S-turns — what road do you pick?",
+        "options": [
+          "At Least 2 Miles, Perpendicular to Wind",
+          "At Least 2 Miles, Parallel to Wind",
+          "At Least 1 Mile, Any Orientation",
+          "Any Road With Light Traffic"
+        ],
+        "correctIndex": 0,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "normal-takeoff",
+      "page": 17,
+      "category": "Takeoffs",
+      "name": "Normal Takeoff",
+      "objective": "To make a smooth and coordinated transition from the runway to climbing flight.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Run-Up",
+          "value": "Complete"
+        },
+        {
+          "n": 2,
+          "label": "Clearance",
+          "value": "Obtain"
+        },
+        {
+          "n": 3,
+          "label": "Throttle",
+          "value": "Full"
+        },
+        {
+          "n": 4,
+          "label": "Engine Instruments",
+          "value": "Check"
+        },
+        {
+          "n": 5,
+          "label": "Airspeed",
+          "value": "Alive"
+        },
+        {
+          "n": 6,
+          "label": "Rotate",
+          "value": "50 Knots"
+        },
+        {
+          "n": 7,
+          "label": "Attitude",
+          "value": "Vy"
+        },
+        {
+          "n": 8,
+          "label": "Climb",
+          "value": "67 Knots"
+        },
+        {
+          "n": 9,
+          "label": "After Takeoff",
+          "value": "Check"
+        },
+        {
+          "n": 10,
+          "label": "Climb",
+          "value": "Check"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Normal takeoff — rotate speed?",
+        "options": [
+          "50 Knots",
+          "45 Knots",
+          "55 Knots",
+          "67 Knots"
+        ],
+        "correctIndex": 0,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "crosswind-takeoff",
+      "page": 18,
+      "category": "Takeoffs",
+      "name": "Crosswind Takeoff",
+      "objective": "To maintain directional control during ground roll and lift off, then maintain a pitch attitude and airspeed which will give the best altitude gain while tracking out on the runway centerline.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Run-Up",
+          "value": "Complete"
+        },
+        {
+          "n": 2,
+          "label": "Clearance",
+          "value": "Obtain"
+        },
+        {
+          "n": 3,
+          "label": "Flight Controls",
+          "value": "Full Deflection for Existing Wind"
+        },
+        {
+          "n": 4,
+          "label": "Throttle",
+          "value": "Full"
+        },
+        {
+          "n": 5,
+          "label": "Engine Instruments",
+          "value": "Check"
+        },
+        {
+          "n": 6,
+          "label": "Airspeed",
+          "value": "Alive"
+        },
+        {
+          "n": 7,
+          "label": "Flight Controls",
+          "value": "Gradually Reduce"
+        },
+        {
+          "n": 8,
+          "label": "Rotate",
+          "value": "On Upwind Wheel at 50 Knots"
+        },
+        {
+          "n": 9,
+          "label": "Attitude",
+          "value": "Vy"
+        },
+        {
+          "n": 10,
+          "label": "Wind Correction Angle",
+          "value": "Into the Wind to Maintain Centerline"
+        },
+        {
+          "n": 11,
+          "label": "Climb",
+          "value": "67 Knots"
+        },
+        {
+          "n": 12,
+          "label": "After Takeoff",
+          "value": "Check"
+        },
+        {
+          "n": 13,
+          "label": "Climb",
+          "value": "Check"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Crosswind takeoff — rotate how?",
+        "options": [
+          "On Downwind Wheel at 50 Knots",
+          "On Upwind Wheel at 50 Knots",
+          "On Both Wheels at 50 Knots",
+          "On Upwind Wheel at 60 Knots"
+        ],
+        "correctIndex": 1,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "soft-field-takeoff",
+      "page": 19,
+      "category": "Takeoffs",
+      "name": "Soft-Field Takeoff",
+      "objective": "To set and maintain an attitude where the airplane will lift-off at the slowest possible speed then transition into ground effect before climbing.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Run-Up",
+          "value": "Complete"
+        },
+        {
+          "n": 2,
+          "label": "Flaps",
+          "value": "10°"
+        },
+        {
+          "n": 3,
+          "label": "Clearance",
+          "value": "Obtain"
+        },
+        {
+          "n": 4,
+          "label": "Elevator Back Pressure",
+          "value": "Full Deflection"
+        },
+        {
+          "n": 5,
+          "label": "Throttle",
+          "value": "Full"
+        },
+        {
+          "n": 6,
+          "label": "Attitude",
+          "value": "Set, Then Maintain by Reducing Elevator Pressure During Acceleration"
+        },
+        {
+          "n": 7,
+          "label": "Engine Instruments",
+          "value": "Check"
+        },
+        {
+          "n": 8,
+          "label": "Airspeed",
+          "value": "Alive"
+        },
+        {
+          "n": 9,
+          "label": "Lift-Off",
+          "value": "Slowest Possible Airspeed"
+        },
+        {
+          "n": 10,
+          "label": "Ground Effect",
+          "value": "Accelerate In"
+        },
+        {
+          "n": 11,
+          "label": "Airspeed",
+          "value": "67 Knots"
+        },
+        {
+          "n": 12,
+          "label": "Attitude",
+          "value": "Vy"
+        },
+        {
+          "n": 13,
+          "label": "Climb",
+          "value": "67 Knots"
+        },
+        {
+          "n": 14,
+          "label": "After Takeoff",
+          "value": "Check"
+        },
+        {
+          "n": 15,
+          "label": "Climb",
+          "value": "Check"
+        }
+      ],
+      "structured": {
+        "type": "missing-step",
+        "removedIndex": 3,
+        "prompt": "One step is missing from this flow. Which one?",
+        "decoys": [
+          "Elevator Back Pressure — Neutral",
+          "Brakes — Hold Until Full Power",
+          "Flaps — Retract Immediately After Lift-Off"
+        ],
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "short-field-takeoff",
+      "page": 20,
+      "category": "Takeoffs",
+      "name": "Short-Field Takeoff",
+      "objective": "To get the airplane airborne in the shortest distance possible and climb to clear obstacles where takeoff area is limited.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Run-Up",
+          "value": "Complete"
+        },
+        {
+          "n": 2,
+          "label": "Flaps",
+          "value": "10°"
+        },
+        {
+          "n": 3,
+          "label": "Clearance",
+          "value": "Obtain"
+        },
+        {
+          "n": 4,
+          "label": "Position",
+          "value": "Maximum Allowable Runway"
+        },
+        {
+          "n": 5,
+          "label": "Brakes",
+          "value": "Hold"
+        },
+        {
+          "n": 6,
+          "label": "Power",
+          "value": "Maximum Static"
+        },
+        {
+          "n": 7,
+          "label": "Engine Instruments",
+          "value": "Check"
+        },
+        {
+          "n": 8,
+          "label": "Brakes",
+          "value": "Release"
+        },
+        {
+          "n": 9,
+          "label": "Directional Control",
+          "value": "Maintain"
+        },
+        {
+          "n": 10,
+          "label": "Airspeed",
+          "value": "Alive"
+        },
+        {
+          "n": 11,
+          "label": "Rotate",
+          "value": "50 Knots"
+        },
+        {
+          "n": 12,
+          "label": "Attitude",
+          "value": "Vx Until 50-ft Obstacle Cleared, then Vy"
+        },
+        {
+          "n": 13,
+          "label": "Airspeed",
+          "value": "67 Knots"
+        },
+        {
+          "n": 14,
+          "label": "After Takeoff",
+          "value": "Check"
+        },
+        {
+          "n": 15,
+          "label": "Climb",
+          "value": "Check"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Short-field takeoff — climb profile?",
+        "options": [
+          "Vy Until 50 ft. Obstacle Cleared, then Vx",
+          "Vx Until 50 ft. Obstacle Cleared, then Vy",
+          "Vx All the Way to Pattern Altitude",
+          "Vy From Rotation"
+        ],
+        "correctIndex": 1,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "traffic-pattern",
+      "page": 21,
+      "category": "Traffic Pattern / Landings",
+      "name": "Traffic Pattern",
+      "objective": "To safely and accurately maneuver the airplane on each leg of the traffic pattern in preparation for landing.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Before Landing Check",
+          "value": "Complete"
+        },
+        {
+          "n": 2,
+          "label": "Enter",
+          "value": "Midfield 45° to Downwind Leg at Traffic Pattern Altitude"
+        },
+        {
+          "n": 3,
+          "label": "Downwind Leg",
+          "value": "Maintain 80-85 Knots; Track Parallel to Runway While Approximately 1/4 - 1/2 Mile From Runway"
+        },
+        {
+          "n": 4,
+          "label": "Abeam Landing Point or Traffic to Follow",
+          "value": "Carburetor Heat Verify On; 1500 RPM; Verify Below Vfe, Flaps 10°; Airspeed 75 Knots - TRIM"
+        },
+        {
+          "n": 5,
+          "label": "Base Leg",
+          "value": "Turn at 45° From Landing Point; Wind Correction as Required; 20° Flaps; Airspeed 70 Knots - TRIM"
+        },
+        {
+          "n": 6,
+          "label": "Final",
+          "value": "Turn to Align with Runway Centerline; Wind Correction as Required; 30° Flaps; Airspeed 65 Knots - TRIM"
+        },
+        {
+          "n": 7,
+          "label": "Landing",
+          "value": "As Appropriate for Conditions"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Traffic pattern — base leg configuration?",
+        "options": [
+          "20° Flaps, Airspeed 70 Knots",
+          "10° Flaps, Airspeed 75 Knots",
+          "30° Flaps, Airspeed 65 Knots",
+          "20° Flaps, Airspeed 65 Knots"
+        ],
+        "correctIndex": 0,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "normal-landing",
+      "page": 22,
+      "category": "Traffic Pattern / Landings",
+      "name": "Normal Landing",
+      "objective": "To safely and accurately transition the airplane from descending flight to touchdown on the main wheels and over the runway centerline.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Before Landing",
+          "value": "Complete"
+        },
+        {
+          "n": 2,
+          "label": "Traffic Pattern",
+          "value": "Enter"
+        },
+        {
+          "n": 3,
+          "label": "Clearance",
+          "value": "Obtain"
+        },
+        {
+          "n": 4,
+          "label": "Final Approach",
+          "value": "Descent in Landing Configuration"
+        },
+        {
+          "n": 5,
+          "label": "Airspeed",
+          "value": "Maintain 65 Knots with Simultaneous Pitch and Power"
+        },
+        {
+          "n": 6,
+          "label": "Glidepath",
+          "value": "Maintain with Simultaneous Pitch and Power"
+        },
+        {
+          "n": 7,
+          "label": "Level Off",
+          "value": "With Proper Visual Cue Over Runway Centerline"
+        },
+        {
+          "n": 8,
+          "label": "Roundout",
+          "value": "With Proper Visual Cue Over Runway Centerline"
+        },
+        {
+          "n": 9,
+          "label": "Touchdown",
+          "value": "On Main Wheels and Over Runway Centerline"
+        },
+        {
+          "n": 10,
+          "label": "Rollout",
+          "value": "Decelerate On Runway Centerline"
+        },
+        {
+          "n": 11,
+          "label": "Exit Runway",
+          "value": "At Earliest Location and Safe Speed"
+        },
+        {
+          "n": 12,
+          "label": "After Landing",
+          "value": "Check"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Normal landing — final approach airspeed?",
+        "options": [
+          "60 Knots",
+          "65 Knots",
+          "70 Knots",
+          "75 Knots"
+        ],
+        "correctIndex": 1,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "crosswind-landing",
+      "page": 23,
+      "category": "Traffic Pattern / Landings",
+      "name": "Crosswind Landing",
+      "objective": "To safely and accurately transition the airplane from descending flight to touchdown on the main wheels and over the runway centerline during various crosswind conditions.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Before Landing",
+          "value": "Complete"
+        },
+        {
+          "n": 2,
+          "label": "Traffic Pattern",
+          "value": "Enter"
+        },
+        {
+          "n": 3,
+          "label": "Clearance",
+          "value": "Obtain"
+        },
+        {
+          "n": 4,
+          "label": "Final Approach",
+          "value": "Upwind Wing Low, Downwind Rudder To Maintain Runway Centerline"
+        },
+        {
+          "n": 5,
+          "label": "Airspeed",
+          "value": "Maintain 65 Knots with Simultaneous Pitch and Power"
+        },
+        {
+          "n": 6,
+          "label": "Glidepath",
+          "value": "Maintain with Simultaneous Pitch and Power"
+        },
+        {
+          "n": 7,
+          "label": "Level Off and Roundout",
+          "value": "Same Visual Cues as Normal Landing"
+        },
+        {
+          "n": 8,
+          "label": "Touchdown",
+          "value": "Upwind Wheel First and Over Runway Centerline"
+        },
+        {
+          "n": 9,
+          "label": "Rollout",
+          "value": "Smoothly Apply Wind Correction and Decelerate on Runway Centerline"
+        },
+        {
+          "n": 10,
+          "label": "Exit Runway",
+          "value": "At Earliest Location and Safe Speed"
+        },
+        {
+          "n": 11,
+          "label": "After Landing",
+          "value": "Check"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Crosswind landing — control technique on final?",
+        "options": [
+          "Downwind Wing Low, Upwind Rudder",
+          "Crab With No Correction Through Touchdown",
+          "Wings Level, Upwind Rudder",
+          "Upwind Wing Low, Downwind Rudder"
+        ],
+        "correctIndex": 3,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "soft-field-landing",
+      "page": 24,
+      "category": "Traffic Pattern / Landings",
+      "name": "Soft-Field Landing",
+      "objective": "To safely and accurately transition the airplane from descending flight to touchdown on the main wheels on soft or rough fields.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Before Landing",
+          "value": "Complete"
+        },
+        {
+          "n": 2,
+          "label": "Traffic Pattern",
+          "value": "Enter"
+        },
+        {
+          "n": 3,
+          "label": "Clearance",
+          "value": "Obtain"
+        },
+        {
+          "n": 4,
+          "label": "Final Approach",
+          "value": "Descent in Landing Configuration"
+        },
+        {
+          "n": 5,
+          "label": "Airspeed",
+          "value": "Maintain 60-65 Knots with Simultaneous Pitch and Power"
+        },
+        {
+          "n": 6,
+          "label": "Glidepath",
+          "value": "Maintain with Simultaneous Pitch and Power"
+        },
+        {
+          "n": 7,
+          "label": "Level Off",
+          "value": "With Proper Visual Cue Over Runway Centerline"
+        },
+        {
+          "n": 8,
+          "label": "Roundout",
+          "value": "With Proper Visual Cue Over Runway Centerline"
+        },
+        {
+          "n": 9,
+          "label": "Power",
+          "value": "Slightly Higher Than Idle"
+        },
+        {
+          "n": 10,
+          "label": "Touchdown",
+          "value": "As Softly as Possible On Main Wheels and Over Runway Centerline"
+        },
+        {
+          "n": 11,
+          "label": "Rollout",
+          "value": "Gradually Increase Elevator Pressure while Decelerating On Runway Centerline"
+        },
+        {
+          "n": 12,
+          "label": "Exit Runway",
+          "value": "At Earliest Location and Safe Speed"
+        },
+        {
+          "n": 13,
+          "label": "After Landing",
+          "value": "Check"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Soft-field landing — power at touchdown?",
+        "options": [
+          "Idle",
+          "Slightly Higher Than Idle",
+          "1500 RPM",
+          "Full, Then Idle at Touchdown"
+        ],
+        "correctIndex": 1,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "short-field-landing",
+      "page": 25,
+      "category": "Traffic Pattern / Landings",
+      "name": "Short-Field Landing",
+      "objective": "To safely and accurately transition the airplane from descending flight to touchdown on the main wheels over a 50 foot obstacle and stop in the shortest distance possible.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Before Landing",
+          "value": "Complete"
+        },
+        {
+          "n": 2,
+          "label": "Traffic Pattern",
+          "value": "Enter"
+        },
+        {
+          "n": 3,
+          "label": "Clearance",
+          "value": "Obtain"
+        },
+        {
+          "n": 4,
+          "label": "Final Approach",
+          "value": "Descent in Landing Configuration"
+        },
+        {
+          "n": 5,
+          "label": "Airspeed",
+          "value": "Maintain 60-63 Knots with Simultaneous Pitch and Power"
+        },
+        {
+          "n": 6,
+          "label": "Glidepath",
+          "value": "Maintain with Simultaneous Pitch and Power"
+        },
+        {
+          "n": 7,
+          "label": "Level Off and Roundout",
+          "value": "With Minimal Float at Proper Visual Cue Over Runway Centerline"
+        },
+        {
+          "n": 8,
+          "label": "Touchdown",
+          "value": "On Main Wheels and Over Runway Centerline"
+        },
+        {
+          "n": 9,
+          "label": "Rollout",
+          "value": "Promptly Retract Flaps, Gradually Increase Elevator Pressure and Use Maximum Effective Braking while Decelerating On Runway Centerline"
+        },
+        {
+          "n": 10,
+          "label": "Exit Runway",
+          "value": "At Earliest Location and Safe Speed"
+        },
+        {
+          "n": 11,
+          "label": "After Landing",
+          "value": "Check"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Short-field landing — final approach airspeed?",
+        "options": [
+          "65 Knots",
+          "60-65 Knots",
+          "55-58 Knots",
+          "60-63 Knots"
+        ],
+        "correctIndex": 3,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "go-around",
+      "page": 26,
+      "category": "Traffic Pattern / Landings",
+      "name": "Go-Around",
+      "objective": "To transition the airplane from the approach descent to climb attitude in preparation for another landing.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Power",
+          "value": "Mixture Rich; Throttle Full; Carburetor Heat Off"
+        },
+        {
+          "n": 2,
+          "label": "Attitude",
+          "value": "Smoothly Establish and Maintain at Vy"
+        },
+        {
+          "n": 3,
+          "label": "Configuration",
+          "value": "Flaps 20° Immediately; At 55 Knots and Positive Rate Flaps 10°; At 67 Knots and Positive Rate Flaps 0°"
+        },
+        {
+          "n": 4,
+          "label": "Attitude",
+          "value": "Vy"
+        },
+        {
+          "n": 5,
+          "label": "Sidestep Runway",
+          "value": "If Required"
+        },
+        {
+          "n": 6,
+          "label": "Climb",
+          "value": "Continue in Traffic Pattern for Landing"
+        },
+        {
+          "n": 7,
+          "label": "Communicate",
+          "value": "Advise ATC"
+        }
+      ],
+      "structured": {
+        "type": "sequence",
+        "prompt": "Put these steps in order.",
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "forward-slip",
+      "page": 27,
+      "category": "Traffic Pattern / Landings",
+      "name": "Forward Slip",
+      "objective": "To steepen the approach angle using opposite control forces.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Flaps",
+          "value": "Full"
+        },
+        {
+          "n": 2,
+          "label": "Airspeed",
+          "value": "Normal Approach"
+        },
+        {
+          "n": 3,
+          "label": "Power",
+          "value": "Carburetor Heat On; Throttle Idle"
+        },
+        {
+          "n": 4,
+          "label": "Rudder",
+          "value": "Full Deflection"
+        },
+        {
+          "n": 5,
+          "label": "Ailerons",
+          "value": "As Required to Maintain Centerline"
+        },
+        {
+          "n": 6,
+          "label": "Pitch",
+          "value": "As Required for Airspeed"
+        },
+        {
+          "n": 7,
+          "label": "Recover",
+          "value": "Return to Normal Descent when on Glidepath"
+        }
+      ],
+      "structured": {
+        "type": "missing-step",
+        "removedIndex": 3,
+        "prompt": "One step is missing from this flow. Which one?",
+        "decoys": [
+          "Rudder — As Required for Coordination",
+          "Ailerons — Full Deflection",
+          "Power — Full"
+        ],
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "emergency-approach-and-landing-simulated",
+      "page": 28,
+      "category": "Emergency / Navigation",
+      "name": "Emergency Approach and Landing (Simulated)",
+      "objective": "To recognize and react to an emergency situation in such a manner as to safeguard life and minimize damage to the airplane. Attention should be focused on airplane control, following recommended procedures, and selecting a suitable landing site.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Airspeed",
+          "value": "65 Knots Flaps Up; 60 Knots Flaps Down"
+        },
+        {
+          "n": 2,
+          "label": "Best Field",
+          "value": "Into the Wind, Free from Obstructions; Minimal Geographic Features"
+        },
+        {
+          "n": 3,
+          "label": "Checklist",
+          "value": "Follow"
+        }
+      ],
+      "structured": {
+        "type": "sequence",
+        "prompt": "Put these steps in order.",
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "emergency-descent",
+      "page": 29,
+      "category": "Emergency / Navigation",
+      "name": "Emergency Descent",
+      "objective": "To descend as smoothly and rapidly as possible to a lower altitude or to the ground for an emergency landing, while not exceeding the structural limits of the airplane.",
+      "steps": [
+        {
+          "n": 1,
+          "phase": "Entry",
+          "label": "HASELL/HELL Check",
+          "value": "Complete"
+        },
+        {
+          "n": 2,
+          "label": "Power",
+          "value": "Mixture Rich; Carb Heat On; Throttle Idle"
+        },
+        {
+          "n": 3,
+          "label": "Configuration",
+          "value": "Below Vfe, Flaps Full"
+        },
+        {
+          "n": 4,
+          "label": "Attitude",
+          "value": "Simultaneously pitch down to maintain Vfe -5 kts"
+        },
+        {
+          "n": 5,
+          "label": "Maneuver",
+          "value": "Establish/maintain left 30° bank"
+        },
+        {
+          "n": 6,
+          "label": "Attitude",
+          "value": "Maintain Vfe -5 kts"
+        },
+        {
+          "n": 7,
+          "phase": "Recover",
+          "label": "Maneuver",
+          "value": "Roll wings level ~150 feet above recovery altitude"
+        },
+        {
+          "n": 8,
+          "label": "Attitude",
+          "value": "Smoothly pitch level for target altitude"
+        },
+        {
+          "n": 9,
+          "label": "Power",
+          "value": "Mixture Rich; Throttle Full; Carb Heat Off"
+        },
+        {
+          "n": 10,
+          "label": "Configuration",
+          "value": "Flaps 20° immediately; Positive climb, Flaps 10 at Vx; Positive rate, Flaps 0 at Vy"
+        },
+        {
+          "n": 11,
+          "label": "Straight and Level",
+          "value": "Establish Cruise"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Emergency descent — the maneuver is flown with what bank?",
+        "options": [
+          "Establish/Maintain Right 45° Bank",
+          "Establish/Maintain Left 45° Bank",
+          "Establish/Maintain Left 30° Bank",
+          "Wings Level Throughout"
+        ],
+        "correctIndex": 2,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "diversion",
+      "page": 30,
+      "category": "Emergency / Navigation",
+      "name": "Diversion",
+      "objective": "To compute course, distance, time, and fuel from last known position to an alternate airport in preparation for an unplanned landing.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Location",
+          "value": "Verify Current Location"
+        },
+        {
+          "n": 2,
+          "label": "Line",
+          "value": "Draw From Current Location to Destination"
+        },
+        {
+          "n": 3,
+          "label": "Course",
+          "value": "Position Straight Edge Parallel to Course Line; Reposition Over Compass Rose; Determine Course TO Airport"
+        },
+        {
+          "n": 4,
+          "label": "Set DG",
+          "value": "Set to Match Compass"
+        },
+        {
+          "n": 5,
+          "label": "Time",
+          "value": "Note Current Time"
+        },
+        {
+          "n": 6,
+          "label": "Turn",
+          "value": "To Determined Heading"
+        },
+        {
+          "n": 7,
+          "label": "Enroute Check",
+          "value": "Complete (FREDAC)"
+        },
+        {
+          "n": 8,
+          "label": "Distance",
+          "value": "Compute Using Rule of Thumb Calculations"
+        },
+        {
+          "n": 9,
+          "label": "Time",
+          "value": "Compute Using Rule of Thumb Calculations"
+        },
+        {
+          "n": 10,
+          "label": "Fuel",
+          "value": "Compute Using Rule of Thumb Calculations"
+        }
+      ],
+      "structured": {
+        "type": "spot-error",
+        "shownOrder": [
+          0,
+          1,
+          5,
+          2,
+          3,
+          4,
+          6,
+          7,
+          8,
+          9
+        ],
+        "wrongPositionIndexInShown": 2,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    },
+    {
+      "id": "lost-procedures",
+      "page": 31,
+      "category": "Emergency / Navigation",
+      "name": "Lost Procedures",
+      "objective": "To determine geographic position in flight after becoming disoriented.",
+      "steps": [
+        {
+          "n": 1,
+          "label": "Climb",
+          "value": "4500' MSL (at least 3000' AGL)"
+        },
+        {
+          "n": 2,
+          "label": "Enroute Check",
+          "value": "Complete (FREDAC)"
+        },
+        {
+          "n": 3,
+          "label": "Look for Prominent Landmarks",
+          "value": "Approximately 10 Minutes"
+        },
+        {
+          "n": 4,
+          "label": "VOR Cross-Check",
+          "value": "Complete"
+        },
+        {
+          "n": 5,
+          "label": "Call for Help",
+          "value": "Last ATC Frequency; Known ATC Frequency; FSS Frequency; Flightwatch 122.00; Emergency Frequency 121.50"
+        }
+      ],
+      "structured": {
+        "type": "multiple-choice",
+        "prompt": "Lost procedures — the emergency frequency?",
+        "options": [
+          "121.50",
+          "122.00",
+          "121.90",
+          "118.00"
+        ],
+        "correctIndex": 0,
+        "authored": "claude-draft",
+        "reviewed": false
+      }
+    }
+  ]
+}
