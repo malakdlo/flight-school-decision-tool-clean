@@ -1,0 +1,884 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const title = 'Private Pilot Requirements Tracker | 61.109 Requirements | Flight School Friend';
+const description =
+  'Track your 14 CFR 61.109(a) private pilot aeronautical experience minimums for airplane single-engine land with browser-only progress saving.';
+const canonical = 'https://flightschoolfriend.com/tools/ppl-requirements-tracker/';
+
+const trackerItems = [
+  {
+    id: 'total-flight-time',
+    type: 'number',
+    level: 0,
+    label: 'Total flight time',
+    minimumLabel: '40 hours minimum',
+    minimum: 40,
+    unit: 'hours',
+    step: '0.1',
+    inputLabel: 'My total flight hours',
+    help: 'All logged flight time counted toward the private pilot airplane single-engine land minimum.',
+  },
+  {
+    id: 'dual-flight-training',
+    type: 'number',
+    level: 0,
+    label: 'Flight training with an instructor',
+    minimumLabel: '20 hours minimum',
+    minimum: 20,
+    unit: 'hours',
+    step: '0.1',
+    inputLabel: 'My instructor flight training hours',
+    help: 'Dual flight training received from an authorized instructor.',
+  },
+  {
+    id: 'dual-cross-country',
+    type: 'number',
+    level: 1,
+    label: 'Cross-country training',
+    minimumLabel: '3 hours',
+    minimum: 3,
+    unit: 'hours',
+    step: '0.1',
+    inputLabel: 'My dual cross-country training hours',
+    help: 'Cross-country flight training included within the instructor training requirement.',
+  },
+  {
+    id: 'night-training',
+    type: 'number',
+    level: 1,
+    label: 'Night training',
+    minimumLabel: '3 hours',
+    minimum: 3,
+    unit: 'hours',
+    step: '0.1',
+    inputLabel: 'My night training hours',
+    help: 'Night flight training included within the instructor training requirement.',
+  },
+  {
+    id: 'night-cross-country',
+    type: 'milestone',
+    level: 2,
+    label: 'Night cross-country flight',
+    minimumLabel: 'One flight over 100 NM total distance',
+    inputLabel: 'Night cross-country completed',
+    help: 'One night cross-country flight of over 100 nautical miles total distance.',
+  },
+  {
+    id: 'night-takeoffs-landings',
+    type: 'number',
+    level: 2,
+    label: 'Night takeoffs and full-stop landings',
+    minimumLabel: '10 takeoffs and 10 landings',
+    minimum: 10,
+    unit: 'count',
+    step: '1',
+    inputLabel: 'My night full-stop takeoff and landing pairs',
+    help: 'Enter completed full-stop night takeoff and landing pairs.',
+  },
+  {
+    id: 'instrument-training',
+    type: 'number',
+    level: 1,
+    label: 'Instrument training',
+    minimumLabel: '3 hours',
+    minimum: 3,
+    unit: 'hours',
+    step: '0.1',
+    inputLabel: 'My instrument training hours',
+    help: 'Flight training solely by reference to instruments.',
+  },
+  {
+    id: 'practical-test-prep',
+    type: 'number',
+    level: 1,
+    label: 'Practical test preparation',
+    minimumLabel: '3 hours',
+    minimum: 3,
+    unit: 'hours',
+    step: '0.1',
+    inputLabel: 'My recent practical test prep hours',
+    help: 'Training in preparation for the practical test within the preceding 2 calendar months.',
+  },
+  {
+    id: 'solo-flight-time',
+    type: 'number',
+    level: 0,
+    label: 'Solo flight time',
+    minimumLabel: '10 hours minimum',
+    minimum: 10,
+    unit: 'hours',
+    step: '0.1',
+    inputLabel: 'My solo flight hours',
+    help: 'Solo flight time in the areas of operation listed for the certificate.',
+  },
+  {
+    id: 'solo-cross-country',
+    type: 'number',
+    level: 1,
+    label: 'Solo cross-country flight time',
+    minimumLabel: '5 hours',
+    minimum: 5,
+    unit: 'hours',
+    step: '0.1',
+    inputLabel: 'My solo cross-country hours',
+    help: 'Solo cross-country time included within the solo flight requirement.',
+  },
+  {
+    id: 'solo-150nm-cross-country',
+    type: 'milestone',
+    level: 2,
+    label: 'Long solo cross-country',
+    minimumLabel: 'At least 150 NM total distance',
+    inputLabel: 'Long solo cross-country completed',
+    help: 'One solo cross-country of at least 150 NM total distance, full-stop landings at three points, and one segment of at least 50 NM straight-line distance.',
+  },
+  {
+    id: 'tower-takeoffs-landings',
+    type: 'milestone',
+    level: 1,
+    label: 'Towered-airport takeoffs and landings',
+    minimumLabel: '3 takeoffs and 3 full-stop landings',
+    inputLabel: 'Towered-airport takeoffs and landings completed',
+    help: 'Three takeoffs and three landings to a full stop at an airport with an operating control tower.',
+  },
+] as const;
+
+const totalRequirements = trackerItems.length;
+
+const structuredData = {
+  '@type': 'WebApplication',
+  '@id': `${canonical}#tracker`,
+  name: 'Private pilot requirements tracker',
+  url: canonical,
+  description,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any',
+  isAccessibleForFree: true,
+  educationalUse: 'Private pilot aeronautical experience tracking',
+  about: '14 CFR 61.109(a) private pilot aeronautical experience requirements',
+  author: { '@id': 'https://flightschoolfriend.com/#person' },
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} structuredData={structuredData}>
+  <section class="requirements-page">
+    <div class="tracker-shell">
+      <header class="hero-panel">
+        <div class="hero-copy">
+          <p class="eyebrow">14 CFR 61.109(a)</p>
+          <h1>Private pilot requirements tracker</h1>
+          <p class="lead">
+            Track the federal aeronautical experience minimums for a Private Pilot certificate, airplane single-engine land. Your entries stay in this browser only.
+          </p>
+        </div>
+
+        <aside class="summary-card" aria-labelledby="summary-heading">
+          <p class="eyebrow">Your progress</p>
+          <h2 id="summary-heading"><span data-summary-percent>0</span>% of minimums met</h2>
+          <p data-summary-line>0 of {totalRequirements} requirements met</p>
+          <div class="summary-meter" aria-hidden="true">
+            <span data-summary-meter></span>
+          </div>
+        </aside>
+      </header>
+
+      <aside class="minimums-callout" role="note" aria-label="Important note about minimums">
+        <div class="callout-marker" aria-hidden="true">!</div>
+        <div>
+          <h2>These are federal minimums.</h2>
+          <p>
+            Most pilots finish above the minimum hours, and your flight school's syllabus may require more. Use this as a planning tracker, then verify your logbook details with your CFI.
+          </p>
+        </div>
+      </aside>
+
+      <section class="tracker-card" aria-labelledby="tracker-heading">
+        <div class="tracker-heading">
+          <div>
+            <p class="eyebrow">Aeronautical experience</p>
+            <h2 id="tracker-heading">FAR 61.109(a) minimums</h2>
+          </div>
+          <button class="clear-button" type="button" data-clear-tracker>Clear my data</button>
+        </div>
+
+        <p class="browser-note">Data is saved with localStorage and stays in this browser only.</p>
+
+        <div class="requirement-list" data-tracker-root>
+          {
+            trackerItems.map((item) => (
+              <article
+                class:list={[
+                  'requirement-row',
+                  `level-${item.level}`,
+                  item.type === 'milestone' && 'is-milestone',
+                ]}
+                data-requirement-id={item.id}
+                data-requirement-type={item.type}
+                data-minimum={item.type === 'number' ? item.minimum : 1}
+              >
+                <div class="requirement-main">
+                  <h3>{item.label}</h3>
+                  <p>{item.help}</p>
+                </div>
+
+                <div class="minimum-cell">
+                  <span>Regulatory minimum</span>
+                  <strong>{item.minimumLabel}</strong>
+                </div>
+
+                <div class="input-cell">
+                  {
+                    item.type === 'number' ? (
+                      <label>
+                        <span>{item.inputLabel}</span>
+                        <input
+                          type="number"
+                          min="0"
+                          step={item.step}
+                          inputmode="decimal"
+                          data-progress-input
+                          aria-describedby={`${item.id}-status`}
+                        />
+                      </label>
+                    ) : (
+                      <label class="milestone-control">
+                        <input type="checkbox" data-progress-input aria-describedby={`${item.id}-status`} />
+                        <span class="check-token" aria-hidden="true">
+                          <span>✓</span>
+                        </span>
+                        <span>{item.inputLabel}</span>
+                      </label>
+                    )
+                  }
+                </div>
+
+                <div class="progress-cell">
+                  {
+                    item.type === 'number' ? (
+                      <>
+                        <div
+                          class="progress-track"
+                          role="progressbar"
+                          aria-label={`${item.label} progress`}
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                          aria-valuenow="0"
+                        >
+                          <span data-progress-fill></span>
+                        </div>
+                        <p class="status-label" id={`${item.id}-status`} data-status-label>
+                          <span class="status-check" aria-hidden="true">✓</span>
+                          <span data-status-text>0%</span>
+                        </p>
+                      </>
+                    ) : (
+                      <p class="milestone-status" id={`${item.id}-status`} data-status-label>
+                        <span class="check-token" aria-hidden="true">
+                          <span>✓</span>
+                        </span>
+                        <span data-status-text>Not met</span>
+                      </p>
+                    )
+                  }
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="regulatory-note" aria-labelledby="regulatory-note-heading">
+        <h2 id="regulatory-note-heading">Regulatory note</h2>
+        <p>
+          Requirements shown are 14 CFR 61.109(a) minimums as written — always verify current regulations with the FAA and your flight school.
+        </p>
+      </section>
+
+      <section class="kit-placeholder-component" aria-labelledby="printable-tracker-heading">
+        <!-- TODO: Replace this placeholder with the documented Kit form UID and tag name after site-map-and-funnels.md marks the funnel live. Do not link a download asset until then. -->
+        <p class="eyebrow">Printable version</p>
+        <h2 id="printable-tracker-heading">Want the printable version of this tracker?</h2>
+        <p>
+          A PDF or sheet version will live here after the Kit form UID, tag name, and gated asset are documented. This placeholder is intentionally not wired to a live form or download.
+        </p>
+        <div class="placeholder-form" aria-hidden="true">
+          <span>Email form placeholder</span>
+          <span>Not connected yet</span>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <script is:inline define:vars={{ totalRequirements }}>
+    const storageKey = 'fsf:ppl-requirements-tracker:v1';
+    const rows = Array.from(document.querySelectorAll('[data-requirement-id]'));
+    const summaryPercent = document.querySelector('[data-summary-percent]');
+    const summaryLine = document.querySelector('[data-summary-line]');
+    const summaryMeter = document.querySelector('[data-summary-meter]');
+    const clearButton = document.querySelector('[data-clear-tracker]');
+
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const readSavedState = () => {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey) || '{}');
+      } catch {
+        return {};
+      }
+    };
+
+    const writeSavedState = () => {
+      const nextState = {};
+
+      rows.forEach((row) => {
+        const input = row.querySelector('[data-progress-input]');
+        if (!input) return;
+
+        nextState[row.dataset.requirementId] =
+          input.type === 'checkbox' ? input.checked : input.value;
+      });
+
+      localStorage.setItem(storageKey, JSON.stringify(nextState));
+    };
+
+    const updateRow = (row) => {
+      const input = row.querySelector('[data-progress-input]');
+      const status = row.querySelector('[data-status-label]');
+      const statusText = row.querySelector('[data-status-text]');
+      const fill = row.querySelector('[data-progress-fill]');
+      const progress = row.querySelector('[role="progressbar"]');
+      const minimum = Number(row.dataset.minimum || 1);
+
+      let percent = 0;
+
+      if (input?.type === 'checkbox') {
+        percent = input.checked ? 100 : 0;
+      } else if (input) {
+        const value = Number(input.value || 0);
+        percent = minimum > 0 ? clamp((value / minimum) * 100, 0, 100) : 0;
+      }
+
+      const isMet = percent >= 100;
+      row.dataset.met = String(isMet);
+      row.dataset.percent = String(percent);
+
+      if (fill) {
+        fill.style.width = `${percent}%`;
+      }
+
+      if (progress) {
+        progress.setAttribute('aria-valuenow', String(Math.round(percent)));
+      }
+
+      if (status) {
+        status.dataset.met = String(isMet);
+      }
+
+      if (statusText) {
+        statusText.textContent = isMet ? 'Met' : input?.type === 'checkbox' ? 'Not met' : `${Math.round(percent)}%`;
+      }
+    };
+
+    const updateSummary = () => {
+      let metCount = 0;
+      let percentTotal = 0;
+
+      rows.forEach((row) => {
+        const percent = Number(row.dataset.percent || 0);
+        percentTotal += percent;
+
+        if (row.dataset.met === 'true') {
+          metCount += 1;
+        }
+      });
+
+      const overallPercent = Math.round(percentTotal / totalRequirements);
+
+      if (summaryPercent) {
+        summaryPercent.textContent = String(overallPercent);
+      }
+
+      if (summaryLine) {
+        summaryLine.textContent = `${metCount} of ${totalRequirements} requirements met`;
+      }
+
+      if (summaryMeter) {
+        summaryMeter.style.width = `${overallPercent}%`;
+      }
+    };
+
+    const updateAll = () => {
+      rows.forEach(updateRow);
+      updateSummary();
+    };
+
+    const savedState = readSavedState();
+
+    rows.forEach((row) => {
+      const input = row.querySelector('[data-progress-input]');
+      const savedValue = savedState[row.dataset.requirementId];
+
+      if (input && savedValue !== undefined) {
+        if (input.type === 'checkbox') {
+          input.checked = savedValue === true;
+        } else {
+          input.value = savedValue;
+        }
+      }
+
+      input?.addEventListener('input', () => {
+        updateAll();
+        writeSavedState();
+      });
+
+      input?.addEventListener('change', () => {
+        updateAll();
+        writeSavedState();
+      });
+    });
+
+    clearButton?.addEventListener('click', () => {
+      rows.forEach((row) => {
+        const input = row.querySelector('[data-progress-input]');
+        if (!input) return;
+
+        if (input.type === 'checkbox') {
+          input.checked = false;
+        } else {
+          input.value = '';
+        }
+      });
+
+      localStorage.removeItem(storageKey);
+      updateAll();
+    });
+
+    updateAll();
+  </script>
+</BaseLayout>
+
+<style>
+  .requirements-page {
+    --bg: #FAFBFD;
+    --surface: #FFFFFF;
+    --surface-sunken: #EEF2F7;
+    --surface-inverse: #0E1B2E;
+    --border: #E2E8F0;
+    --border-strong: #CBD5E1;
+    --text-strong: #0E1B2E;
+    --text-body: #334155;
+    --text-muted: #64748B;
+    --primary: #0B69D6;
+    --primary-hover: #0A5BBA;
+    --primary-soft: #EAF3FE;
+    --success: #1F9D5B;
+    --warning: #E08600;
+    --error: #DC2B36;
+    --shadow-sm: 0 1px 3px rgba(14, 27, 46, 0.06), 0 1px 2px rgba(14, 27, 46, 0.04);
+    --shadow-md: 0 4px 12px rgba(14, 27, 46, 0.07), 0 2px 4px rgba(14, 27, 46, 0.04);
+    background: var(--bg);
+    color: var(--text-body);
+  }
+
+  .tracker-shell {
+    width: min(100% - clamp(2.5rem, 10vw, 6rem), 1080px);
+    margin: 0 auto;
+    padding: clamp(4rem, 8vw, 7rem) 0;
+  }
+
+  .hero-panel,
+  .tracker-card,
+  .kit-placeholder-component {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: var(--shadow-md);
+  }
+
+  .hero-panel {
+    display: grid;
+    gap: 1.5rem;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .eyebrow {
+    margin: 0 0 0.75rem;
+    color: var(--primary);
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2,
+  h3 {
+    color: var(--text-strong);
+    letter-spacing: -0.015em;
+  }
+
+  h1 {
+    max-width: 780px;
+    margin: 0;
+    font-size: clamp(2.25rem, 7vw, 4rem);
+    font-weight: 800;
+    line-height: 1.05;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.25;
+  }
+
+  .lead {
+    max-width: 760px;
+    margin: 1.25rem 0 0;
+    font-size: 1.1875rem;
+    line-height: 1.7;
+  }
+
+  .summary-card {
+    align-self: stretch;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--primary-soft);
+    padding: 1.25rem;
+  }
+
+  .summary-card h2 {
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    line-height: 1;
+  }
+
+  .summary-card p:last-of-type {
+    margin: 0.875rem 0 0;
+    font-weight: 700;
+    color: var(--text-body);
+  }
+
+  .summary-meter,
+  .progress-track {
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--surface-sunken);
+  }
+
+  .summary-meter {
+    height: 0.75rem;
+    margin-top: 1.25rem;
+    border: 1px solid var(--border);
+  }
+
+  .summary-meter span,
+  .progress-track span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--primary);
+    transition: width 200ms cubic-bezier(0.22, 0.61, 0.36, 1), background-color 200ms ease-out;
+  }
+
+  .minimums-callout,
+  .regulatory-note {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    border: 1px solid color-mix(in srgb, var(--warning) 40%, var(--border));
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--warning) 9%, var(--surface));
+    padding: 1.25rem;
+  }
+
+  .callout-marker {
+    display: grid;
+    flex: 0 0 auto;
+    width: 2rem;
+    height: 2rem;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--warning);
+    color: var(--surface);
+    font-weight: 800;
+  }
+
+  .minimums-callout h2,
+  .regulatory-note h2 {
+    font-size: 1.25rem;
+  }
+
+  .minimums-callout p,
+  .regulatory-note p {
+    margin: 0.5rem 0 0;
+    line-height: 1.65;
+  }
+
+  .tracker-card {
+    margin-top: 1.5rem;
+    padding: clamp(1rem, 3vw, 1.5rem);
+  }
+
+  .tracker-heading {
+    display: grid;
+    gap: 1rem;
+    align-items: start;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .clear-button {
+    min-height: 44px;
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--text-strong);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 800;
+    padding: 0.75rem 1rem;
+    transition: border-color 200ms ease-out, color 200ms ease-out, transform 200ms ease-out;
+  }
+
+  .clear-button:hover {
+    border-color: var(--primary);
+    color: var(--primary-hover);
+  }
+
+  .clear-button:active {
+    transform: translateY(1px);
+  }
+
+  .clear-button:focus-visible,
+  input:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--primary) 35%, transparent);
+    outline-offset: 3px;
+  }
+
+  .browser-note {
+    margin: 1rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .requirement-list {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .requirement-row {
+    display: grid;
+    gap: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+    padding: 1rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .requirement-row.level-1,
+  .requirement-row.level-2 {
+    position: relative;
+    margin-left: clamp(1rem, 4vw, 2rem);
+    border-left: 4px solid var(--primary-soft);
+    background: color-mix(in srgb, var(--primary-soft) 35%, var(--surface));
+  }
+
+  .requirement-row.level-2 {
+    margin-left: clamp(2rem, 8vw, 4rem);
+  }
+
+  .requirement-main p {
+    margin: 0.5rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  .minimum-cell span,
+  .input-cell label > span:first-child {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .minimum-cell strong {
+    display: block;
+    margin-top: 0.35rem;
+    color: var(--text-strong);
+    font-size: 0.9375rem;
+    line-height: 1.35;
+  }
+
+  input[type='number'] {
+    width: 100%;
+    min-height: 44px;
+    margin-top: 0.5rem;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--text-strong);
+    font: inherit;
+    font-weight: 700;
+    padding: 0.625rem 0.75rem;
+  }
+
+  .progress-track {
+    height: 0.75rem;
+  }
+
+  .requirement-row[data-met='true'] .progress-track span {
+    background: var(--success);
+  }
+
+  .status-label,
+  .milestone-status {
+    display: inline-flex;
+    min-height: 1.75rem;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0.65rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+
+  .status-check {
+    display: none;
+    color: var(--success);
+  }
+
+  .status-label[data-met='true'],
+  .milestone-status[data-met='true'] {
+    color: var(--success);
+  }
+
+  .status-label[data-met='true'] .status-check {
+    display: inline;
+  }
+
+  .milestone-control {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    color: var(--text-strong);
+    font-weight: 800;
+  }
+
+  .milestone-control input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .check-token {
+    display: inline-grid;
+    flex: 0 0 auto;
+    width: 2.75rem;
+    height: 2.75rem;
+    place-items: center;
+    border: 2px solid var(--border-strong);
+    border-radius: 999px;
+    background: var(--surface);
+    color: transparent;
+    font-weight: 900;
+    transition: background-color 200ms ease-out, border-color 200ms ease-out, color 200ms ease-out;
+  }
+
+  .milestone-control input:checked + .check-token,
+  .milestone-status[data-met='true'] .check-token {
+    border-color: var(--success);
+    background: var(--success);
+    color: var(--surface);
+  }
+
+  .milestone-control:has(input:focus-visible) .check-token {
+    outline: 3px solid color-mix(in srgb, var(--primary) 35%, transparent);
+    outline-offset: 3px;
+  }
+
+  .regulatory-note {
+    display: block;
+    border-color: var(--border);
+    background: var(--surface);
+  }
+
+  .kit-placeholder-component {
+    margin-top: 1.5rem;
+    padding: clamp(1.5rem, 4vw, 2rem);
+  }
+
+  .kit-placeholder-component p:not(.eyebrow) {
+    max-width: 720px;
+    margin: 0.75rem 0 0;
+    line-height: 1.65;
+  }
+
+  .placeholder-form {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    border: 1px dashed var(--border-strong);
+    border-radius: 12px;
+    background: var(--surface-sunken);
+    padding: 1rem;
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+
+  @media (min-width: 760px) {
+    .hero-panel {
+      grid-template-columns: minmax(0, 1fr) 320px;
+      align-items: stretch;
+    }
+
+    .tracker-heading {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+    }
+
+    .requirement-row {
+      grid-template-columns: minmax(220px, 1.4fr) minmax(140px, 0.8fr) minmax(170px, 0.9fr) minmax(150px, 0.8fr);
+      align-items: center;
+    }
+
+    .progress-cell {
+      min-width: 0;
+    }
+
+    .placeholder-form {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .summary-meter span,
+    .progress-track span,
+    .clear-button,
+    .check-token {
+      transition: none;
+    }
+  }
+</style>
