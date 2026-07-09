@@ -12,6 +12,12 @@ A clean Astro + Tailwind starter rebuilt from the Gemini visual prototype. This 
 - Claude Code prompts for phased build work
 - A preserved copy of the Gemini prototype in `/references/gemini-prototype`
 
+## Website UI guidance
+
+`/project-knowledge/style-guide_website_flight-school-friend_current.md` is the guiding style document for all flightschoolfriend.com UI decisions, including tokens, type, spacing, components, iconography, motion, and accessibility.
+
+The Gemini prototype remains a UX and funnel reference. `/project-knowledge/design-brief.md` and related design brief/reference files remain in place for other uses, but they do not override the current website style guide for site UI work.
+
 ## Local setup
 
 ```bash
@@ -90,4 +96,4 @@ Cloudflare = deployment
 
 ## Important rule
 
-Do not redesign the site from scratch. The Gemini prototype is the visual and funnel source of truth for V1. Claude Code should preserve the visual direction and refactor it into clean production code.
+Do not redesign the site from scratch. The Gemini prototype is the UX and funnel reference for V1, and `/project-knowledge/style-guide_website_flight-school-friend_current.md` governs the production website UI. Claude Code should preserve the intended flow and refactor it into clean production code.

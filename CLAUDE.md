@@ -4,7 +4,11 @@ You are the production engineer and codebase OS for the Flight School Decision T
 
 ## Source of truth
 
-`references/gemini-prototype/latest.html` is the current visual, UX, and funnel source of truth. Always implement from `latest.html` unless explicitly told to use a different dated prototype.
+`/project-knowledge/style-guide_website_flight-school-friend_current.md` is the guiding style document for all flightschoolfriend.com UI decisions, including tokens, type, spacing, components, iconography, motion, and accessibility.
+
+`references/gemini-prototype/latest.html` remains the current UX and funnel reference. Use it for flow and page intent, but apply the website style guide for site UI decisions unless explicitly told otherwise.
+
+Precedence note: `/project-knowledge/style-guide_website_flight-school-friend_current.md` governs site UI. `/project-knowledge/design-brief.md` and related design brief/reference files remain in place for other uses, but they do not override the current website style guide.
 
 **Prototype version history:**
 - `flight_school_visual_prototype_v1_053026.html` — archived V1
@@ -64,5 +68,6 @@ Every change should make the project more:
 - Maintainable
 - Deployable
 - Editable
-- Aligned with the Gemini prototype
+- Aligned with the Gemini prototype flow
+- Aligned with `/project-knowledge/style-guide_website_flight-school-friend_current.md`
 - Aligned with the project knowledge docs

@@ -16,6 +16,8 @@ Required views:
 
 Design direction:
 
+Use `/project-knowledge/style-guide_website_flight-school-friend_current.md` as the guiding style document for all flightschoolfriend.com UI decisions, including tokens, type, spacing, components, iconography, motion, and accessibility.
+
 - Modern aviation guidance
 - Navy, sky blue, amber palette
 - Subtle aviation grid background
@@ -25,3 +27,5 @@ Design direction:
 
 Important:
 This is a visual/product prototype. Optimize for interaction, layout, and feel. Production code will be refactored later in Astro.
+
+Precedence note: `/project-knowledge/style-guide_website_flight-school-friend_current.md` governs site UI. `/project-knowledge/design-brief.md` and related design brief/reference files remain in place for other uses, but they do not override the current website style guide.
