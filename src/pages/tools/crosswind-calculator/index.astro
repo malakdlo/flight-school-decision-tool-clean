@@ -1,0 +1,841 @@
+---
+import '@/styles/global.css';
+import { site } from '@/config/site';
+
+const title = 'Crosswind Component Calculator | Flight School Friend';
+const description =
+  'Use this crosswind component calculator to estimate crosswind, headwind, tailwind, and gust components for student pilot runway planning.';
+const canonical = 'https://flightschoolfriend.com/tools/crosswind-calculator/';
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${site.url}/#website`,
+      url: site.url,
+      name: site.name,
+    },
+    {
+      '@type': 'WebApplication',
+      '@id': `${canonical}#webapp`,
+      name: 'Crosswind Component Calculator',
+      url: canonical,
+      applicationCategory: 'EducationalApplication',
+      operatingSystem: 'Any',
+      description,
+      publisher: { '@id': `${site.url}/#website` },
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>{title}</title>
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body class="crosswind-page">
+    <main>
+      <section class="hero-band">
+        <div class="page-shell hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Student pilot calculator</p>
+            <h1>Crosswind component calculator</h1>
+            <p class="lead">
+              Estimate crosswind, headwind, tailwind, and gust components from runway heading and wind direction. Use it as decision support before you compare the numbers with your school's limits, POH, and instructor guidance.
+            </p>
+          </div>
+
+          <div class="instrument-card" aria-label="Calculator summary preview">
+            <div class="instrument-ring">
+              <span class="instrument-label">XW</span>
+              <strong id="hero-crosswind">0.0 kt</strong>
+              <span id="hero-side">waiting for wind</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page-shell tool-layout" aria-labelledby="calculator-heading">
+        <div class="calculator-panel">
+          <div class="panel-heading">
+            <p class="eyebrow">Inputs</p>
+            <h2 id="calculator-heading">Build your wind components</h2>
+            <p>
+              Enter a runway number like 18 or a full magnetic heading like 183. Runway numbers 1-36 are converted to heading x 10; use a leading zero for headings like 025 degrees.
+            </p>
+          </div>
+
+          <form class="input-grid" id="crosswind-form">
+            <label>
+              <span>Runway heading</span>
+              <input id="runway-heading" name="runway-heading" type="text" inputmode="decimal" placeholder="36 or 360" autocomplete="off" />
+            </label>
+
+            <label>
+              <span>Wind direction</span>
+              <input id="wind-direction" name="wind-direction" type="number" inputmode="decimal" min="0" max="360" placeholder="010" autocomplete="off" />
+            </label>
+
+            <label>
+              <span>Wind speed</span>
+              <input id="wind-speed" name="wind-speed" type="number" inputmode="decimal" min="0" step="0.1" placeholder="12" autocomplete="off" />
+            </label>
+
+            <label>
+              <span>Gust speed <small>optional</small></span>
+              <input id="gust-speed" name="gust-speed" type="number" inputmode="decimal" min="0" step="0.1" placeholder="18" autocomplete="off" />
+            </label>
+
+            <label class="limit-field">
+              <span>My school's solo crosswind limit <small>optional</small></span>
+              <input id="solo-limit" name="solo-limit" type="number" inputmode="decimal" min="0" step="0.1" placeholder="Example: 10" autocomplete="off" />
+            </label>
+          </form>
+        </div>
+
+        <div class="results-panel" aria-live="polite">
+          <div class="result-row">
+            <div>
+              <span class="result-label">Crosswind</span>
+              <strong id="crosswind-output">Enter wind values</strong>
+            </div>
+            <span id="crosswind-side" class="status-pill">left/right</span>
+          </div>
+
+          <div class="result-row">
+            <div>
+              <span class="result-label">Headwind / tailwind</span>
+              <strong id="headwind-output">Enter wind values</strong>
+            </div>
+            <span id="headwind-kind" class="status-pill">component</span>
+          </div>
+
+          <div class="gust-results" id="gust-results" hidden>
+            <div class="result-row compact">
+              <div>
+                <span class="result-label">Crosswind at gust</span>
+                <strong id="gust-crosswind-output">0.0 kt</strong>
+              </div>
+              <span id="gust-crosswind-side" class="status-pill">left/right</span>
+            </div>
+
+            <div class="result-row compact">
+              <div>
+                <span class="result-label">Headwind / tailwind at gust</span>
+                <strong id="gust-headwind-output">0.0 kt</strong>
+              </div>
+              <span id="gust-headwind-kind" class="status-pill">component</span>
+            </div>
+          </div>
+
+          <p class="limit-note" id="limit-note" hidden>above the limit you entered.</p>
+
+          <figure class="wind-visual" aria-labelledby="visual-title">
+            <figcaption id="visual-title">Runway and wind angle</figcaption>
+            <svg viewBox="0 0 320 280" role="img" aria-describedby="visual-desc">
+              <desc id="visual-desc">A vertical runway line with a wind arrow rotated to match the wind angle relative to the runway heading.</desc>
+              <defs>
+                <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+                  <path d="M2 2 L10 6 L2 10 Z" class="arrow-head"></path>
+                </marker>
+              </defs>
+              <rect x="118" y="26" width="84" height="228" rx="10" class="runway-fill"></rect>
+              <line x1="160" y1="44" x2="160" y2="236" class="runway-center"></line>
+              <line x1="132" y1="70" x2="188" y2="70" class="runway-mark"></line>
+              <line x1="132" y1="210" x2="188" y2="210" class="runway-mark"></line>
+              <text x="160" y="24" text-anchor="middle" class="svg-label" id="runway-label">RWY --</text>
+              <g id="wind-arrow" transform="rotate(0 160 140)">
+                <line x1="160" y1="34" x2="160" y2="126" class="wind-line" marker-end="url(#arrowhead)"></line>
+                <circle cx="160" cy="34" r="4" class="wind-source"></circle>
+              </g>
+              <circle cx="160" cy="140" r="6" class="center-dot"></circle>
+              <text x="160" y="272" text-anchor="middle" class="svg-caption" id="angle-label">Relative wind angle: --</text>
+            </svg>
+          </figure>
+        </div>
+      </section>
+
+      <section class="page-shell verification-section" aria-labelledby="verification-heading">
+        <div>
+          <p class="eyebrow">Inline verification</p>
+          <h2 id="verification-heading">Math checks built into this page</h2>
+          <p>
+            These cases use the same calculation functions as the tool: direct crosswind, direct headwind, direct tailwind, and a 360/0 wraparound check.
+          </p>
+        </div>
+
+        <div class="verification-table" id="verification-table"></div>
+      </section>
+    </main>
+
+    <footer class="tool-footer">
+      <div class="page-shell footer-inner">
+        <div>
+          <strong>{site.name}</strong>
+          <p>Flight School Friend is an independent educational resource. It is not legal, medical, financial, or FAA certification advice. Always verify requirements with the FAA, your aviation medical examiner, and your flight school.</p>
+          <p>Component math only - always follow your school's limitations, your POH, and your instructor's guidance.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script is:inline>
+      const runwayInput = document.querySelector('#runway-heading');
+      const windDirectionInput = document.querySelector('#wind-direction');
+      const windSpeedInput = document.querySelector('#wind-speed');
+      const gustSpeedInput = document.querySelector('#gust-speed');
+      const soloLimitInput = document.querySelector('#solo-limit');
+      const crosswindOutput = document.querySelector('#crosswind-output');
+      const crosswindSide = document.querySelector('#crosswind-side');
+      const headwindOutput = document.querySelector('#headwind-output');
+      const headwindKind = document.querySelector('#headwind-kind');
+      const gustResults = document.querySelector('#gust-results');
+      const gustCrosswindOutput = document.querySelector('#gust-crosswind-output');
+      const gustCrosswindSide = document.querySelector('#gust-crosswind-side');
+      const gustHeadwindOutput = document.querySelector('#gust-headwind-output');
+      const gustHeadwindKind = document.querySelector('#gust-headwind-kind');
+      const limitNote = document.querySelector('#limit-note');
+      const windArrow = document.querySelector('#wind-arrow');
+      const angleLabel = document.querySelector('#angle-label');
+      const runwayLabel = document.querySelector('#runway-label');
+      const heroCrosswind = document.querySelector('#hero-crosswind');
+      const heroSide = document.querySelector('#hero-side');
+      const verificationTable = document.querySelector('#verification-table');
+
+      const toNumber = (value) => {
+        const parsed = Number(String(value).trim());
+        return Number.isFinite(parsed) ? parsed : null;
+      };
+
+      const normalize360 = (degrees) => ((degrees % 360) + 360) % 360;
+
+      const parseRunwayHeading = (value) => {
+        const raw = String(value).trim();
+        if (!/^\d+(\.\d+)?$/.test(raw)) return null;
+        const numeric = toNumber(raw);
+        if (numeric === null || numeric < 0 || numeric > 360) return null;
+        const isLeadingZeroHeading = /^0\d/.test(raw);
+        if (!isLeadingZeroHeading && Number.isInteger(numeric) && numeric >= 1 && numeric <= 36) {
+          return normalize360(numeric * 10);
+        }
+        return normalize360(numeric);
+      };
+
+      const signedAngularDifference = (runwayHeading, windDirection) => {
+        const signed = ((normalize360(windDirection) - normalize360(runwayHeading) + 540) % 360) - 180;
+        return signed === -180 ? 180 : signed;
+      };
+
+      const componentsFor = (runwayHeading, windDirection, windSpeed) => {
+        const signedDifference = signedAngularDifference(runwayHeading, windDirection);
+        const difference = Math.abs(signedDifference);
+        const radians = (difference * Math.PI) / 180;
+        const crosswind = Math.abs(windSpeed * Math.sin(radians));
+        const headwind = windSpeed * Math.cos(radians);
+        const side = crosswind < 0.05 ? 'none' : signedDifference > 0 ? 'from right' : 'from left';
+
+        return {
+          signedDifference,
+          difference,
+          crosswind,
+          headwind,
+          side,
+        };
+      };
+
+      const formatKnots = (value) => `${Math.abs(value).toFixed(1)} kt`;
+
+      const setHeadwindDisplay = (element, pill, value) => {
+        const isTailwind = value < -0.05;
+        element.textContent = `${formatKnots(value)} ${isTailwind ? 'tailwind' : 'headwind'}`;
+        pill.textContent = isTailwind ? 'TAILWIND' : 'headwind';
+        pill.classList.toggle('warning', isTailwind);
+      };
+
+      const renderComponent = (result, output, sideElement) => {
+        output.textContent = `${result.crosswind.toFixed(1)} kt`;
+        sideElement.textContent = result.side;
+        sideElement.classList.toggle('muted', result.side === 'none');
+      };
+
+      const resetOutputs = () => {
+        crosswindOutput.textContent = 'Enter wind values';
+        crosswindSide.textContent = 'left/right';
+        headwindOutput.textContent = 'Enter wind values';
+        headwindKind.textContent = 'component';
+        headwindKind.classList.remove('warning');
+        gustResults.hidden = true;
+        limitNote.hidden = true;
+        heroCrosswind.textContent = '0.0 kt';
+        heroSide.textContent = 'waiting for wind';
+        windArrow.setAttribute('transform', 'rotate(0 160 140)');
+        angleLabel.textContent = 'Relative wind angle: --';
+        runwayLabel.textContent = 'RWY --';
+      };
+
+      const updateCalculator = () => {
+        const runwayHeading = parseRunwayHeading(runwayInput.value);
+        const windDirection = toNumber(windDirectionInput.value);
+        const windSpeed = toNumber(windSpeedInput.value);
+        const gustSpeed = toNumber(gustSpeedInput.value);
+        const soloLimit = toNumber(soloLimitInput.value);
+
+        if (runwayHeading === null || windDirection === null || windSpeed === null || windDirection < 0 || windDirection > 360 || windSpeed < 0) {
+          resetOutputs();
+          return;
+        }
+
+        const result = componentsFor(runwayHeading, windDirection, windSpeed);
+        renderComponent(result, crosswindOutput, crosswindSide);
+        setHeadwindDisplay(headwindOutput, headwindKind, result.headwind);
+
+        heroCrosswind.textContent = `${result.crosswind.toFixed(1)} kt`;
+        heroSide.textContent = result.side;
+        windArrow.setAttribute('transform', `rotate(${result.signedDifference} 160 140)`);
+        angleLabel.textContent = `Relative wind angle: ${result.difference.toFixed(0)} degrees`;
+        runwayLabel.textContent = `RWY ${runwayHeading === 0 ? '360' : runwayHeading.toFixed(0).padStart(3, '0')}`;
+
+        if (gustSpeed !== null && gustSpeed >= 0) {
+          const gust = componentsFor(runwayHeading, windDirection, gustSpeed);
+          renderComponent(gust, gustCrosswindOutput, gustCrosswindSide);
+          setHeadwindDisplay(gustHeadwindOutput, gustHeadwindKind, gust.headwind);
+          gustResults.hidden = false;
+        } else {
+          gustResults.hidden = true;
+        }
+
+        const highestCrosswind = gustSpeed !== null && gustSpeed >= 0
+          ? Math.max(result.crosswind, componentsFor(runwayHeading, windDirection, gustSpeed).crosswind)
+          : result.crosswind;
+        limitNote.hidden = !(soloLimit !== null && soloLimit >= 0 && highestCrosswind > soloLimit);
+      };
+
+      const verificationCases = [
+        {
+          label: 'Direct crosswind',
+          runway: 360,
+          wind: 90,
+          speed: 10,
+          expected: '10.0 kt crosswind, 0.0 kt headwind',
+          test: (result) => Math.abs(result.crosswind - 10) < 0.05 && Math.abs(result.headwind) < 0.05,
+        },
+        {
+          label: 'Direct headwind',
+          runway: 180,
+          wind: 180,
+          speed: 10,
+          expected: '0.0 kt crosswind, 10.0 kt headwind',
+          test: (result) => result.crosswind < 0.05 && Math.abs(result.headwind - 10) < 0.05,
+        },
+        {
+          label: 'Direct tailwind',
+          runway: 180,
+          wind: 360,
+          speed: 10,
+          expected: '0.0 kt crosswind, 10.0 kt tailwind',
+          test: (result) => result.crosswind < 0.05 && Math.abs(result.headwind + 10) < 0.05,
+        },
+        {
+          label: 'Wraparound',
+          runway: 360,
+          wind: 10,
+          speed: 12,
+          expected: '10 degree difference',
+          test: (result) => Math.abs(result.difference - 10) < 0.05,
+        },
+      ];
+
+      const renderVerification = () => {
+        verificationTable.innerHTML = verificationCases
+          .map((item) => {
+            const result = componentsFor(item.runway, item.wind, item.speed);
+            const passed = item.test(result);
+            const measured = `${result.crosswind.toFixed(1)} kt crosswind, ${Math.abs(result.headwind).toFixed(1)} kt ${result.headwind < 0 ? 'tailwind' : 'headwind'}, ${result.difference.toFixed(0)} degree angle`;
+            return `
+              <div class="verification-row">
+                <span>${item.label}</span>
+                <span>${item.expected}</span>
+                <strong class="${passed ? 'pass' : 'fail'}">${passed ? 'Pass' : 'Check'}</strong>
+                <small>${measured}</small>
+              </div>
+            `;
+          })
+          .join('');
+      };
+
+      [runwayInput, windDirectionInput, windSpeedInput, gustSpeedInput, soloLimitInput].forEach((input) => {
+        input.addEventListener('input', updateCalculator);
+      });
+
+      renderVerification();
+      updateCalculator();
+    </script>
+
+    <style>
+      :root {
+        --bg: #FAFBFD;
+        --surface: #FFFFFF;
+        --surface-sunken: #EEF2F7;
+        --surface-inverse: #0E1B2E;
+        --border: #E2E8F0;
+        --border-strong: #CBD5E1;
+        --text-strong: #0E1B2E;
+        --text-body: #334155;
+        --text-muted: #64748B;
+        --primary: #0B69D6;
+        --primary-hover: #0A5BBA;
+        --primary-soft: #EAF3FE;
+        --secondary: #0E1B2E;
+        --accent: #5B7FB5;
+        --success: #1F9D5B;
+        --warning: #E08600;
+        --error: #DC2B36;
+        --space-1: 4px;
+        --space-2: 8px;
+        --space-3: 12px;
+        --space-4: 16px;
+        --space-5: 20px;
+        --space-6: 24px;
+        --space-8: 32px;
+        --space-10: 40px;
+        --space-12: 48px;
+        --space-16: 64px;
+        --shadow-sm: 0 1px 3px rgba(14,27,46,.06), 0 1px 2px rgba(14,27,46,.04);
+        --shadow-md: 0 4px 12px rgba(14,27,46,.07), 0 2px 4px rgba(14,27,46,.04);
+      }
+
+      html {
+        background: var(--bg);
+      }
+
+      .crosswind-page {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          linear-gradient(rgba(14, 27, 46, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(14, 27, 46, 0.03) 1px, transparent 1px),
+          var(--bg);
+        background-size: 32px 32px;
+        color: var(--text-body);
+        font-family: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      .page-shell {
+        width: min(1080px, calc(100% - clamp(2.5rem, 10vw, 6rem)));
+        margin-inline: auto;
+      }
+
+      .hero-band {
+        padding: clamp(4rem, 8vw, 7rem) 0 var(--space-12);
+      }
+
+      .hero-grid {
+        display: grid;
+        gap: var(--space-8);
+      }
+
+      .hero-copy {
+        max-width: 760px;
+      }
+
+      .eyebrow {
+        margin: 0 0 var(--space-3);
+        color: var(--primary);
+        font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2 {
+        margin: 0;
+        color: var(--text-strong);
+        letter-spacing: -0.015em;
+      }
+
+      h1 {
+        max-width: 780px;
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 800;
+        line-height: 1.05;
+      }
+
+      h2 {
+        font-size: clamp(1.75rem, 3vw, 2rem);
+        font-weight: 800;
+        line-height: 1.25;
+      }
+
+      .lead {
+        margin: var(--space-5) 0 0;
+        max-width: 760px;
+        color: var(--text-body);
+        font-size: 1.1875rem;
+        line-height: 1.7;
+      }
+
+      .instrument-card,
+      .calculator-panel,
+      .results-panel,
+      .verification-section,
+      .tool-footer {
+        border: 1px solid var(--border);
+        background: var(--surface);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .instrument-card {
+        display: grid;
+        min-height: 260px;
+        place-items: center;
+        border-radius: 16px;
+        padding: var(--space-6);
+      }
+
+      .instrument-ring {
+        display: grid;
+        width: min(220px, 100%);
+        aspect-ratio: 1;
+        place-items: center;
+        border: 12px solid var(--surface-sunken);
+        border-radius: 999px;
+        outline: 1px solid var(--border-strong);
+        text-align: center;
+      }
+
+      .instrument-label {
+        align-self: end;
+        color: var(--text-muted);
+        font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+      }
+
+      .instrument-ring strong {
+        color: var(--text-strong);
+        font-size: clamp(2rem, 8vw, 3rem);
+        line-height: 1;
+      }
+
+      .instrument-ring span:last-child {
+        align-self: start;
+        color: var(--text-muted);
+        font-size: 0.9375rem;
+        font-weight: 700;
+      }
+
+      .tool-layout {
+        display: grid;
+        gap: var(--space-6);
+        padding-bottom: var(--space-16);
+      }
+
+      .calculator-panel,
+      .results-panel,
+      .verification-section {
+        border-radius: 16px;
+        padding: clamp(1.25rem, 4vw, 2rem);
+      }
+
+      .panel-heading p:not(.eyebrow),
+      .verification-section p {
+        margin: var(--space-3) 0 0;
+        color: var(--text-muted);
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+
+      .input-grid {
+        display: grid;
+        gap: var(--space-4);
+        margin-top: var(--space-8);
+      }
+
+      label {
+        display: grid;
+        gap: var(--space-2);
+        color: var(--text-strong);
+        font-size: 0.9375rem;
+        font-weight: 700;
+      }
+
+      label small {
+        color: var(--text-muted);
+        font-size: 0.8125rem;
+        font-weight: 600;
+      }
+
+      input {
+        min-height: 48px;
+        width: 100%;
+        border: 1.5px solid var(--border-strong);
+        border-radius: 12px;
+        background: var(--surface);
+        color: var(--text-strong);
+        font: inherit;
+        font-size: 1rem;
+        outline: none;
+        padding: 0 var(--space-4);
+        transition: border-color 200ms ease-out, box-shadow 200ms ease-out;
+      }
+
+      input:focus-visible {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(11, 105, 214, 0.22);
+      }
+
+      input::placeholder {
+        color: var(--text-muted);
+      }
+
+      .results-panel {
+        display: grid;
+        gap: var(--space-4);
+        align-content: start;
+      }
+
+      .result-row {
+        display: flex;
+        min-height: 92px;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-4);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--surface-sunken);
+        padding: var(--space-4);
+      }
+
+      .result-row.compact {
+        min-height: 78px;
+      }
+
+      .result-label {
+        display: block;
+        margin-bottom: var(--space-1);
+        color: var(--text-muted);
+        font-size: 0.8125rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .result-row strong {
+        color: var(--text-strong);
+        font-size: clamp(1.375rem, 5vw, 2rem);
+        line-height: 1.1;
+      }
+
+      .status-pill {
+        flex: 0 0 auto;
+        border: 1px solid var(--border-strong);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--text-body);
+        font-size: 0.8125rem;
+        font-weight: 800;
+        padding: var(--space-2) var(--space-3);
+        text-transform: uppercase;
+      }
+
+      .status-pill.warning {
+        border-color: rgba(224, 134, 0, 0.35);
+        background: rgba(224, 134, 0, 0.12);
+        color: var(--warning);
+      }
+
+      .status-pill.muted {
+        color: var(--text-muted);
+      }
+
+      .gust-results {
+        display: grid;
+        gap: var(--space-4);
+      }
+
+      .limit-note {
+        margin: 0;
+        border: 1px solid var(--border-strong);
+        border-radius: 12px;
+        background: var(--surface);
+        color: var(--text-body);
+        font-weight: 700;
+        padding: var(--space-4);
+      }
+
+      .wind-visual {
+        margin: var(--space-2) 0 0;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: var(--surface);
+        padding: var(--space-4);
+      }
+
+      .wind-visual figcaption {
+        margin-bottom: var(--space-3);
+        color: var(--text-strong);
+        font-weight: 800;
+      }
+
+      .wind-visual svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .runway-fill {
+        fill: var(--surface-inverse);
+      }
+
+      .runway-center,
+      .runway-mark {
+        stroke: var(--surface);
+        stroke-dasharray: 12 10;
+        stroke-linecap: round;
+        stroke-width: 4;
+      }
+
+      .runway-mark {
+        stroke-dasharray: none;
+        stroke-width: 3;
+      }
+
+      .wind-line {
+        stroke: var(--primary);
+        stroke-linecap: round;
+        stroke-width: 6;
+      }
+
+      .arrow-head,
+      .wind-source {
+        fill: var(--primary);
+      }
+
+      .center-dot {
+        fill: var(--warning);
+      }
+
+      .svg-label,
+      .svg-caption {
+        fill: var(--text-muted);
+        font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+      }
+
+      .verification-section {
+        display: grid;
+        gap: var(--space-6);
+        margin-bottom: var(--space-16);
+      }
+
+      .verification-table {
+        display: grid;
+        gap: var(--space-3);
+      }
+
+      .verification-row {
+        display: grid;
+        gap: var(--space-2);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--surface-sunken);
+        padding: var(--space-4);
+      }
+
+      .verification-row span:first-child {
+        color: var(--text-strong);
+        font-weight: 800;
+      }
+
+      .verification-row span:nth-child(2),
+      .verification-row small {
+        color: var(--text-muted);
+        font-size: 0.9375rem;
+        line-height: 1.5;
+      }
+
+      .verification-row strong {
+        color: var(--success);
+      }
+
+      .verification-row strong.fail {
+        color: var(--error);
+      }
+
+      .tool-footer {
+        border-width: 1px 0 0;
+        box-shadow: none;
+      }
+
+      .footer-inner {
+        padding: var(--space-8) 0;
+      }
+
+      .footer-inner strong {
+        color: var(--text-strong);
+      }
+
+      .footer-inner p {
+        max-width: 880px;
+        margin: var(--space-3) 0 0;
+        color: var(--text-muted);
+        font-size: 0.9375rem;
+        line-height: 1.6;
+      }
+
+      @media (min-width: 768px) {
+        .hero-grid,
+        .tool-layout {
+          grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+          align-items: start;
+        }
+
+        .input-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .limit-field {
+          grid-column: 1 / -1;
+        }
+
+        .verification-row {
+          grid-template-columns: 1fr 1.4fr auto;
+          align-items: center;
+        }
+
+        .verification-row small {
+          grid-column: 1 / -1;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+        }
+      }
+    </style>
+  </body>
+</html>
