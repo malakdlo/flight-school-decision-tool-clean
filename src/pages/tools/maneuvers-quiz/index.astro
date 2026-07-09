@@ -1,0 +1,1439 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import quizData from '../../../../references/claude-prototype/tools/maneuvers-quiz/maneuvers-data.json';
+
+const title = 'Maneuvers Quiz — Free Chair-Flying Trainer | Flight School Friend';
+const description =
+  'Practice PPL maneuver callout flows from memory, then check yourself against the card with a quick structured question.';
+const canonical = 'https://flightschoolfriend.com/tools/maneuvers-quiz/';
+const structuredData = {
+  '@type': 'WebApplication',
+  '@id': `${canonical}#webapp`,
+  name: 'Maneuvers Quiz',
+  url: canonical,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any',
+  isAccessibleForFree: true,
+  educationalUse: 'Student pilot chair-flying practice',
+  description,
+  author: { '@id': 'https://flightschoolfriend.com/#person' },
+};
+const quizClientData = {
+  _meta: {
+    disclaimer_note: quizData._meta.disclaimer_note,
+  },
+  categories: quizData.categories,
+  maneuvers: quizData.maneuvers.map((maneuver) => {
+    const { authored, reviewed, ...structured } = maneuver.structured;
+    void authored;
+    void reviewed;
+    return {
+      ...maneuver,
+      structured,
+    };
+  }),
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} structuredData={structuredData}>
+  <section class="mq-page" aria-labelledby="maneuvers-quiz-heading">
+    <div class="mq-container">
+      <div class="mq-root" data-maneuvers-quiz>
+        <script is:inline type="application/json" data-mq-data set:html={JSON.stringify(quizClientData)} />
+        <div class="mq-app" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // @ts-nocheck
+  const root = document.querySelector('[data-maneuvers-quiz]');
+  const app = root?.querySelector('.mq-app');
+  const dataNode = root?.querySelector('[data-mq-data]');
+  const DATA = JSON.parse(dataNode?.textContent || '{}');
+  const CATEGORIES = DATA.categories || [];
+  const MANEUVERS = DATA.maneuvers || [];
+  const DISCLAIMER = DATA._meta?.disclaimer_note || '';
+  const SITE_DISCLAIMER =
+    'Flight School Friend is an independent educational resource. It is not legal, medical, financial, or FAA certification advice. Always verify requirements with the FAA, your aviation medical examiner, and your flight school.';
+
+  const categoryIcon = {
+    'Ground Operations': 'compass',
+    'Basic Flight': 'gauge',
+    'Slow Flight & Stalls': 'speed',
+    'Ground Reference': 'map',
+    Takeoffs: 'takeoff',
+    'Traffic Pattern / Landings': 'landing',
+    'Emergency / Navigation': 'lifebuoy',
+  };
+
+  const gradeLabel = { 'got-it': 'Got it', mostly: 'Mostly', missed: 'Missed it' };
+
+  const state = {
+    screen: 'start',
+    selectedCats: [],
+    length: 5,
+    queue: [],
+    index: 0,
+    beat: 'recall',
+    recallResult: null,
+    structuredPicked: null,
+    structuredCorrect: null,
+    seqOrder: [],
+    responses: [],
+    revealed: new Set(),
+    flagging: false,
+    flagged: new Set(),
+    options: [],
+    sequencePool: [],
+  };
+
+  function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;',
+    })[char]);
+  }
+
+  function icon(name) {
+    const icons = {
+      compass: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m15 9-2 5-5 2 2-5 5-2Z"></path></svg>',
+      gauge: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14l4-4"></path><path d="M4 14a8 8 0 0 1 16 0"></path><path d="M4 14v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"></path></svg>',
+      speed: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 1 18 0"></path><path d="M12 12l5-3"></path><path d="M7 15h10"></path></svg>',
+      map: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l-6 3V6l6-3 6 3 6-3v15l-6 3-6-3Z"></path><path d="M9 3v15"></path><path d="M15 6v15"></path></svg>',
+      takeoff: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 16h20"></path><path d="M6 13l4-8 8 8"></path><path d="M10 13h10"></path></svg>',
+      landing: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 19h20"></path><path d="M6 5l4 8 10 2"></path><path d="M10 13l-3 3"></path></svg>',
+      lifebuoy: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="3"></circle><path d="m4.9 4.9 4.9 4.9"></path><path d="m14.2 14.2 4.9 4.9"></path><path d="m19.1 4.9-4.9 4.9"></path><path d="m9.8 14.2-4.9 4.9"></path></svg>',
+      check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>',
+      x: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>',
+      eye: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>',
+      next: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>',
+      reset: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 3v6h6"></path></svg>',
+      alert: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.3 4.1 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 4.1a2 2 0 0 0-3.4 0Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>',
+      mail: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>',
+      info: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>',
+    };
+    return icons[name] || icons.compass;
+  }
+
+  function shuffle(items) {
+    const array = [...items];
+    for (let i = array.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function buildQueue(selectedCats, length, pool) {
+    const byCat = selectedCats
+      .map((cat) => shuffle(pool.filter((maneuver) => maneuver.category === cat)))
+      .filter((items) => items.length > 0);
+    const available = pool.filter((maneuver) => selectedCats.includes(maneuver.category)).length;
+    const target = length === 'all' ? available : Math.min(Number(length), available);
+    const queue = [];
+    let round = 0;
+
+    while (queue.length < target) {
+      let addedAny = false;
+      byCat.forEach((items) => {
+        if (queue.length >= target) return;
+        if (items[round]) {
+          queue.push(items[round]);
+          addedAny = true;
+        }
+      });
+      round += 1;
+      if (!addedAny) break;
+    }
+
+    return queue;
+  }
+
+  function deriveGrade(missedCount, total) {
+    if (missedCount === 0) return 'got-it';
+    if (missedCount / total <= 0.25) return 'mostly';
+    return 'missed';
+  }
+
+  function currentManeuver() {
+    return state.queue[state.index];
+  }
+
+  function stepText(step) {
+    return `${step.label} — ${step.value}`;
+  }
+
+  function resetQuestionState() {
+    const maneuver = currentManeuver();
+    state.structuredPicked = null;
+    state.structuredCorrect = null;
+    state.seqOrder = [];
+    state.options = [];
+    state.sequencePool = [];
+
+    if (!maneuver) return;
+    if (maneuver.structured.type === 'missing-step') {
+      const removedIndex = maneuver.structured.removedIndex;
+      const correctText = stepText(maneuver.steps[removedIndex]);
+      state.options = shuffle([correctText, ...(maneuver.structured.decoys || [])]);
+    }
+    if (maneuver.structured.type === 'sequence') {
+      state.sequencePool = shuffle(maneuver.steps.map((_, index) => index));
+    }
+  }
+
+  function startQuiz() {
+    state.queue = buildQueue(state.selectedCats, state.length, MANEUVERS);
+    state.index = 0;
+    state.beat = 'recall';
+    state.recallResult = null;
+    state.responses = [];
+    state.screen = 'quiz';
+    state.revealed = new Set();
+    state.flagging = false;
+    state.flagged = new Set();
+    resetQuestionState();
+    render();
+  }
+
+  function startRecall() {
+    state.beat = 'recall';
+    state.recallResult = null;
+    state.revealed = new Set();
+    state.flagging = false;
+    state.flagged = new Set();
+    resetQuestionState();
+  }
+
+  function goStructured() {
+    const maneuver = currentManeuver();
+    state.recallResult = {
+      missedSteps: [...state.flagged].sort((a, b) => a - b),
+      grade: deriveGrade(state.flagged.size, maneuver.steps.length),
+    };
+    state.beat = 'structured';
+    resetQuestionState();
+    render();
+  }
+
+  function answerStructured(picked, isCorrect) {
+    state.structuredPicked = picked;
+    state.structuredCorrect = isCorrect;
+    render();
+  }
+
+  function nextManeuver() {
+    state.responses.push({
+      maneuver: currentManeuver(),
+      ...state.recallResult,
+      structuredCorrect: state.structuredCorrect,
+    });
+
+    if (state.index + 1 < state.queue.length) {
+      state.index += 1;
+      startRecall();
+    } else {
+      state.screen = 'results';
+    }
+    render();
+  }
+
+  function renderStart() {
+    return `
+      <p class="mq-eyebrow">Free tool</p>
+      <h1 class="mq-h1" id="maneuvers-quiz-heading">Brief each maneuver from memory, then check yourself against the card.</h1>
+      <p class="mq-lead">
+        Each maneuver shows you the callout flow with the values hidden - say each one
+        out loud like a briefing, tap to check, and flag what you missed. Then one quick
+        question on the numbers. The card is always the answer key.
+      </p>
+      <p class="mq-study-note">${escapeHtml(DISCLAIMER)}</p>
+
+      <div class="mq-card">
+        <p class="mq-section-label">Which maneuvers do you want to practice?</p>
+        <div class="mq-cat-grid">
+          ${CATEGORIES.map((cat) => {
+            const selected = state.selectedCats.includes(cat);
+            const count = MANEUVERS.filter((maneuver) => maneuver.category === cat).length;
+            return `
+              <button class="mq-cat-chip ${selected ? 'mq-cat-chip--selected' : ''}" type="button" data-action="toggle-cat" data-cat="${escapeHtml(cat)}" aria-pressed="${selected}">
+                ${icon(categoryIcon[cat])}
+                <span>${escapeHtml(cat)}</span>
+                <span class="mq-cat-count">${count}</span>
+              </button>
+            `;
+          }).join('')}
+        </div>
+
+        <p class="mq-section-label">How many maneuvers?</p>
+        <div class="mq-length-row">
+          ${[5, 10, 15, 'all'].map((length) => `
+            <button class="mq-length-pill ${state.length === length ? 'mq-length-pill--selected' : ''}" type="button" data-action="set-length" data-length="${length}">
+              ${length === 'all' ? 'All selected' : length}
+            </button>
+          `).join('')}
+        </div>
+
+        <button class="mq-btn-primary" type="button" data-action="start-quiz" ${state.selectedCats.length === 0 ? 'disabled' : ''}>
+          Start quiz ${icon('next')}
+        </button>
+        ${state.selectedCats.length === 0 ? '<p class="mq-hint">Pick at least one category to start.</p>' : ''}
+      </div>
+
+      <p class="mq-disclaimer">${SITE_DISCLAIMER}</p>
+    `;
+  }
+
+  function renderProgress() {
+    const totalBeats = state.queue.length * 2;
+    const completedBeats = state.index * 2 + (state.beat === 'recall' ? 0 : 1);
+    const progressPct = totalBeats ? Math.round((completedBeats / totalBeats) * 100) : 0;
+
+    return `
+      <div class="mq-progress-wrap">
+        <div class="mq-progress-label">
+          <span>Maneuver ${state.index + 1} of ${state.queue.length}</span>
+          <span>${progressPct}%</span>
+        </div>
+        <div class="mq-progress-track" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progressPct}">
+          <div class="mq-progress-fill" style="width: ${progressPct}%"></div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderRecall(maneuver) {
+    const total = maneuver.steps.length;
+    const allRevealed = state.revealed.size === total;
+    return `
+      <p class="mq-objective"><strong>Objective:</strong> ${escapeHtml(maneuver.objective)}</p>
+      <p class="mq-prompt">Brief it like you would out loud - say each callout, then tap the row to check yourself against the card.</p>
+      <div class="mq-flow">
+        ${maneuver.steps.map((step, index) => {
+          const isRevealed = state.revealed.has(index);
+          const isFlagged = state.flagged.has(index);
+          return `
+            <div>
+              ${step.phase ? `<p class="mq-phase">${escapeHtml(step.phase)}</p>` : ''}
+              <button class="mq-flow-row ${isRevealed ? 'mq-flow-row--revealed' : ''} ${state.flagging ? 'mq-flow-row--flagmode' : ''} ${isFlagged ? 'mq-flow-row--flagged' : ''}" type="button" data-action="${state.flagging ? 'toggle-flag' : 'reveal-step'}" data-step-index="${index}">
+                <span class="mq-flow-num">${escapeHtml(step.n)}.</span>
+                <span class="mq-flow-label">${escapeHtml(step.label)}</span>
+                <span class="mq-flow-value">
+                  ${isRevealed ? escapeHtml(step.value) : `<span class="mq-flow-hidden">${icon('eye')} tap to check</span>`}
+                </span>
+                ${state.flagging ? `<span class="mq-flag-dot ${isFlagged ? 'mq-flag-dot--on' : ''}">${isFlagged ? icon('x') : ''}</span>` : ''}
+              </button>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      ${!state.flagging ? `
+        <div class="mq-footer-actions mq-footer-actions--split">
+          <button class="mq-btn-ghost" type="button" data-action="reveal-all">${icon('eye')} Reveal all</button>
+          <button class="mq-btn-primary" type="button" data-action="start-flagging" ${!allRevealed ? 'disabled' : ''}>
+            Done briefing ${icon('next')}
+          </button>
+        </div>
+      ` : `
+        <p class="mq-prompt mq-flag-prompt">Tap any steps you missed or got wrong - be honest, it's just for your review list.</p>
+        <div class="mq-footer-actions">
+          <button class="mq-btn-primary" type="button" data-action="finish-recall">
+            ${state.flagged.size === 0 ? 'Nailed it - next' : `${state.flagged.size} missed - next`} ${icon('next')}
+          </button>
+        </div>
+      `}
+    `;
+  }
+
+  function renderMultipleChoice(maneuver) {
+    const question = maneuver.structured;
+    return `
+      <div class="mq-mc">
+        <p class="mq-question">${escapeHtml(question.prompt)}</p>
+        <div class="mq-mc-grid">
+          ${(question.options || []).map((option, index) => {
+            const isPicked = state.structuredPicked === index;
+            const showCorrect = state.structuredCorrect !== null && question.correctIndex === index;
+            const showWrong = state.structuredCorrect !== null && isPicked && question.correctIndex !== index;
+            return `
+              <button class="mq-choice ${isPicked ? 'mq-choice--picked' : ''} ${showCorrect ? 'mq-choice--correct' : ''} ${showWrong ? 'mq-choice--wrong' : ''}" type="button" data-action="answer-mc" data-index="${index}" ${state.structuredCorrect !== null ? 'disabled' : ''}>
+                <span>${escapeHtml(option)}</span>
+                ${showCorrect ? icon('check') : ''}
+                ${showWrong ? icon('x') : ''}
+              </button>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderMissingStep(maneuver) {
+    const question = maneuver.structured;
+    const removedIndex = question.removedIndex;
+    const shown = maneuver.steps.filter((_, index) => index !== removedIndex);
+    const correctText = stepText(maneuver.steps[removedIndex]);
+
+    return `
+      <div class="mq-mc">
+        <div class="mq-flow mq-flow--question">
+          ${shown.map((step) => `
+            <div class="mq-flow-row mq-flow-row--revealed">
+              <span class="mq-flow-label">${escapeHtml(step.label)}</span>
+              <span class="mq-flow-value">${escapeHtml(step.value)}</span>
+            </div>
+          `).join('')}
+        </div>
+        <p class="mq-question">${escapeHtml(question.prompt)}</p>
+        <div class="mq-mc-grid">
+          {options}
+        </div>
+      </div>
+    `.replace('{options}', state.options.map((option, index) => {
+      const isPicked = state.structuredPicked === index;
+      const isCorrect = option === correctText;
+      const showCorrect = state.structuredCorrect !== null && isCorrect;
+      const showWrong = state.structuredCorrect !== null && isPicked && !isCorrect;
+      return `
+        <button class="mq-choice ${isPicked ? 'mq-choice--picked' : ''} ${showCorrect ? 'mq-choice--correct' : ''} ${showWrong ? 'mq-choice--wrong' : ''}" type="button" data-action="answer-missing" data-index="${index}" ${state.structuredCorrect !== null ? 'disabled' : ''}>
+          <span>${escapeHtml(option)}</span>
+          ${showCorrect ? icon('check') : ''}
+          ${showWrong ? icon('x') : ''}
+        </button>
+      `;
+    }).join(''));
+  }
+
+  function renderSequence(maneuver) {
+    const isComplete = state.seqOrder.length === maneuver.steps.length;
+    const isCorrect = isComplete && state.seqOrder.every((value, index) => value === index);
+    const remaining = state.sequencePool.filter((index) => !state.seqOrder.includes(index));
+
+    return `
+      <div class="mq-sequence">
+        <p class="mq-question">${escapeHtml(maneuver.structured.prompt)}</p>
+        <div class="mq-seq-slots">
+          ${maneuver.steps.map((_, slotIndex) => {
+            const filledIndex = state.seqOrder[slotIndex];
+            const text = filledIndex !== undefined ? stepText(maneuver.steps[filledIndex]) : '-';
+            return `
+              <div class="mq-seq-slot">
+                <span class="mq-seq-slot-num">${slotIndex + 1}</span>
+                <span class="mq-seq-slot-text">${escapeHtml(text)}</span>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        ${state.structuredCorrect === null ? `
+          <div class="mq-seq-pool">
+            ${remaining.map((stepIndex) => `
+              <button class="mq-seq-chip" type="button" data-action="add-sequence" data-step-index="${stepIndex}">
+                ${escapeHtml(stepText(maneuver.steps[stepIndex]))}
+              </button>
+            `).join('')}
+          </div>
+          <div class="mq-seq-actions">
+            <button class="mq-btn-ghost" type="button" data-action="clear-sequence">${icon('reset')} Clear</button>
+            <button class="mq-btn-primary" type="button" data-action="check-sequence" ${!isComplete ? 'disabled' : ''}>Check it</button>
+          </div>
+        ` : `
+          <div class="mq-seq-result ${isCorrect ? 'mq-good' : 'mq-bad'}">
+            ${isCorrect ? `
+              <p>${icon('check')} That's the order per the card.</p>
+            ` : `
+              <p>${icon('x')} Not quite - here's the card order:</p>
+              <ol class="mq-steplist">
+                ${maneuver.steps.map((step) => `<li>${escapeHtml(stepText(step))}</li>`).join('')}
+              </ol>
+            `}
+          </div>
+        `}
+      </div>
+    `;
+  }
+
+  function renderSpotError(maneuver) {
+    const question = maneuver.structured;
+    const shownSteps = question.shownOrder.map((stepIndex) => maneuver.steps[stepIndex]);
+
+    return `
+      <div class="mq-mc">
+        <p class="mq-question">One step here is out of place. Tap the one that's in the wrong spot.</p>
+        <div class="mq-flow">
+          ${shownSteps.map((step, index) => {
+            const isPicked = state.structuredPicked === index;
+            const isWrongOne = index === question.wrongPositionIndexInShown;
+            const showCorrect = state.structuredCorrect !== null && isWrongOne;
+            const showWrong = state.structuredCorrect !== null && isPicked && !isWrongOne;
+            return `
+              <button class="mq-flow-row mq-flow-row--revealed mq-flow-row--tappable ${isPicked ? 'mq-step--picked' : ''} ${showCorrect ? 'mq-step--correct' : ''} ${showWrong ? 'mq-step--wrong' : ''}" type="button" data-action="answer-spot-error" data-index="${index}" ${state.structuredCorrect !== null ? 'disabled' : ''}>
+                <span class="mq-flow-num">${index + 1}.</span>
+                <span class="mq-flow-label">${escapeHtml(step.label)}</span>
+                <span class="mq-flow-value">${escapeHtml(step.value)}</span>
+                ${showCorrect ? icon('check') : ''}
+                ${showWrong ? icon('x') : ''}
+              </button>
+            `;
+          }).join('')}
+        </div>
+        ${state.structuredCorrect !== null ? `
+          <div class="mq-callout">
+            ${icon('info')}
+            <span>Card order: ${escapeHtml(maneuver.steps.map((step) => step.label).join(' -> '))}</span>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }
+
+  function renderStructured(maneuver) {
+    const type = maneuver.structured.type;
+    let body = '';
+    if (type === 'multiple-choice') body = renderMultipleChoice(maneuver);
+    if (type === 'missing-step') body = renderMissingStep(maneuver);
+    if (type === 'sequence') body = renderSequence(maneuver);
+    if (type === 'spot-error') body = renderSpotError(maneuver);
+
+    return `
+      ${body}
+      ${state.structuredCorrect !== null ? `
+        <div class="mq-footer-actions">
+          <button class="mq-btn-primary" type="button" data-action="next-maneuver">
+            ${state.index + 1 < state.queue.length ? 'Next maneuver' : 'See results'} ${icon('next')}
+          </button>
+        </div>
+      ` : ''}
+    `;
+  }
+
+  function renderQuiz() {
+    const maneuver = currentManeuver();
+    if (!maneuver) return '';
+
+    return `
+      ${renderProgress()}
+      <div class="mq-card">
+        <span class="mq-maneuver-badge">${icon(categoryIcon[maneuver.category])}${escapeHtml(maneuver.category)}</span>
+        <h2 class="mq-maneuver-name">${escapeHtml(maneuver.name)}</h2>
+        ${state.beat === 'recall' ? renderRecall(maneuver) : renderStructured(maneuver)}
+      </div>
+    `;
+  }
+
+  function renderResults() {
+    const structuredScore = state.responses.filter((response) => response.structuredCorrect).length;
+
+    return `
+      <p class="mq-eyebrow">Results</p>
+      <h1 class="mq-h1">Here's how it went</h1>
+
+      <div class="mq-score-banner">
+        <div>
+          <p>Quick checks</p>
+          <span class="mq-score-num">${structuredScore}/${state.responses.length}</span>
+        </div>
+        <div class="mq-score-copy">The missed steps below are your chair-flying list for next time.</div>
+      </div>
+
+      <div class="mq-card">
+        ${state.responses.map((response) => {
+          const needsReview = response.grade === 'missed' || response.structuredCorrect === false;
+          return `
+            <div class="mq-results-row">
+              <div class="mq-results-icon ${response.structuredCorrect ? 'mq-good' : 'mq-bad'}">
+                ${response.structuredCorrect ? icon('check') : icon('x')}
+              </div>
+              <div>
+                <p class="mq-results-name">${escapeHtml(response.maneuver.name)}</p>
+                <p class="mq-results-meta">
+                  Briefing: <strong>${escapeHtml(gradeLabel[response.grade])}</strong>
+                  ${response.missedSteps.length > 0 ? ` (${response.missedSteps.length} step${response.missedSteps.length > 1 ? 's' : ''} flagged)` : ''}
+                  · Quick check: <strong>${response.structuredCorrect ? 'Correct' : 'Incorrect'}</strong>
+                </p>
+                ${response.missedSteps.length > 0 ? `
+                  <div>
+                    ${response.missedSteps.map((stepIndex) => {
+                      const step = response.maneuver.steps[stepIndex];
+                      return `<span class="mq-missed-chip">${escapeHtml(step.n)}. ${escapeHtml(stepText(step))}</span>`;
+                    }).join('')}
+                  </div>
+                ` : ''}
+                ${needsReview ? `<div class="mq-review-tag">${icon('alert')} Review this one</div>` : ''}
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      <div class="mq-end-options">
+        <div class="mq-end-card">
+          <p class="mq-end-card-title">Run it again</p>
+          <p class="mq-end-card-body">Pick a fresh set of maneuvers or re-run the same categories.</p>
+          <button class="mq-btn-ghost" type="button" data-action="restart">${icon('reset')} Start a new quiz</button>
+        </div>
+        <form class="mq-end-card" data-action="kit-stub">
+          <p class="mq-end-card-title">Get the full card set</p>
+          <p class="mq-end-card-body">All 31 maneuver cards - objective, callout flow, and diagram - as a printable download.</p>
+          <label class="mq-email-label">
+            <span>Email</span>
+            <input class="mq-email-input" type="email" placeholder="you@email.com" autocomplete="email" disabled />
+          </label>
+          <button class="mq-btn-primary mq-btn-full" type="submit" disabled>${icon('mail')} Coming soon</button>
+          <p class="mq-hint">Email delivery is not wired yet.</p>
+        </form>
+      </div>
+
+      <p class="mq-disclaimer">${SITE_DISCLAIMER}</p>
+      <p class="mq-disclaimer">${escapeHtml(DISCLAIMER)}</p>
+    `;
+  }
+
+  function render() {
+    if (!app) return;
+    if (state.screen === 'start') app.innerHTML = renderStart();
+    if (state.screen === 'quiz') app.innerHTML = renderQuiz();
+    if (state.screen === 'results') app.innerHTML = renderResults();
+  }
+
+  function toggleCategory(cat) {
+    state.selectedCats = state.selectedCats.includes(cat)
+      ? state.selectedCats.filter((item) => item !== cat)
+      : [...state.selectedCats, cat];
+  }
+
+  root?.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const control = target.closest('[data-action]');
+    if (!(control instanceof HTMLElement)) return;
+    const action = control.dataset.action;
+    const maneuver = currentManeuver();
+
+    if (action === 'toggle-cat') {
+      toggleCategory(control.dataset.cat || '');
+      render();
+    }
+    if (action === 'set-length') {
+      state.length = control.dataset.length === 'all' ? 'all' : Number(control.dataset.length);
+      render();
+    }
+    if (action === 'start-quiz') startQuiz();
+    if (action === 'reveal-step') {
+      state.revealed.add(Number(control.dataset.stepIndex));
+      render();
+    }
+    if (action === 'reveal-all' && maneuver) {
+      state.revealed = new Set(maneuver.steps.map((_, index) => index));
+      render();
+    }
+    if (action === 'start-flagging') {
+      state.flagging = true;
+      render();
+    }
+    if (action === 'toggle-flag') {
+      const stepIndex = Number(control.dataset.stepIndex);
+      if (state.flagged.has(stepIndex)) state.flagged.delete(stepIndex);
+      else state.flagged.add(stepIndex);
+      render();
+    }
+    if (action === 'finish-recall') goStructured();
+    if (action === 'answer-mc' && maneuver) {
+      const index = Number(control.dataset.index);
+      answerStructured(index, index === maneuver.structured.correctIndex);
+    }
+    if (action === 'answer-missing' && maneuver) {
+      const index = Number(control.dataset.index);
+      const option = state.options[index];
+      const correctText = stepText(maneuver.steps[maneuver.structured.removedIndex]);
+      answerStructured(index, option === correctText);
+    }
+    if (action === 'add-sequence') {
+      state.seqOrder.push(Number(control.dataset.stepIndex));
+      render();
+    }
+    if (action === 'clear-sequence') {
+      state.seqOrder = [];
+      render();
+    }
+    if (action === 'check-sequence' && maneuver) {
+      answerStructured(null, state.seqOrder.every((value, index) => value === index));
+    }
+    if (action === 'answer-spot-error' && maneuver) {
+      const index = Number(control.dataset.index);
+      answerStructured(index, index === maneuver.structured.wrongPositionIndexInShown);
+    }
+    if (action === 'next-maneuver') nextManeuver();
+    if (action === 'restart') {
+      state.screen = 'start';
+      render();
+    }
+  });
+
+  root?.addEventListener('submit', (event) => {
+    const form = event.target;
+    if (form instanceof HTMLElement && form.dataset.action === 'kit-stub') {
+      event.preventDefault();
+      // TODO: wire Kit form — UID + tag pending, see site-map-and-funnels.md
+    }
+  });
+
+  render();
+</script>
+
+<style is:global>
+  .mq-page {
+    --bg: #fafbfd;
+    --surface: #ffffff;
+    --surface-sunken: #eef2f7;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text-strong: #0e1b2e;
+    --text-body: #334155;
+    --text-muted: #64748b;
+    --primary: #0b69d6;
+    --primary-hover: #0a5bba;
+    --primary-soft: #eaf3fe;
+    --success: #1f9d5b;
+    --warning: #e08600;
+    --error: #dc2b36;
+    --shadow-md: 0 4px 12px rgba(14, 27, 46, 0.07), 0 2px 4px rgba(14, 27, 46, 0.04);
+    color: var(--text-body);
+    padding: clamp(2rem, 6vw, 4.5rem) clamp(1rem, 5vw, 3rem);
+  }
+
+  .mq-container {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .mq-root {
+    min-height: 640px;
+    border-radius: 20px;
+  }
+
+  .mq-eyebrow,
+  .mq-phase,
+  .mq-maneuver-badge,
+  .mq-cat-count,
+  .mq-review-tag {
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+  }
+
+  .mq-eyebrow {
+    margin: 0 0 0.375rem;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .mq-h1 {
+    margin: 0 0 0.5rem;
+    color: var(--text-strong);
+    font-size: clamp(2rem, 6vw, 2.5rem);
+    font-weight: 800;
+    line-height: 1.15;
+  }
+
+  .mq-lead {
+    margin: 0 0 1rem;
+    color: var(--text-muted);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+
+  .mq-study-note {
+    margin: 0 0 1.75rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--text-body);
+    padding: 0.85rem 1rem;
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(14, 27, 46, 0.06), 0 1px 2px rgba(14, 27, 46, 0.04);
+  }
+
+  .mq-card,
+  .mq-end-card {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: var(--shadow-md);
+  }
+
+  .mq-card {
+    padding: clamp(1.125rem, 4vw, 1.5rem);
+  }
+
+  .mq-section-label,
+  .mq-prompt,
+  .mq-question {
+    margin: 0 0 0.75rem;
+    color: var(--text-strong);
+    font-weight: 700;
+  }
+
+  .mq-section-label {
+    font-size: 0.875rem;
+  }
+
+  .mq-cat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.625rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .mq-cat-chip,
+  .mq-choice,
+  .mq-flow-row,
+  .mq-seq-chip,
+  .mq-btn-primary,
+  .mq-btn-ghost,
+  .mq-length-pill {
+    min-height: 44px;
+    transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+  }
+
+  .mq-cat-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--text-body);
+    cursor: pointer;
+    padding: 0.75rem 0.875rem;
+    text-align: left;
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  .mq-cat-chip > span:first-of-type {
+    flex: 1;
+  }
+
+  .mq-cat-chip--selected,
+  .mq-choice--picked {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+    color: var(--text-strong);
+  }
+
+  .mq-cat-count {
+    border-radius: 999px;
+    background: var(--surface-sunken);
+    color: var(--text-muted);
+    padding: 0.125rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .mq-length-row,
+  .mq-footer-actions,
+  .mq-seq-actions,
+  .mq-end-options {
+    display: flex;
+    gap: 0.625rem;
+    flex-wrap: wrap;
+  }
+
+  .mq-length-row {
+    margin-bottom: 1.75rem;
+  }
+
+  .mq-length-pill {
+    border: 1.5px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--text-body);
+    cursor: pointer;
+    padding: 0.5rem 1.125rem;
+    font-weight: 700;
+  }
+
+  .mq-length-pill--selected {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .mq-btn-primary,
+  .mq-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+
+  .mq-btn-primary {
+    border: 0;
+    background: var(--primary);
+    color: #fff;
+    padding: 0.8125rem 1.375rem;
+  }
+
+  .mq-btn-primary:hover {
+    background: var(--primary-hover);
+  }
+
+  .mq-btn-ghost {
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    padding: 0.6875rem 1.125rem;
+  }
+
+  .mq-btn-primary:disabled,
+  .mq-btn-ghost:disabled,
+  .mq-choice:disabled,
+  .mq-email-input:disabled {
+    cursor: not-allowed;
+    opacity: 0.72;
+  }
+
+  .mq-btn-primary:disabled {
+    background: var(--border-strong);
+  }
+
+  .mq-btn-full {
+    width: 100%;
+  }
+
+  .mq-hint,
+  .mq-disclaimer {
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+
+  .mq-hint {
+    margin: 0.625rem 0 0;
+  }
+
+  .mq-disclaimer {
+    max-width: 560px;
+    margin: 1.75rem auto 0;
+    text-align: center;
+  }
+
+  .mq-progress-wrap {
+    margin-bottom: 1.5rem;
+  }
+
+  .mq-progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.375rem;
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .mq-progress-track {
+    height: 0.5rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--surface-sunken);
+  }
+
+  .mq-progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--primary);
+    transition: width 300ms ease-out;
+  }
+
+  .mq-maneuver-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-bottom: 0.625rem;
+    border-radius: 999px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .mq-maneuver-name {
+    margin: 0 0 0.375rem;
+    color: var(--text-strong);
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.25;
+  }
+
+  .mq-objective {
+    margin: 0 0 1.125rem;
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .mq-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .mq-flow--question {
+    margin-bottom: 1rem;
+  }
+
+  .mq-phase {
+    margin: 0.875rem 0 0.375rem;
+    padding-left: 0.25rem;
+    color: var(--text-muted);
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-transform: uppercase;
+  }
+
+  .mq-flow-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.625rem;
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-body);
+    cursor: pointer;
+    padding: 0.5625rem 0.375rem;
+    text-align: left;
+    font-size: 0.9375rem;
+  }
+
+  .mq-flow-row:hover,
+  .mq-seq-chip:hover,
+  .mq-choice:hover {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+  }
+
+  .mq-flow-row--revealed,
+  .mq-flow-row--revealed:hover {
+    background: transparent;
+    cursor: default;
+  }
+
+  .mq-flow-row--flagmode,
+  .mq-flow-row--tappable {
+    cursor: pointer;
+  }
+
+  .mq-flow-row--flagmode:hover {
+    background: rgba(224, 134, 0, 0.07);
+  }
+
+  .mq-flow-row--flagged,
+  .mq-flow-row--flagged:hover {
+    background: rgba(224, 134, 0, 0.11);
+  }
+
+  .mq-flow-num {
+    min-width: 1.375rem;
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    font-weight: 700;
+  }
+
+  .mq-flow-label {
+    flex-shrink: 0;
+    color: var(--text-strong);
+    font-weight: 700;
+  }
+
+  .mq-flow-value {
+    margin-left: auto;
+    color: var(--text-body);
+    line-height: 1.5;
+    text-align: right;
+  }
+
+  .mq-flow-hidden {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3125rem;
+    border-radius: 999px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    padding: 0.1875rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .mq-flag-dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 999px;
+    color: #fff;
+  }
+
+  .mq-flag-dot--on {
+    border-color: var(--warning);
+    background: var(--warning);
+  }
+
+  .mq-flag-prompt {
+    margin-top: 1.125rem;
+  }
+
+  .mq-footer-actions {
+    justify-content: flex-end;
+    margin-top: 1.375rem;
+  }
+
+  .mq-footer-actions--split {
+    justify-content: space-between;
+  }
+
+  .mq-mc-grid,
+  .mq-seq-slots,
+  .mq-seq-pool {
+    display: grid;
+    gap: 0.625rem;
+  }
+
+  .mq-choice,
+  .mq-seq-chip {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--text-body);
+    cursor: pointer;
+    padding: 0.8125rem 1rem;
+    text-align: left;
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  .mq-choice {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.625rem;
+  }
+
+  .mq-choice--correct {
+    border-color: var(--success);
+    background: rgba(31, 157, 91, 0.08);
+    color: var(--success);
+  }
+
+  .mq-choice--wrong {
+    border-color: var(--error);
+    background: rgba(220, 43, 54, 0.08);
+    color: var(--error);
+  }
+
+  .mq-step--picked {
+    background: var(--primary-soft);
+  }
+
+  .mq-step--correct {
+    background: rgba(31, 157, 91, 0.12);
+  }
+
+  .mq-step--wrong {
+    background: rgba(220, 43, 54, 0.1);
+  }
+
+  .mq-seq-slots {
+    margin-bottom: 1rem;
+  }
+
+  .mq-seq-slot {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 44px;
+    border: 1.5px dashed var(--border-strong);
+    border-radius: 10px;
+    padding: 0.625rem 0.75rem;
+  }
+
+  .mq-seq-slot-num {
+    min-width: 1.125rem;
+    color: var(--primary);
+    font-weight: 800;
+  }
+
+  .mq-seq-pool {
+    margin-bottom: 1rem;
+  }
+
+  .mq-seq-actions {
+    justify-content: flex-end;
+  }
+
+  .mq-seq-result {
+    margin-top: 0.625rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+  }
+
+  .mq-seq-result p {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin: 0 0 0.5rem;
+  }
+
+  .mq-steplist {
+    margin: 0;
+    padding-left: 1.375rem;
+    color: var(--text-body);
+    font-weight: 500;
+    line-height: 1.8;
+  }
+
+  .mq-callout {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-top: 0.875rem;
+    border-radius: 10px;
+    background: var(--surface-sunken);
+    color: var(--text-muted);
+    padding: 0.75rem 0.875rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .mq-score-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    border-radius: 12px;
+    background: var(--primary-soft);
+    padding: 1rem 1.25rem;
+  }
+
+  .mq-score-banner p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    font-weight: 700;
+  }
+
+  .mq-score-num {
+    color: var(--primary);
+    font-size: 1.75rem;
+    font-weight: 800;
+  }
+
+  .mq-score-copy {
+    max-width: 15rem;
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    text-align: right;
+  }
+
+  .mq-results-row {
+    display: flex;
+    gap: 0.875rem;
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 0;
+  }
+
+  .mq-results-row:first-child {
+    padding-top: 0;
+  }
+
+  .mq-results-row:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .mq-results-icon {
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+
+  .mq-results-name {
+    margin: 0 0 0.25rem;
+    color: var(--text-strong);
+    font-weight: 800;
+  }
+
+  .mq-results-meta {
+    margin: 0 0 0.375rem;
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .mq-missed-chip {
+    display: inline-block;
+    margin: 0.125rem 0.25rem 0.125rem 0;
+    border-radius: 6px;
+    background: var(--surface-sunken);
+    color: var(--text-body);
+    padding: 0.1875rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .mq-review-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0.375rem;
+    border-radius: 999px;
+    background: rgba(224, 134, 0, 0.1);
+    color: var(--warning);
+    padding: 0.1875rem 0.625rem;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .mq-end-options {
+    margin-top: 1.5rem;
+  }
+
+  .mq-end-card {
+    flex: 1;
+    min-width: min(15rem, 100%);
+    padding: 1.125rem;
+  }
+
+  .mq-end-card-title {
+    margin: 0 0 0.375rem;
+    color: var(--text-strong);
+    font-weight: 800;
+  }
+
+  .mq-end-card-body {
+    margin: 0 0 0.875rem;
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .mq-email-label span {
+    display: block;
+    margin-bottom: 0.375rem;
+    color: var(--text-strong);
+    font-size: 0.8125rem;
+    font-weight: 700;
+  }
+
+  .mq-email-input {
+    width: 100%;
+    min-height: 44px;
+    box-sizing: border-box;
+    margin-bottom: 0.625rem;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface-sunken);
+    color: var(--text-body);
+    padding: 0.625rem 0.75rem;
+    font-size: 1rem;
+  }
+
+  .mq-good {
+    color: var(--success);
+  }
+
+  .mq-bad {
+    color: var(--error);
+  }
+
+  .mq-page svg {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+  }
+
+  .mq-page button:focus-visible,
+  .mq-page input:focus-visible {
+    outline: 3px solid rgba(11, 105, 214, 0.32);
+    outline-offset: 2px;
+  }
+
+  @media (hover: hover) {
+    .mq-btn-primary:hover,
+    .mq-btn-ghost:hover,
+    .mq-length-pill:hover,
+    .mq-cat-chip:hover {
+      transform: translateY(-1px);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .mq-cat-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .mq-flow-row {
+      align-items: flex-start;
+    }
+
+    .mq-flow-value {
+      text-align: left;
+    }
+
+    .mq-footer-actions,
+    .mq-footer-actions--split,
+    .mq-seq-actions,
+    .mq-score-banner {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .mq-score-copy {
+      max-width: none;
+      text-align: left;
+    }
+
+    .mq-btn-primary,
+    .mq-btn-ghost {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mq-page *,
+    .mq-page *::before,
+    .mq-page *::after {
+      transition-duration: 1ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
