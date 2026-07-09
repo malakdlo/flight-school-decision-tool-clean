@@ -1,0 +1,1288 @@
+---
+import DraftReviewBanner from '@/components/tools/DraftReviewBanner.astro';
+
+const directions = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
+const atisLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const distances = ['3', '5', '7', '10', '15'];
+---
+
+<section class="fsf-radio" aria-labelledby="rcb-heading">
+  <div class="rcb-shell">
+    <DraftReviewBanner />
+
+    <header class="rcb-hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Radio practice</p>
+        <h1 id="rcb-heading">Radio call script builder</h1>
+        <p class="lead">
+          These are the calls I practice before I fly. Pick the field type and what you're doing,
+          drop in your details, and chair-fly the whole sequence out loud — practice mode hides
+          each call until you tap to check yourself.
+        </p>
+      </div>
+
+      <aside class="scope-card" aria-label="What this version covers">
+        <p class="eyebrow">In this version</p>
+        <strong>Class D towered<br />Untowered CTAF</strong>
+        <span>Class C and B calls and flight following aren't in v1 — I'm starting with the fields I actually train at.</span>
+      </aside>
+    </header>
+
+    <section class="rcb-panel" aria-label="Build your call script">
+      <div class="chip-row" role="group" aria-label="Airport environment">
+        <span class="chip-row-label">Airport</span>
+        <button type="button" class="chip is-selected" data-env="towered" aria-pressed="true">Class D — towered</button>
+        <button type="button" class="chip" data-env="ctaf" aria-pressed="false">Untowered — CTAF</button>
+      </div>
+
+      <div class="chip-row" role="group" aria-label="Operation">
+        <span class="chip-row-label">Operation</span>
+        <button type="button" class="chip is-selected" data-op="radio-check" aria-pressed="true" data-label-towered="Radio check + ATIS" data-label-ctaf="Radio check + weather">Radio check + ATIS</button>
+        <button type="button" class="chip" data-op="taxi" aria-pressed="false">Taxi out</button>
+        <button type="button" class="chip" data-op="takeoff" aria-pressed="false">Takeoff</button>
+        <button type="button" class="chip" data-op="pattern" aria-pressed="false">In the pattern</button>
+        <button type="button" class="chip" data-op="inbound" aria-pressed="false">Inbound + landing</button>
+        <button type="button" class="chip" data-op="after-landing" aria-pressed="false">After landing</button>
+        <button type="button" class="chip" data-op="depart" aria-pressed="false">Leaving the area</button>
+      </div>
+
+      <form class="fields-grid" data-fields autocomplete="off">
+        <label class="field" data-field="type">
+          <span>Aircraft type <small>optional</small></span>
+          <input name="type" placeholder="Skyhawk" />
+        </label>
+        <label class="field" data-field="tail">
+          <span>Tail number</span>
+          <input name="tail" placeholder="N2453F" />
+        </label>
+        <label class="field" data-field="airport">
+          <span>Airport name</span>
+          <input name="airport" placeholder="Riverside" />
+        </label>
+        <label class="field" data-field="runway">
+          <span>Runway</span>
+          <input name="runway" placeholder="25 or 16L" />
+        </label>
+        <label class="field" data-field="atis">
+          <span>ATIS letter</span>
+          <select name="atis">
+            <option value="">Pick one</option>
+            {atisLetters.map((letter) => <option value={letter}>{letter}</option>)}
+          </select>
+        </label>
+        <label class="field" data-field="spot">
+          <span>Spot on the field</span>
+          <input name="spot" placeholder="the ramp" />
+        </label>
+        <label class="field" data-field="taxiway">
+          <span>Taxiway exited at <small>optional</small></span>
+          <input name="taxiway" placeholder="A3" />
+        </label>
+        <label class="field" data-field="side">
+          <span>Pattern side</span>
+          <select name="side">
+            <option value="left">Left traffic</option>
+            <option value="right">Right traffic</option>
+          </select>
+        </label>
+        <label class="field" data-field="intent">
+          <span>Landing</span>
+          <select name="intent">
+            <option value="full stop">Full stop</option>
+            <option value="touch and go">Touch and go</option>
+          </select>
+        </label>
+        <label class="field" data-field="plan">
+          <span>After takeoff</span>
+          <select name="plan">
+            <option value="stay">Staying in the pattern</option>
+            <option value="depart">Departing the area</option>
+          </select>
+        </label>
+        <label class="field" data-field="planDir">
+          <span>Departing toward</span>
+          <select name="planDir">
+            {directions.map((dir) => <option value={dir}>{dir}</option>)}
+          </select>
+        </label>
+        <label class="field" data-field="dist">
+          <span>Distance out</span>
+          <select name="dist">
+            {distances.map((d) => <option value={d} selected={d === '10'}>{d} miles</option>)}
+          </select>
+        </label>
+        <label class="field" data-field="fromDir">
+          <span>Inbound from the</span>
+          <select name="fromDir">
+            {directions.map((dir) => <option value={dir} selected={dir === 'south'}>{dir}</option>)}
+          </select>
+        </label>
+        <label class="field" data-field="alt">
+          <span>Altitude <small>optional</small></span>
+          <input name="alt" inputmode="numeric" placeholder="2500" />
+        </label>
+        <label class="field" data-field="departDir">
+          <span>Departing toward</span>
+          <select name="departDir">
+            {directions.map((dir) => <option value={dir}>{dir}</option>)}
+          </select>
+        </label>
+        <label class="field" data-field="departStyle">
+          <span>Departure leg</span>
+          <select name="departStyle">
+            <option value="straight out">Straight out</option>
+            <option value="on the forty-five">On the forty-five</option>
+          </select>
+        </label>
+        <label class="field field-check" data-field="student">
+          <input type="checkbox" name="student" />
+          <span>Add “student pilot” to my initial calls</span>
+        </label>
+      </form>
+    </section>
+
+    <section class="rcb-output" aria-label="Your call script">
+      <header class="output-head">
+        <div>
+          <p class="eyebrow" data-op-kicker>Class D — towered</p>
+          <h2 data-op-title>Radio check + ATIS</h2>
+        </div>
+        <label class="practice-toggle">
+          <input type="checkbox" data-practice-toggle />
+          <span>Practice mode — hide the calls until I tap</span>
+        </label>
+      </header>
+      <p class="op-note" data-op-note hidden></p>
+      <ol class="rcb-cards" data-script-zone></ol>
+    </section>
+
+    <section class="rcb-avoid" aria-labelledby="rcb-avoid-heading">
+      <h2 id="rcb-avoid-heading">What I don't say</h2>
+      <ul>
+        <li><strong>“Any traffic in the area, please advise”</strong> — AC 90-66 calls this one out by name. It adds nothing; just announce your position.</li>
+        <li><strong>“Clear of the active”</strong> — say the runway number. “The active” is ambiguous anywhere more than one runway can be in use.</li>
+        <li><strong>“Taking the runway”</strong> — announce “departing runway two five” instead.</li>
+      </ul>
+      <p>
+        Two habits that help me: full callsign on every call until ATC shortens it first, and when
+        I miss something, a plain “say again” beats guessing.
+      </p>
+    </section>
+
+    <aside class="rcb-note" role="note">
+      <div class="note-marker" aria-hidden="true">!</div>
+      <div>
+        <h2>Before you key up</h2>
+        <p>
+          Phraseology is practice reference only — follow your instructor, your school's
+          procedures, and ATC instructions.
+        </p>
+        <p class="fine-print">
+          Flight School Friend is an independent educational resource. It is not legal, medical,
+          financial, or FAA certification advice. Always verify requirements with the FAA, your
+          aviation medical examiner, and your flight school.
+        </p>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<script>
+  // @ts-nocheck
+  // Approved phraseology set — frozen in REVIEW.md. Do not edit call templates
+  // without a new review pass (see REVIEW.md at the repo root).
+
+  const DIGITS = { 0: 'zero', 1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six', 7: 'seven', 8: 'eight', 9: 'niner' };
+  const LETTERS = {
+    A: 'alpha', B: 'bravo', C: 'charlie', D: 'delta', E: 'echo', F: 'foxtrot', G: 'golf', H: 'hotel',
+    I: 'india', J: 'juliett', K: 'kilo', L: 'lima', M: 'mike', N: 'november', O: 'oscar', P: 'papa',
+    Q: 'quebec', R: 'romeo', S: 'sierra', T: 'tango', U: 'uniform', V: 'victor', W: 'whiskey',
+    X: 'x-ray', Y: 'yankee', Z: 'zulu',
+  };
+
+  const speakChars = (raw) =>
+    [...String(raw).toUpperCase()]
+      .map((ch) => DIGITS[ch] ?? LETTERS[ch] ?? '')
+      .filter(Boolean)
+      .join(' ');
+
+  const speakCallsign = (type, tail) => {
+    const cleaned = String(tail || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (!cleaned) return '';
+    const aircraftType = String(type || '').trim();
+    if (aircraftType) {
+      const digitsPart = cleaned.startsWith('N') ? cleaned.slice(1) : cleaned;
+      return `${aircraftType} ${speakChars(digitsPart)}`;
+    }
+    return speakChars(cleaned);
+  };
+
+  const speakRunway = (raw) => {
+    const match = String(raw || '').trim().toUpperCase().replace(/\s+/g, '').match(/^(\d{1,2})(L|R|C)?$/);
+    if (!match) return '';
+    const suffix = match[2] ? { L: ' left', R: ' right', C: ' center' }[match[2]] : '';
+    return speakChars(match[1]) + suffix;
+  };
+
+  const speakAltitude = (raw) => {
+    const trimmed = String(raw || '').trim();
+    if (!trimmed) return '';
+    const n = parseInt(trimmed.replace(/[^0-9]/g, ''), 10);
+    if (!n || Number.isNaN(n)) return trimmed;
+    const thousands = Math.floor(n / 1000);
+    const hundreds = Math.floor((n % 1000) / 100);
+    const parts = [];
+    if (thousands) parts.push(`${speakChars(String(thousands))} thousand`);
+    if (hundreds) parts.push(`${DIGITS[hundreds]} hundred`);
+    return parts.join(' ') || speakChars(String(n));
+  };
+
+  const escapeHtml = (value) =>
+    String(value).replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;',
+    })[char]);
+
+  // Call templates are arrays of segments: T() = fixed text, V() = a filled-in variable.
+  const T = (text) => ({ text, isVar: false });
+  const V = (value) => ({ text: value.text, isVar: true, missing: value.missing });
+  const val = (spoken, fallback) => (spoken ? { text: spoken, missing: false } : { text: fallback, missing: true });
+
+  const studentTag = (s) => (s.student ? [T(', student pilot')] : []);
+  const altSegs = (s, prefix) => (s.alt ? [T(prefix), V({ text: s.alt, missing: false })] : []);
+
+  // ---- Towered (Class D) operations — templates T1–T9 in REVIEW.md ----
+  const TOWERED_OPS = [
+    {
+      id: 'radio-check',
+      label: 'Radio check + ATIS',
+      cards: [
+        {
+          who: 'LISTEN',
+          title: 'Listen to the ATIS',
+          when: 'Before your first call — usually right after engine start.',
+          body: 'Note the information letter, the altimeter setting, and the runway in use. You report the letter on your first call to ground.',
+        },
+        {
+          who: 'GROUND',
+          title: 'Radio check',
+          when: 'After you have the ATIS, before you call for taxi.',
+          call: (s) => [V(s.airport), T(' Ground, '), V(s.callsign), T(', radio check.')],
+          listen: 'A readability report — “loud and clear” or “readability five.” If the frequency is busy, most pilots skip this and let the taxi call double as the check.',
+        },
+      ],
+    },
+    {
+      id: 'taxi',
+      label: 'Taxi out',
+      cards: [
+        {
+          who: 'GROUND',
+          title: 'Call for taxi',
+          when: 'ATIS noted, at your parking spot, ready to move.',
+          call: (s) => [
+            V(s.airport), T(' Ground, '), V(s.callsign), T(', at '), V(s.spot),
+            T(', with information '), V(s.atis), T(', ready to taxi, '), V(s.taxiIntent),
+            ...studentTag(s), T('.'),
+          ],
+          listen: 'Your runway and taxi route. Read back the runway, the route, and any hold-short instruction verbatim with your callsign — hold-short readbacks are mandatory.',
+        },
+      ],
+    },
+    {
+      id: 'takeoff',
+      label: 'Takeoff',
+      cards: [
+        {
+          who: 'TOWER',
+          title: 'Ready for departure',
+          when: 'At the hold-short line, run-up complete, switched to tower.',
+          call: (s) => [
+            V(s.airport), T(' Tower, '), V(s.callsign), T(', ready for departure, runway '),
+            V(s.runway), T(', '), V(s.takeoffIntent), ...studentTag(s), T('.'),
+          ],
+          listen: '“Cleared for takeoff runway …” — read it back with your callsign. “Line up and wait” and “hold short” are mandatory readbacks too. Never start the roll without the words “cleared for takeoff.”',
+        },
+      ],
+    },
+    {
+      id: 'pattern',
+      label: 'In the pattern',
+      note: 'At a towered field the tower sequences you. Make these reports when tower asks for them — “report midfield downwind” — not on every leg.',
+      cards: [
+        {
+          who: 'TOWER',
+          title: 'Downwind report',
+          tag: 'when instructed',
+          when: 'Tower told you to report downwind.',
+          call: (s) => [V(s.callsign), T(', midfield '), V(s.side), T(' downwind, runway '), V(s.runway), T('.')],
+          listen: 'Your sequence and clearance — “cleared touch and go,” “cleared for the option,” or “number two, follow the Cherokee on base.” Read clearances back with your callsign.',
+        },
+        {
+          who: 'TOWER',
+          title: 'Final report',
+          tag: 'when instructed',
+          when: 'Tower told you to report final.',
+          call: (s) => [V(s.callsign), T(', two-mile final, runway '), V(s.runway), T('.')],
+          listen: '“Cleared to land runway …” or “cleared for the option.” No landing clearance by short final? Go around and tell tower.',
+        },
+      ],
+    },
+    {
+      id: 'inbound',
+      label: 'Inbound + landing',
+      cards: [
+        {
+          who: 'LISTEN',
+          title: 'Get the ATIS early',
+          when: 'About 15–20 miles out.',
+          body: 'Note the letter, altimeter, and runway in use before you call tower.',
+        },
+        {
+          who: 'TOWER',
+          title: 'Inbound call',
+          when: 'Before the Class D ring — about 10 miles out.',
+          call: (s) => [
+            V(s.airport), T(' Tower, '), V(s.callsign), T(', '), V(s.dist), T(' miles '), V(s.fromDir),
+            ...altSegs(s, ', at '), T(', with information '), V(s.atis), T(', inbound, '), V(s.intent),
+            ...studentTag(s), T('.'),
+          ],
+          listen: 'Your callsign in the reply — that’s what establishes two-way comms to enter the Class D. “Aircraft calling, standby” without your callsign does not count. Then the entry instruction — read it back and fly it.',
+        },
+        {
+          who: 'TOWER',
+          title: 'Position report',
+          tag: 'as instructed',
+          when: 'Tower told you to report — for example “report midfield downwind.”',
+          call: (s) => [V(s.callsign), T(', midfield '), V(s.side), T(' downwind, runway '), V(s.runway), T('.')],
+          listen: 'Your landing clearance and any sequencing. Same rule as the pattern: no clearance by short final means go around.',
+        },
+      ],
+    },
+    {
+      id: 'after-landing',
+      label: 'After landing',
+      cards: [
+        {
+          who: 'GROUND',
+          title: 'Call for taxi in',
+          when: 'Fully past the hold-short line, stopped, cleanup done, and tower said “contact ground” (or your school’s flow).',
+          call: (s) => [
+            V(s.airport), T(' Ground, '), V(s.callsign), T(', clear of runway '), V(s.runway),
+            ...(s.taxiway ? [T(' at '), V({ text: s.taxiway, missing: false })] : []),
+            T(', taxi to '), V(s.spot), T('.'),
+          ],
+          listen: 'Your taxi route, plus any hold-short — read hold-shorts back verbatim with your callsign.',
+        },
+      ],
+    },
+    {
+      id: 'depart',
+      label: 'Leaving the area',
+      cards: [
+        {
+          who: 'NOTE',
+          title: 'Stay with tower inside the Class D',
+          when: 'Climbing out after departure.',
+          body: 'Your departure intentions were already in the takeoff call. Tower usually offers “frequency change approved” on its own — stay on frequency until it does or you’re clear.',
+        },
+        {
+          who: 'TOWER',
+          title: 'Request frequency change',
+          when: 'Clear of the Class D and no frequency change offered yet.',
+          call: (s) => [V(s.airport), T(' Tower, '), V(s.callsign), T(', request frequency change.')],
+          listen: '“Frequency change approved.” Then switch and go.',
+        },
+      ],
+    },
+  ];
+
+  // ---- Untowered (CTAF) operations — templates C1–C11 in REVIEW.md ----
+  const ctafLeg = (leg, withIntent) => ({
+    who: 'CTAF',
+    title: `${leg[0].toUpperCase()}${leg.slice(1)} call`,
+    tag: leg === 'crosswind' ? 'optional' : undefined,
+    when: leg === 'crosswind' ? 'Turning crosswind — some fields skip this one.' : `Turning ${leg}.`,
+    call: (s) => [
+      V(s.airport), T(' traffic, '), V(s.callsign), T(', '),
+      ...(leg === 'final' ? [T('final')] : [V(s.side), T(` ${leg}`)]),
+      T(', runway '), V(s.runway),
+      ...(withIntent ? [T(', '), V(s.intent)] : []),
+      T(', '), V(s.airport), T('.'),
+    ],
+    listen: 'Other position calls — especially straight-in traffic on final.',
+  });
+
+  const CTAF_OPS = [
+    {
+      id: 'radio-check',
+      label: 'Radio check + weather',
+      cards: [
+        {
+          who: 'LISTEN',
+          title: 'Listen to the AWOS/ASOS',
+          when: 'Before you move — usually right after engine start.',
+          body: 'Wind and altimeter drive which runway you use. There’s no ATIS letter at an untowered field.',
+        },
+        {
+          who: 'UNICOM',
+          title: 'Radio check',
+          when: 'After the weather, before you taxi.',
+          call: (s) => [V(s.airport), T(' UNICOM, '), V(s.callsign), T(', radio check.')],
+          listen: 'Any reply confirms you transmit. Keep it brief if the frequency is busy.',
+        },
+      ],
+    },
+    {
+      id: 'taxi',
+      label: 'Taxi out',
+      cards: [
+        {
+          who: 'CTAF',
+          title: 'Announce taxi',
+          when: 'Ready to move from parking.',
+          call: (s) => [
+            V(s.airport), T(' traffic, '), V(s.callsign), T(', taxiing from '), V(s.spot),
+            T(' to runway '), V(s.runway), T(', '), V(s.airport), T('.'),
+          ],
+          listen: 'Nobody clears you here — listen for conflicting taxi and inbound calls, and clear visually.',
+        },
+      ],
+    },
+    {
+      id: 'takeoff',
+      label: 'Takeoff',
+      cards: [
+        {
+          who: 'CTAF',
+          title: 'Announce departure',
+          when: 'Before entering the runway, after your final-approach scan.',
+          call: (s) => [
+            V(s.airport), T(' traffic, '), V(s.callsign), T(', departing runway '), V(s.runway),
+            T(', '), V(s.ctafTakeoffIntent), T(', '), V(s.airport), T('.'),
+          ],
+          listen: 'Anyone on final, on base, or back-taxiing on the runway.',
+        },
+      ],
+    },
+    {
+      id: 'pattern',
+      label: 'In the pattern',
+      note: 'One self-announce per leg, each starting and ending with the airport name.',
+      cards: [ctafLeg('crosswind', false), ctafLeg('downwind', true), ctafLeg('base', false), ctafLeg('final', true)],
+    },
+    {
+      id: 'inbound',
+      label: 'Inbound + landing',
+      cards: [
+        {
+          who: 'CTAF',
+          title: 'Inbound call',
+          when: 'About 10 miles out.',
+          call: (s) => [
+            V(s.airport), T(' traffic, '), V(s.callsign), T(', '), V(s.dist), T(' miles '), V(s.fromDir),
+            ...altSegs(s, ', at '), T(', inbound, planning '), V(s.side), T(' downwind entry, runway '),
+            V(s.runway), T(', '), V(s.intent), T(', '), V(s.airport), T('.'),
+          ],
+          listen: 'Who’s already in the pattern and where. The runway in use may not match what you guessed from the AWOS wind.',
+        },
+        {
+          who: 'CTAF',
+          title: 'Downwind entry',
+          when: 'Joining the downwind on the 45.',
+          call: (s) => [
+            V(s.airport), T(' traffic, '), V(s.callsign), T(', entering '), V(s.side),
+            T(' downwind on the forty-five, runway '), V(s.runway), T(', '), V(s.airport), T('.'),
+          ],
+          listen: 'Traffic already on downwind you need to fall in behind.',
+        },
+        ctafLeg('base', false),
+        ctafLeg('final', true),
+      ],
+    },
+    {
+      id: 'after-landing',
+      label: 'After landing',
+      cards: [
+        {
+          who: 'CTAF',
+          title: 'Announce clear',
+          when: 'Fully past the hold-short line, stopped.',
+          call: (s) => [
+            V(s.airport), T(' traffic, '), V(s.callsign), T(', clear of runway '), V(s.runway),
+            T(', taxiing to '), V(s.spot), T(', '), V(s.airport), T('.'),
+          ],
+          listen: 'Anyone rolling out behind you or on short final. (Say the runway number — never “clear of the active.”)',
+        },
+      ],
+    },
+    {
+      id: 'depart',
+      label: 'Leaving the area',
+      cards: [
+        {
+          who: 'CTAF',
+          title: 'Announce pattern departure',
+          when: 'Climbing out, leaving the pattern.',
+          call: (s) => [
+            V(s.airport), T(' traffic, '), V(s.callsign), T(', departing the pattern to the '),
+            V(s.departDir), T(', '), V(s.departStyle),
+            ...altSegs(s, ', climbing '), T(', '), V(s.airport), T('.'),
+          ],
+          listen: 'Inbound traffic on the 45 or straight-in. Straight-out or a 45 in the pattern-turn direction are the AC 90-66 recommended departures.',
+        },
+      ],
+    },
+  ];
+
+  const OPS = { towered: TOWERED_OPS, ctaf: CTAF_OPS };
+
+  const ENV_LABELS = { towered: 'Class D — towered', ctaf: 'Untowered — CTAF' };
+
+  // Which input fields each operation needs.
+  const OP_FIELDS = {
+    towered: {
+      'radio-check': ['type', 'tail', 'airport'],
+      taxi: ['type', 'tail', 'airport', 'atis', 'spot', 'plan', 'student'],
+      takeoff: ['type', 'tail', 'airport', 'runway', 'plan', 'student'],
+      pattern: ['type', 'tail', 'airport', 'runway', 'side'],
+      inbound: ['type', 'tail', 'airport', 'runway', 'atis', 'dist', 'fromDir', 'alt', 'intent', 'side', 'student'],
+      'after-landing': ['type', 'tail', 'airport', 'runway', 'taxiway', 'spot'],
+      depart: ['type', 'tail', 'airport'],
+    },
+    ctaf: {
+      'radio-check': ['type', 'tail', 'airport'],
+      taxi: ['type', 'tail', 'airport', 'runway', 'spot'],
+      takeoff: ['type', 'tail', 'airport', 'runway', 'plan'],
+      pattern: ['type', 'tail', 'airport', 'runway', 'side', 'intent'],
+      inbound: ['type', 'tail', 'airport', 'runway', 'dist', 'fromDir', 'alt', 'side', 'intent'],
+      'after-landing': ['type', 'tail', 'airport', 'runway', 'spot'],
+      depart: ['type', 'tail', 'airport', 'departDir', 'departStyle', 'alt'],
+    },
+  };
+
+  const root = document.querySelector('.fsf-radio');
+  const envButtons = Array.from(root?.querySelectorAll('[data-env]') || []);
+  const opButtons = Array.from(root?.querySelectorAll('[data-op]') || []);
+  const fieldsForm = root?.querySelector('[data-fields]');
+  const fieldWraps = Array.from(root?.querySelectorAll('[data-field]') || []);
+  const scriptZone = root?.querySelector('[data-script-zone]');
+  const opKicker = root?.querySelector('[data-op-kicker]');
+  const opTitle = root?.querySelector('[data-op-title]');
+  const opNote = root?.querySelector('[data-op-note]');
+  const practiceToggle = root?.querySelector('[data-practice-toggle]');
+
+  let state = {
+    env: 'towered',
+    op: 'radio-check',
+    practice: false,
+    revealed: new Set(),
+    values: {
+      type: '', tail: '', airport: '', runway: '', atis: '', spot: '', taxiway: '', alt: '',
+      side: 'left', intent: 'full stop', plan: 'stay', planDir: 'north',
+      dist: '10', fromDir: 'south', departDir: 'north', departStyle: 'straight out',
+      student: false,
+    },
+  };
+
+  const resolve = () => {
+    const v = state.values;
+    const planDirText = `departing to the ${v.planDir}`;
+    const taxiwaySpoken = /^[A-Za-z]{1,2}[0-9]{0,2}$/.test(v.taxiway.trim())
+      ? speakChars(v.taxiway.trim())
+      : v.taxiway.trim();
+    return {
+      callsign: val(speakCallsign(v.type, v.tail), 'your callsign'),
+      airport: val(v.airport.trim(), 'airport'),
+      runway: val(speakRunway(v.runway), 'number'),
+      atis: val(v.atis ? LETTERS[v.atis] : '', 'ATIS letter'),
+      spot: val(v.spot.trim(), 'spot on the field'),
+      taxiway: taxiwaySpoken,
+      side: val(v.side, 'side'),
+      intent: val(v.intent, 'intent'),
+      dist: val(speakChars(v.dist), 'distance'),
+      fromDir: val(v.fromDir, 'direction'),
+      alt: speakAltitude(v.alt),
+      departDir: val(v.departDir, 'direction'),
+      departStyle: val(v.departStyle, 'departure leg'),
+      taxiIntent: val(v.plan === 'stay' ? 'closed traffic' : `VFR departure to the ${v.planDir}`, ''),
+      takeoffIntent: val(v.plan === 'stay' ? 'closed traffic' : planDirText, ''),
+      ctafTakeoffIntent: val(v.plan === 'stay' ? 'remaining in the pattern' : planDirText, ''),
+      student: v.student,
+    };
+  };
+
+  const renderSegs = (segs) =>
+    segs
+      .map((seg) =>
+        seg.isVar
+          ? `<mark class="rcb-var${seg.missing ? ' is-missing' : ''}">${escapeHtml(seg.text)}</mark>`
+          : escapeHtml(seg.text)
+      )
+      .join('');
+
+  const WHO_LABELS = {
+    GROUND: 'You → ground',
+    TOWER: 'You → tower',
+    CTAF: 'Self-announce · CTAF',
+    UNICOM: 'You → UNICOM',
+    LISTEN: 'Listen',
+    NOTE: 'Note',
+  };
+
+  const currentOp = () => OPS[state.env].find((op) => op.id === state.op) || OPS[state.env][0];
+
+  const renderCards = () => {
+    if (!scriptZone) return;
+    const op = currentOp();
+    const s = resolve();
+    const cards = op.cards;
+
+    scriptZone.innerHTML = cards
+      .map((card, index) => {
+        const key = `${state.env}:${state.op}:${index}`;
+        const isAdvisory = card.who === 'LISTEN' || card.who === 'NOTE';
+        let callHtml = '';
+
+        if (card.call) {
+          if (state.practice && !state.revealed.has(key)) {
+            callHtml = `
+              <div class="call-block">
+                <span class="call-label">The call</span>
+                <button type="button" class="rcb-reveal" data-reveal="${key}">Say it out loud, then tap to check</button>
+              </div>`;
+          } else {
+            callHtml = `
+              <div class="call-block">
+                <span class="call-label">The call</span>
+                <p class="call-text" data-call="${key}" tabindex="-1">“${renderSegs(card.call(s))}”</p>
+              </div>`;
+          }
+        }
+
+        return `
+          <li class="rcb-card${isAdvisory ? ' is-advisory' : ''}">
+            <div class="card-top">
+              <span class="who-chip who-${card.who.toLowerCase()}">${WHO_LABELS[card.who]}</span>
+              ${card.tag ? `<span class="tag-chip">${escapeHtml(card.tag)}</span>` : ''}
+              <span class="step-kicker">Step ${index + 1} of ${cards.length}</span>
+            </div>
+            <h3>${escapeHtml(card.title)}</h3>
+            <p class="card-when"><strong>When:</strong> ${escapeHtml(card.when)}</p>
+            ${callHtml}
+            ${card.listen ? `<p class="card-listen"><strong>Listen for:</strong> ${escapeHtml(card.listen)}</p>` : ''}
+            ${card.body ? `<p class="card-body">${escapeHtml(card.body)}</p>` : ''}
+          </li>`;
+      })
+      .join('');
+  };
+
+  const updateChrome = () => {
+    const op = currentOp();
+    if (opKicker) opKicker.textContent = ENV_LABELS[state.env];
+    if (opTitle) opTitle.textContent = op.label;
+    if (opNote) {
+      opNote.hidden = !op.note;
+      opNote.textContent = op.note || '';
+    }
+
+    envButtons.forEach((button) => {
+      const selected = button.dataset.env === state.env;
+      button.classList.toggle('is-selected', selected);
+      button.setAttribute('aria-pressed', String(selected));
+    });
+
+    opButtons.forEach((button) => {
+      const selected = button.dataset.op === state.op;
+      button.classList.toggle('is-selected', selected);
+      button.setAttribute('aria-pressed', String(selected));
+      const envLabel = button.dataset[state.env === 'towered' ? 'labelTowered' : 'labelCtaf'];
+      if (envLabel) button.textContent = envLabel;
+    });
+
+    const visible = OP_FIELDS[state.env][state.op] || [];
+    fieldWraps.forEach((wrap) => {
+      const name = wrap.dataset.field;
+      let show = visible.includes(name);
+      if (name === 'planDir') show = visible.includes('plan') && state.values.plan === 'depart';
+      wrap.hidden = !show;
+    });
+  };
+
+  const render = () => {
+    updateChrome();
+    renderCards();
+  };
+
+  envButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      state.env = button.dataset.env;
+      state.revealed.clear();
+      render();
+    });
+  });
+
+  opButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      state.op = button.dataset.op;
+      state.revealed.clear();
+      render();
+    });
+  });
+
+  fieldsForm?.addEventListener('input', (event) => {
+    const input = event.target;
+    if (!input.name) return;
+    state.values[input.name] = input.type === 'checkbox' ? input.checked : input.value;
+    if (input.name === 'plan') updateChrome();
+    renderCards();
+  });
+
+  fieldsForm?.addEventListener('submit', (event) => event.preventDefault());
+
+  practiceToggle?.addEventListener('change', () => {
+    state.practice = practiceToggle.checked;
+    state.revealed.clear();
+    renderCards();
+  });
+
+  scriptZone?.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-reveal]');
+    if (!button) return;
+    const key = button.dataset.reveal;
+    state.revealed.add(key);
+    renderCards();
+    scriptZone.querySelector(`[data-call="${key}"]`)?.focus();
+  });
+
+  render();
+</script>
+
+<style is:global>
+  /* All selectors namespaced under .fsf-radio — is:global so styles reach
+     the cards this tool renders at runtime (Astro scoped styles do not). */
+  .fsf-radio {
+    --bg: #FAFBFD;
+    --surface: #FFFFFF;
+    --surface-sunken: #EEF2F7;
+    --surface-inverse: #0E1B2E;
+    --border: #E2E8F0;
+    --border-strong: #CBD5E1;
+    --text-strong: #0E1B2E;
+    --text-body: #334155;
+    --text-muted: #64748B;
+    --primary: #0B69D6;
+    --primary-hover: #0A5BBA;
+    --primary-soft: #EAF3FE;
+    --success: #1F9D5B;
+    --warning: #E08600;
+    --error: #DC2B36;
+    --shadow-sm: 0 1px 3px rgba(14, 27, 46, 0.06), 0 1px 2px rgba(14, 27, 46, 0.04);
+    --shadow-md: 0 4px 12px rgba(14, 27, 46, 0.07), 0 2px 4px rgba(14, 27, 46, 0.04);
+    background: var(--bg);
+    color: var(--text-body);
+  }
+
+  .fsf-radio .rcb-shell {
+    width: min(100% - clamp(2.5rem, 10vw, 6rem), 1080px);
+    margin: 0 auto;
+    padding: clamp(3rem, 6vw, 5rem) 0 clamp(4rem, 8vw, 7rem);
+  }
+
+  .fsf-radio .rcb-hero,
+  .fsf-radio .rcb-panel,
+  .fsf-radio .rcb-output,
+  .fsf-radio .rcb-avoid,
+  .fsf-radio .rcb-note {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: var(--shadow-md);
+  }
+
+  .fsf-radio .rcb-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+    gap: 1.5rem;
+    align-items: stretch;
+    margin-top: 1.5rem;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .fsf-radio h1,
+  .fsf-radio h2,
+  .fsf-radio h3 {
+    margin: 0;
+    color: var(--text-strong);
+    letter-spacing: -0.015em;
+  }
+
+  .fsf-radio .hero-copy h1 {
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    line-height: 1.15;
+  }
+
+  .fsf-radio .lead {
+    max-width: 720px;
+    margin: 1rem 0 0;
+    font-size: 1.1875rem;
+    line-height: 1.7;
+  }
+
+  .fsf-radio .eyebrow {
+    margin: 0 0 0.75rem;
+    color: var(--primary);
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .fsf-radio .scope-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 12px;
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      var(--surface-inverse);
+    background-size: 32px 32px;
+    padding: 1.25rem;
+    color: #B6C6D8;
+  }
+
+  .fsf-radio .scope-card .eyebrow {
+    color: #8FAAD4;
+  }
+
+  .fsf-radio .scope-card strong {
+    color: #EAF1F9;
+    font-size: 1.1875rem;
+    line-height: 1.4;
+  }
+
+  .fsf-radio .scope-card span {
+    margin-top: 0.65rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .fsf-radio .rcb-panel {
+    margin-top: 1.5rem;
+    padding: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .fsf-radio .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .fsf-radio .chip-row + .chip-row {
+    margin-top: 1rem;
+  }
+
+  .fsf-radio .chip-row-label {
+    min-width: 72px;
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    font-weight: 700;
+  }
+
+  .fsf-radio .chip,
+  .fsf-radio .rcb-reveal {
+    min-height: 44px;
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    background: var(--surface);
+    padding: 0.6rem 0.9rem;
+    color: var(--text-body);
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    transition: border-color 200ms ease, background 200ms ease, color 200ms ease, transform 200ms ease;
+  }
+
+  .fsf-radio .chip:hover,
+  .fsf-radio .chip.is-selected {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+    color: var(--primary-hover);
+  }
+
+  .fsf-radio .fields-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .fsf-radio .field > span {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--text-strong);
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+
+  .fsf-radio .field small {
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+
+  .fsf-radio .field input:not([type='checkbox']),
+  .fsf-radio .field select {
+    width: 100%;
+    min-height: 48px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 12px;
+    background: var(--surface);
+    padding: 0.7rem 0.85rem;
+    color: var(--text-strong);
+    font: inherit;
+    font-size: 1rem;
+  }
+
+  .fsf-radio .field input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .fsf-radio .field-check {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 0.65rem;
+    align-self: end;
+    color: var(--text-body);
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+
+  .fsf-radio .field-check input {
+    width: 1.15rem;
+    min-height: 1.15rem;
+    accent-color: var(--primary);
+  }
+
+  .fsf-radio .rcb-output {
+    margin-top: 1.5rem;
+    padding: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .fsf-radio .output-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .fsf-radio .output-head h2 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.25;
+  }
+
+  .fsf-radio .practice-toggle {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 0.65rem;
+    color: var(--text-body);
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+
+  .fsf-radio .practice-toggle input {
+    width: 1.15rem;
+    min-height: 1.15rem;
+    accent-color: var(--primary);
+  }
+
+  .fsf-radio .op-note {
+    margin: 1rem 0 0;
+    border: 1px solid rgba(11, 105, 214, 0.18);
+    border-radius: 12px;
+    background: var(--primary-soft);
+    padding: 0.95rem 1rem;
+    line-height: 1.55;
+  }
+
+  .fsf-radio .rcb-cards {
+    display: grid;
+    gap: 1rem;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .fsf-radio .rcb-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    padding: 1.1rem 1.25rem;
+  }
+
+  .fsf-radio .rcb-card.is-advisory {
+    background: var(--surface-sunken);
+  }
+
+  .fsf-radio .card-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .fsf-radio .who-chip,
+  .fsf-radio .tag-chip,
+  .fsf-radio .step-kicker {
+    border-radius: 999px;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .fsf-radio .who-chip {
+    padding: 0.3rem 0.7rem;
+  }
+
+  .fsf-radio .who-ground,
+  .fsf-radio .who-tower {
+    background: var(--primary-soft);
+    color: var(--primary-hover);
+  }
+
+  .fsf-radio .who-ctaf,
+  .fsf-radio .who-unicom {
+    background: var(--surface-inverse);
+    color: #EAF1F9;
+  }
+
+  .fsf-radio .who-listen,
+  .fsf-radio .who-note {
+    background: rgba(224, 134, 0, 0.12);
+    color: #875000;
+  }
+
+  .fsf-radio .tag-chip {
+    border: 1px dashed var(--border-strong);
+    padding: 0.3rem 0.7rem;
+    color: var(--text-muted);
+  }
+
+  .fsf-radio .step-kicker {
+    margin-left: auto;
+    color: var(--text-muted);
+  }
+
+  .fsf-radio .rcb-card h3 {
+    margin-top: 0.75rem;
+    font-size: 1.25rem;
+    line-height: 1.25;
+  }
+
+  .fsf-radio .card-when,
+  .fsf-radio .card-listen,
+  .fsf-radio .card-body {
+    margin: 0.6rem 0 0;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .fsf-radio .card-when strong,
+  .fsf-radio .card-listen strong {
+    color: var(--text-strong);
+  }
+
+  .fsf-radio .call-block {
+    margin-top: 0.85rem;
+    border-left: 3px solid var(--primary);
+    border-radius: 0 12px 12px 0;
+    background: var(--surface-sunken);
+    padding: 0.85rem 1rem;
+  }
+
+  .fsf-radio .call-label {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--text-muted);
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .fsf-radio .call-text {
+    margin: 0;
+    color: var(--text-strong);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.65;
+  }
+
+  .fsf-radio .rcb-var {
+    border-radius: 4px;
+    background: var(--primary-soft);
+    padding: 0 0.2em;
+    color: var(--primary-hover);
+    font-weight: 800;
+  }
+
+  .fsf-radio .rcb-var.is-missing {
+    border: 1px dashed rgba(224, 134, 0, 0.5);
+    background: rgba(224, 134, 0, 0.1);
+    color: #875000;
+    font-style: italic;
+    font-weight: 700;
+  }
+
+  .fsf-radio .rcb-reveal {
+    display: block;
+    width: 100%;
+    border-style: dashed;
+    background: var(--surface);
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  .fsf-radio .rcb-reveal:hover {
+    border-color: var(--primary);
+    color: var(--primary-hover);
+  }
+
+  .fsf-radio .rcb-avoid {
+    margin-top: 1.5rem;
+    padding: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .fsf-radio .rcb-avoid h2 {
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+
+  .fsf-radio .rcb-avoid ul {
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .fsf-radio .rcb-avoid li {
+    border-left: 3px solid var(--error);
+    border-radius: 0 12px 12px 0;
+    background: var(--surface-sunken);
+    padding: 0.75rem 1rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .fsf-radio .rcb-avoid li strong {
+    color: var(--text-strong);
+  }
+
+  .fsf-radio .rcb-avoid > p {
+    margin: 1rem 0 0;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .fsf-radio .rcb-note {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+  }
+
+  .fsf-radio .rcb-note h2 {
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  .fsf-radio .note-marker {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    place-items: center;
+    border-radius: 999px;
+    background: rgba(224, 134, 0, 0.12);
+    color: var(--warning);
+    font-weight: 900;
+  }
+
+  .fsf-radio .rcb-note p {
+    margin: 0.45rem 0 0;
+    line-height: 1.65;
+  }
+
+  .fsf-radio .fine-print {
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+  }
+
+  .fsf-radio button:focus-visible,
+  .fsf-radio input:focus-visible,
+  .fsf-radio select:focus-visible,
+  .fsf-radio .call-text:focus-visible {
+    outline: 3px solid rgba(11, 105, 214, 0.35);
+    outline-offset: 3px;
+  }
+
+  .fsf-radio button:active {
+    transform: translateY(1px);
+  }
+
+  @media (max-width: 760px) {
+    .fsf-radio .rcb-hero {
+      grid-template-columns: 1fr;
+    }
+
+    .fsf-radio .output-head {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .fsf-radio .rcb-shell {
+      width: min(100% - 2rem, 1080px);
+      padding: 2.5rem 0 3rem;
+    }
+
+    .fsf-radio .rcb-hero,
+    .fsf-radio .rcb-panel,
+    .fsf-radio .rcb-output,
+    .fsf-radio .rcb-avoid,
+    .fsf-radio .rcb-note {
+      border-radius: 12px;
+    }
+
+    .fsf-radio .fields-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .fsf-radio .step-kicker {
+      width: 100%;
+      margin-left: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fsf-radio *,
+    .fsf-radio *::before,
+    .fsf-radio *::after {
+      transition: none !important;
+    }
+  }
+</style>

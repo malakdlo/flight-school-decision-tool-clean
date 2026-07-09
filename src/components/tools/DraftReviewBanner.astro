@@ -1,0 +1,46 @@
+<!--
+  Draft-status banner for tools under review.
+  Remove this component from the page after instructor sign-off (see REVIEW.md).
+-->
+<aside class="fsf-draft-banner" role="status">
+  <span class="draft-badge">Draft — under review</span>
+  <p>
+    I'm still checking these scripts against what I actually hear on frequency, and my instructor
+    hasn't signed off yet. Practice with them, but don't treat them as gospel.
+  </p>
+</aside>
+
+<style>
+  .fsf-draft-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    border: 1px solid rgba(224, 134, 0, 0.35);
+    border-radius: 12px;
+    background: rgba(224, 134, 0, 0.08);
+    padding: 0.85rem 1rem;
+  }
+
+  .draft-badge {
+    flex-shrink: 0;
+    border: 1px solid rgba(224, 134, 0, 0.4);
+    border-radius: 999px;
+    background: rgba(224, 134, 0, 0.14);
+    padding: 0.3rem 0.75rem;
+    color: #875000;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .fsf-draft-banner p {
+    margin: 0;
+    color: #875000;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+</style>
