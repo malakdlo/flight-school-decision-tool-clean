@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import METARDecoderTrainer from '@/components/tools/METARDecoderTrainer.astro';
+
+const title = 'METAR Decoder — Free Practice Tool | Flight School Friend';
+const description =
+  'Practice decoding real-format METARs — wind, visibility, ceiling, weather, and flight category. Free, no email required.';
+const canonical = 'https://flightschoolfriend.com/tools/metar-decoder/';
+const structuredData = {
+  '@type': 'WebApplication',
+  '@id': `${canonical}#webapp`,
+  name: 'METAR Decoder',
+  url: canonical,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any',
+  isAccessibleForFree: true,
+  educationalUse: 'Student pilot weather decoding practice',
+  description,
+  author: { '@id': 'https://flightschoolfriend.com/#person' },
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} structuredData={structuredData}>
+  <METARDecoderTrainer />
+</BaseLayout>

@@ -1,0 +1,968 @@
+<section class="fsf-metar" aria-labelledby="metar-trainer-heading">
+  <div class="metar-shell">
+    <header class="metar-hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Weather practice</p>
+        <h1 id="metar-trainer-heading">METAR decoder practice tool</h1>
+        <p class="lead">
+          Practice reading real-format METARs one layer at a time: wind, visibility, ceiling, present weather, and flight category.
+        </p>
+      </div>
+
+      <aside class="score-card" aria-label="Round score">
+        <p class="eyebrow">Current round</p>
+        <strong><span data-score>0</span>/<span data-step-count>5</span></strong>
+        <span data-score-label>Start with the wind group.</span>
+      </aside>
+    </header>
+
+    <section class="practice-panel" aria-label="METAR practice controls">
+      <div class="difficulty-row" aria-label="Choose difficulty">
+        <span>Difficulty</span>
+        <button type="button" class="chip is-selected" data-difficulty="student" aria-pressed="true">Student</button>
+        <button type="button" class="chip" data-difficulty="checkride" aria-pressed="false">Checkride</button>
+        <button type="button" class="chip" data-difficulty="weather-day" aria-pressed="false">Weather day</button>
+      </div>
+
+      <label class="hint-toggle">
+        <input type="checkbox" data-hints-toggle checked />
+        <span>Show quick hints while I practice</span>
+      </label>
+
+      <div class="metar-strip" tabindex="0" aria-label="Current METAR" data-metar-strip></div>
+
+      <aside class="hint-panel" data-hint-panel>
+        <h2>Quick hint</h2>
+        <p data-hint-copy>Start with the wind group: direction first, then speed in knots, then gust if a G group is present.</p>
+      </aside>
+
+      <div class="step-progress" role="progressbar" aria-label="Decoder progress" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1">
+        <span data-progress-fill></span>
+      </div>
+
+      <form class="question-card" data-question-form>
+        <div class="question-heading">
+          <p class="eyebrow" data-step-kicker>Step 1 of 5</p>
+          <h2 data-question-title>Decode the wind</h2>
+          <p data-question-help>Enter the reported wind direction, speed, and gust if one is present.</p>
+        </div>
+
+        <div class="answer-zone" data-answer-zone></div>
+
+        <div class="feedback" data-feedback aria-live="polite" hidden></div>
+
+        <div class="actions">
+          <button type="submit" class="primary-action" data-check-answer>Check answer</button>
+          <button type="button" class="ghost-action" data-reveal-answer>Reveal and continue</button>
+          <button type="button" class="ghost-action" data-reset-round>New METAR</button>
+        </div>
+      </form>
+    </section>
+
+    <aside class="practice-note" role="note">
+      <div class="note-marker" aria-hidden="true">!</div>
+      <div>
+        <h2>Training note</h2>
+        <p>
+          METARs can change quickly. Use this for decoding practice only, then check current official weather, your school procedures, and your instructor before any real go/no-go decision.
+        </p>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<script>
+  // @ts-nocheck
+  const metarData = {
+    student: [
+      {
+        raw: 'KOUN 091855Z 18012KT 10SM CLR 29/18 A2992',
+        station: 'Norman, OK',
+        wind: { direction: '180', speed: 12, gust: null, label: '180 degrees at 12 knots' },
+        visibility: { value: '10SM', label: '10 statute miles' },
+        ceiling: 'none',
+        weather: 'none',
+        category: 'vfr',
+      },
+      {
+        raw: 'KTUL 091953Z 15009KT 10SM SCT035 31/20 A2996',
+        station: 'Tulsa, OK',
+        wind: { direction: '150', speed: 9, gust: null, label: '150 degrees at 9 knots' },
+        visibility: { value: '10SM', label: '10 statute miles' },
+        ceiling: 'none',
+        weather: 'none',
+        category: 'vfr',
+      },
+    ],
+    checkride: [
+      {
+        raw: 'KDTO 091953Z 14008KT 6SM BR SCT008 BKN018 24/23 A3001',
+        station: 'Denton, TX',
+        wind: { direction: '140', speed: 8, gust: null, label: '140 degrees at 8 knots' },
+        visibility: { value: '6SM', label: '6 statute miles' },
+        ceiling: 'bkn018',
+        weather: 'br',
+        category: 'mvfr',
+      },
+      {
+        raw: 'KAPA 092053Z 32015G24KT 2SM -SN OVC009 M04/M06 A2988',
+        station: 'Centennial, CO',
+        wind: { direction: '320', speed: 15, gust: 24, label: '320 degrees at 15 knots, gusting 24' },
+        visibility: { value: '2SM', label: '2 statute miles' },
+        ceiling: 'ovc009',
+        weather: 'light-snow',
+        category: 'ifr',
+      },
+    ],
+    'weather-day': [
+      {
+        raw: 'KJFK 092051Z 06018KT 1/2SM FG VV002 08/08 A3010',
+        station: 'New York, NY',
+        wind: { direction: '060', speed: 18, gust: null, label: '060 degrees at 18 knots' },
+        visibility: { value: '1/2SM', label: 'one-half statute mile' },
+        ceiling: 'vv002',
+        weather: 'fg',
+        category: 'lifr',
+      },
+      {
+        raw: 'KOKC 092152Z 19016G27KT 3SM -RA BR BKN004 OVC012 21/20 A2985',
+        station: 'Oklahoma City, OK',
+        wind: { direction: '190', speed: 16, gust: 27, label: '190 degrees at 16 knots, gusting 27' },
+        visibility: { value: '3SM', label: '3 statute miles' },
+        ceiling: 'bkn004',
+        weather: 'light-rain-mist',
+        category: 'lifr',
+      },
+    ],
+  };
+
+  const steps = [
+    {
+      id: 'wind',
+      title: 'Decode the wind',
+      help: 'Enter the reported wind direction, speed, and gust if one is present.',
+    },
+    {
+      id: 'visibility',
+      title: 'Decode visibility',
+      help: 'Enter the visibility group exactly as a statute-mile value.',
+    },
+    {
+      id: 'ceiling',
+      title: 'Find the ceiling',
+      help: 'Choose the lowest broken, overcast, or vertical visibility layer.',
+    },
+    {
+      id: 'weather',
+      title: 'Decode present weather',
+      help: 'Choose the present weather group reported in the METAR.',
+    },
+    {
+      id: 'category',
+      title: 'Assign the flight category',
+      help: 'Use ceiling and visibility to identify VFR, MVFR, IFR, or LIFR.',
+    },
+  ];
+
+  const choices = {
+    ceiling: [
+      { id: 'none', label: 'No ceiling', note: 'Clear or scattered layers only' },
+      { id: 'bkn018', label: 'BKN018', note: 'Broken at 1,800 ft AGL' },
+      { id: 'ovc009', label: 'OVC009', note: 'Overcast at 900 ft AGL' },
+      { id: 'vv002', label: 'VV002', note: 'Vertical visibility 200 ft' },
+      { id: 'bkn004', label: 'BKN004', note: 'Broken at 400 ft AGL' },
+    ],
+    weather: [
+      { id: 'none', label: 'No present weather', note: 'No weather group shown' },
+      { id: 'br', label: 'BR', note: 'Mist' },
+      { id: 'light-snow', label: '-SN', note: 'Light snow' },
+      { id: 'fg', label: 'FG', note: 'Fog' },
+      { id: 'light-rain-mist', label: '-RA BR', note: 'Light rain and mist' },
+    ],
+    category: [
+      { id: 'vfr', label: 'VFR', note: 'Ceiling greater than 3,000 ft and visibility greater than 5 SM' },
+      { id: 'mvfr', label: 'MVFR', note: 'Ceiling 1,000-3,000 ft and/or visibility 3-5 SM' },
+      { id: 'ifr', label: 'IFR', note: 'Ceiling 500-below 1,000 ft and/or visibility 1-below 3 SM' },
+      { id: 'lifr', label: 'LIFR', note: 'Ceiling below 500 ft and/or visibility below 1 SM' },
+    ],
+  };
+
+  const root = document.querySelector('.fsf-metar');
+  const difficultyButtons = Array.from(root?.querySelectorAll('[data-difficulty]') || []);
+  const metarStrip = root?.querySelector('[data-metar-strip]');
+  const form = root?.querySelector('[data-question-form]');
+  const answerZone = root?.querySelector('[data-answer-zone]');
+  const feedback = root?.querySelector('[data-feedback]');
+  const stepKicker = root?.querySelector('[data-step-kicker]');
+  const questionTitle = root?.querySelector('[data-question-title]');
+  const questionHelp = root?.querySelector('[data-question-help]');
+  const progress = root?.querySelector('[role="progressbar"]');
+  const progressFill = root?.querySelector('[data-progress-fill]');
+  const score = root?.querySelector('[data-score]');
+  const stepCount = root?.querySelector('[data-step-count]');
+  const scoreLabel = root?.querySelector('[data-score-label]');
+  const hintToggle = root?.querySelector('[data-hints-toggle]');
+  const hintPanel = root?.querySelector('[data-hint-panel]');
+  const hintCopy = root?.querySelector('[data-hint-copy]');
+  const revealButton = root?.querySelector('[data-reveal-answer]');
+  const resetButton = root?.querySelector('[data-reset-round]');
+
+  const hints = {
+    wind: 'Read the wind group as direction/speed in knots. A G value means gusts, so 32015G24KT is 320 degrees at 15 knots gusting 24.',
+    visibility: 'Visibility appears before clouds and weather. In U.S. METARs it is reported in statute miles, such as 10SM, 6SM, or 1/2SM.',
+    ceiling: 'Ceiling is the lowest BKN, OVC, or VV layer. FEW and SCT layers are cloud layers, but they are not ceilings.',
+    weather: 'Present weather groups sit between visibility and clouds. A leading minus sign means light intensity, as in -RA or -SN.',
+    category: 'Use the most restrictive ceiling or visibility value: VFR, MVFR, IFR, then LIFR for the lowest conditions.',
+  };
+
+  let state = {
+    difficulty: 'student',
+    sampleIndex: 0,
+    stepIndex: 0,
+    score: 0,
+    selectedChoice: null,
+    locked: false,
+  };
+
+  const normalizeVisibility = (value) => {
+    const cleaned = String(value || '').trim().toUpperCase().replace(/\s+/g, '');
+    if (!cleaned) return '';
+    return cleaned.endsWith('SM') ? cleaned : `${cleaned}SM`;
+  };
+
+  const currentSample = () => metarData[state.difficulty][state.sampleIndex % metarData[state.difficulty].length];
+  const currentStep = () => steps[state.stepIndex];
+  const getChoiceLabel = (group, id) => choices[group].find((choice) => choice.id === id)?.label || id;
+
+  const escapeHtml = (value) =>
+    String(value).replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;',
+    })[char]);
+
+  const renderWindInputs = () => `
+    <div class="wind-inputs">
+      <label>
+        <span>Direction</span>
+        <input name="direction" inputmode="numeric" autocomplete="off" placeholder="180" />
+      </label>
+      <label>
+        <span>Speed</span>
+        <input name="speed" type="number" min="0" inputmode="numeric" autocomplete="off" placeholder="12" />
+      </label>
+      <label>
+        <span>Gust <small>optional</small></span>
+        <input name="gust" type="number" min="0" inputmode="numeric" autocomplete="off" placeholder="24" />
+      </label>
+    </div>
+  `;
+
+  const renderVisibilityInput = () => `
+    <label class="visibility-field">
+      <span>Visibility</span>
+      <input name="visibility" autocomplete="off" placeholder="10SM or 1/2SM" />
+    </label>
+  `;
+
+  const renderChoiceGrid = (group) => `
+    <div class="choice-grid ${group === 'category' ? 'category-grid' : ''}" role="radiogroup" aria-label="${group} answer choices">
+      ${choices[group].map((choice) => `
+        <button type="button" class="choice-button" role="radio" aria-checked="false" data-choice="${choice.id}">
+          <strong>${choice.label}</strong>
+          <span>${choice.note}</span>
+        </button>
+      `).join('')}
+    </div>
+  `;
+
+  const renderAnswerZone = () => {
+    const step = currentStep();
+
+    if (!answerZone) return;
+
+    if (step.id === 'wind') {
+      answerZone.innerHTML = renderWindInputs();
+    } else if (step.id === 'visibility') {
+      answerZone.innerHTML = renderVisibilityInput();
+    } else {
+      answerZone.innerHTML = renderChoiceGrid(step.id);
+    }
+  };
+
+  const clearFeedback = () => {
+    if (!feedback) return;
+    feedback.hidden = true;
+    feedback.className = 'feedback';
+    feedback.textContent = '';
+  };
+
+  const showFeedback = (isCorrect, message) => {
+    if (!feedback) return;
+    feedback.hidden = false;
+    feedback.className = `feedback ${isCorrect ? 'is-correct' : 'is-incorrect'}`;
+    feedback.textContent = message;
+  };
+
+  const updateChrome = () => {
+    const sample = currentSample();
+    const step = currentStep();
+    const stepNumber = state.stepIndex + 1;
+
+    if (metarStrip) {
+      metarStrip.innerHTML = `<span>${escapeHtml(sample.raw)}</span><small>${escapeHtml(sample.station)}</small>`;
+    }
+
+    if (stepKicker) stepKicker.textContent = `Step ${stepNumber} of ${steps.length}`;
+    if (questionTitle) questionTitle.textContent = step.title;
+    if (questionHelp) questionHelp.textContent = step.help;
+    if (progress) progress.setAttribute('aria-valuenow', String(stepNumber));
+    if (progressFill) progressFill.style.width = `${(stepNumber / steps.length) * 100}%`;
+    if (score) score.textContent = String(state.score);
+    if (stepCount) stepCount.textContent = String(steps.length);
+    if (scoreLabel) scoreLabel.textContent = stepNumber === 1 ? 'Start with the wind group.' : 'Keep decoding each layer.';
+    if (hintPanel) hintPanel.hidden = hintToggle ? !hintToggle.checked : false;
+    if (hintCopy) hintCopy.textContent = hints[step.id];
+
+    difficultyButtons.forEach((button) => {
+      const selected = button.dataset.difficulty === state.difficulty;
+      button.classList.toggle('is-selected', selected);
+      button.setAttribute('aria-pressed', String(selected));
+    });
+  };
+
+  const resetRound = (difficulty = state.difficulty, sampleOffset = 0) => {
+    state = {
+      difficulty,
+      sampleIndex: sampleOffset,
+      stepIndex: 0,
+      score: 0,
+      selectedChoice: null,
+      locked: false,
+    };
+    render();
+  };
+
+  const advanceStep = () => {
+    if (state.stepIndex < steps.length - 1) {
+      state.stepIndex += 1;
+      state.selectedChoice = null;
+      state.locked = false;
+      render();
+      questionTitle?.focus?.();
+      return;
+    }
+
+    const nextSampleIndex = (state.sampleIndex + 1) % metarData[state.difficulty].length;
+    showFeedback(true, `Round complete: ${state.score}/${steps.length}. Loading the next METAR.`);
+    window.setTimeout(() => resetRound(state.difficulty, nextSampleIndex), 900);
+  };
+
+  const checkWind = (sample) => {
+    const data = new FormData(form);
+    const direction = String(data.get('direction') || '').trim().toUpperCase().padStart(3, '0');
+    const speed = Number(data.get('speed'));
+    const gustValue = String(data.get('gust') || '').trim();
+    const gust = gustValue ? Number(gustValue) : null;
+    const correct =
+      direction === sample.wind.direction &&
+      speed === sample.wind.speed &&
+      gust === sample.wind.gust;
+
+    return {
+      correct,
+      message: correct
+        ? `Correct. Wind is ${sample.wind.label}.`
+        : `Not quite. The wind group decodes as ${sample.wind.label}.`,
+    };
+  };
+
+  const checkVisibility = (sample) => {
+    const data = new FormData(form);
+    const visibility = normalizeVisibility(data.get('visibility'));
+    const correct = visibility === sample.visibility.value;
+
+    return {
+      correct,
+      message: correct
+        ? `Correct. Visibility is ${sample.visibility.label}.`
+        : `Not quite. Visibility is ${sample.visibility.label}.`,
+    };
+  };
+
+  const checkChoice = (sample, group) => {
+    const correctId = sample[group];
+    const correct = state.selectedChoice === correctId;
+    const label = getChoiceLabel(group, correctId);
+
+    return {
+      correct,
+      message: correct
+        ? `Correct. ${label} is the right decode.`
+        : `Not quite. The correct decode is ${label}.`,
+    };
+  };
+
+  const checkAnswer = () => {
+    const sample = currentSample();
+    const step = currentStep();
+    let result;
+
+    if (step.id === 'wind') {
+      result = checkWind(sample);
+    } else if (step.id === 'visibility') {
+      result = checkVisibility(sample);
+    } else {
+      if (!state.selectedChoice) {
+        showFeedback(false, 'Choose an answer before checking this step.');
+        return;
+      }
+      result = checkChoice(sample, step.id);
+    }
+
+    if (result.correct) state.score += 1;
+    showFeedback(result.correct, result.message);
+    state.locked = true;
+    window.setTimeout(advanceStep, result.correct ? 650 : 1100);
+  };
+
+  const revealAnswer = () => {
+    const sample = currentSample();
+    const step = currentStep();
+
+    if (step.id === 'wind') {
+      showFeedback(false, `Answer: ${sample.wind.label}.`);
+    } else if (step.id === 'visibility') {
+      showFeedback(false, `Answer: ${sample.visibility.label}.`);
+    } else {
+      showFeedback(false, `Answer: ${getChoiceLabel(step.id, sample[step.id])}.`);
+    }
+
+    state.locked = true;
+    window.setTimeout(advanceStep, 900);
+  };
+
+  const render = () => {
+    clearFeedback();
+    updateChrome();
+    renderAnswerZone();
+  };
+
+  answerZone?.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-choice]');
+    if (!button || state.locked) return;
+
+    state.selectedChoice = button.dataset.choice;
+    answerZone.querySelectorAll('[data-choice]').forEach((choice) => {
+      const selected = choice === button;
+      choice.classList.toggle('is-selected', selected);
+      choice.setAttribute('aria-checked', String(selected));
+    });
+  });
+
+  answerZone?.addEventListener('keydown', (event) => {
+    const activeChoice = event.target.closest('[data-choice]');
+    if (!activeChoice) return;
+
+    const choiceButtons = Array.from(answerZone.querySelectorAll('[data-choice]'));
+    const index = choiceButtons.indexOf(activeChoice);
+    const keyMap = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+
+    if (!(event.key in keyMap)) return;
+
+    event.preventDefault();
+    const nextIndex = (index + keyMap[event.key] + choiceButtons.length) % choiceButtons.length;
+    choiceButtons[nextIndex].focus();
+  });
+
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (!state.locked) checkAnswer();
+  });
+
+  revealButton?.addEventListener('click', () => {
+    if (!state.locked) revealAnswer();
+  });
+
+  resetButton?.addEventListener('click', () => {
+    const nextSampleIndex = (state.sampleIndex + 1) % metarData[state.difficulty].length;
+    resetRound(state.difficulty, nextSampleIndex);
+  });
+
+  hintToggle?.addEventListener('change', updateChrome);
+
+  difficultyButtons.forEach((button) => {
+    button.addEventListener('click', () => resetRound(button.dataset.difficulty || 'student', 0));
+  });
+
+  render();
+</script>
+
+<style>
+  .fsf-metar {
+    --bg: #FAFBFD;
+    --surface: #FFFFFF;
+    --surface-sunken: #EEF2F7;
+    --surface-inverse: #0E1B2E;
+    --border: #E2E8F0;
+    --border-strong: #CBD5E1;
+    --text-strong: #0E1B2E;
+    --text-body: #334155;
+    --text-muted: #64748B;
+    --primary: #0B69D6;
+    --primary-hover: #0A5BBA;
+    --primary-soft: #EAF3FE;
+    --success: #1F9D5B;
+    --warning: #E08600;
+    --error: #DC2B36;
+    --cat-lifr: #9B3D8F;
+    --shadow-sm: 0 1px 3px rgba(14, 27, 46, 0.06), 0 1px 2px rgba(14, 27, 46, 0.04);
+    --shadow-md: 0 4px 12px rgba(14, 27, 46, 0.07), 0 2px 4px rgba(14, 27, 46, 0.04);
+    background: var(--bg);
+    color: var(--text-body);
+  }
+
+  .metar-shell {
+    width: min(100% - clamp(2.5rem, 10vw, 6rem), 1080px);
+    margin: 0 auto;
+    padding: clamp(4rem, 8vw, 7rem) 0;
+  }
+
+  .metar-hero,
+  .practice-panel,
+  .practice-note {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: var(--shadow-md);
+  }
+
+  .metar-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+    gap: 1.5rem;
+    align-items: stretch;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .hero-copy h1,
+  .question-heading h2,
+  .practice-note h2 {
+    margin: 0;
+    color: var(--text-strong);
+    letter-spacing: -0.015em;
+  }
+
+  .hero-copy h1 {
+    max-width: 780px;
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    line-height: 1.15;
+  }
+
+  .lead {
+    max-width: 720px;
+    margin: 1rem 0 0;
+    font-size: 1.1875rem;
+    line-height: 1.7;
+  }
+
+  .eyebrow {
+    margin: 0 0 0.75rem;
+    color: var(--primary);
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .score-card {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 12px;
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      var(--surface-inverse);
+    background-size: 32px 32px;
+    padding: 1.25rem;
+    color: #B6C6D8;
+  }
+
+  .score-card .eyebrow {
+    color: #8FAAD4;
+  }
+
+  .score-card strong {
+    display: block;
+    color: #EAF1F9;
+    font-size: 2.5rem;
+    line-height: 1;
+  }
+
+  .score-card span:last-child {
+    margin-top: 0.65rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .practice-panel {
+    margin-top: 1.5rem;
+    padding: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .difficulty-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .hint-toggle {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 0.65rem;
+    margin-top: 1rem;
+    color: var(--text-body);
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+
+  .hint-toggle input {
+    width: 1.15rem;
+    min-height: 1.15rem;
+    accent-color: var(--primary);
+  }
+
+  .difficulty-row > span {
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    font-weight: 700;
+  }
+
+  .chip,
+  .primary-action,
+  .ghost-action,
+  .choice-button {
+    min-height: 44px;
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    transition: border-color 200ms ease, background 200ms ease, color 200ms ease, transform 200ms ease;
+  }
+
+  .chip {
+    background: var(--surface);
+    padding: 0.6rem 0.9rem;
+    color: var(--text-body);
+  }
+
+  .chip:hover,
+  .chip.is-selected {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+    color: var(--primary-hover);
+  }
+
+  .metar-strip {
+    margin-top: 1.25rem;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface-inverse);
+    padding: 1rem;
+    color: #EAF1F9;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    white-space: nowrap;
+  }
+
+  .hint-panel {
+    margin-top: 1rem;
+    border: 1px solid rgba(11, 105, 214, 0.18);
+    border-radius: 12px;
+    background: var(--primary-soft);
+    padding: 0.95rem 1rem;
+  }
+
+  .hint-panel h2 {
+    margin: 0;
+    color: var(--text-strong);
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  .hint-panel p {
+    margin: 0.35rem 0 0;
+    line-height: 1.55;
+  }
+
+  .metar-strip span {
+    display: block;
+    font-size: clamp(1rem, 2.4vw, 1.25rem);
+    font-weight: 700;
+  }
+
+  .metar-strip small {
+    display: block;
+    margin-top: 0.35rem;
+    color: #B6C6D8;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .step-progress {
+    height: 10px;
+    margin-top: 1.25rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--surface-sunken);
+  }
+
+  .step-progress span {
+    display: block;
+    width: 20%;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--primary);
+    transition: width 220ms ease;
+  }
+
+  .question-card {
+    margin-top: 1.5rem;
+  }
+
+  .question-heading h2 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.25;
+  }
+
+  .question-heading p:last-child {
+    max-width: 720px;
+    margin: 0.75rem 0 0;
+    line-height: 1.6;
+  }
+
+  .answer-zone {
+    margin-top: 1.25rem;
+  }
+
+  .wind-inputs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .wind-inputs label {
+    flex: 1 1 170px;
+  }
+
+  .visibility-field {
+    display: block;
+    max-width: 420px;
+  }
+
+  .wind-inputs span,
+  .visibility-field span {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--text-strong);
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+
+  small {
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+
+  input {
+    width: 100%;
+    min-height: 48px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 12px;
+    background: var(--surface);
+    padding: 0.7rem 0.85rem;
+    color: var(--text-strong);
+    font: inherit;
+    font-size: 1rem;
+  }
+
+  input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .choice-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+
+  .category-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .choice-button {
+    display: flex;
+    min-height: 92px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    background: var(--surface);
+    padding: 0.95rem;
+    text-align: left;
+  }
+
+  .choice-button strong {
+    color: var(--text-strong);
+    font-size: 1rem;
+  }
+
+  .choice-button span {
+    margin-top: 0.35rem;
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  .choice-button:hover,
+  .choice-button.is-selected {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+  }
+
+  .feedback {
+    margin-top: 1rem;
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    font-weight: 800;
+    line-height: 1.5;
+  }
+
+  .feedback.is-correct {
+    border: 1px solid rgba(31, 157, 91, 0.28);
+    background: rgba(31, 157, 91, 0.1);
+    color: #12683B;
+  }
+
+  .feedback.is-incorrect {
+    border: 1px solid rgba(224, 134, 0, 0.28);
+    background: rgba(224, 134, 0, 0.1);
+    color: #875000;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .primary-action {
+    border-color: var(--primary);
+    background: var(--primary);
+    padding: 0.7rem 1.05rem;
+    color: white;
+  }
+
+  .primary-action:hover {
+    border-color: var(--primary-hover);
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+  }
+
+  .ghost-action {
+    background: var(--surface);
+    padding: 0.7rem 1.05rem;
+    color: var(--text-body);
+  }
+
+  .ghost-action:hover {
+    border-color: var(--primary);
+    color: var(--primary-hover);
+  }
+
+  .practice-note {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+  }
+
+  .note-marker {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    place-items: center;
+    border-radius: 999px;
+    background: rgba(224, 134, 0, 0.12);
+    color: var(--warning);
+    font-weight: 900;
+  }
+
+  .practice-note p {
+    margin: 0.45rem 0 0;
+    line-height: 1.65;
+  }
+
+  button:focus-visible,
+  input:focus-visible,
+  .metar-strip:focus-visible {
+    outline: 3px solid rgba(11, 105, 214, 0.35);
+    outline-offset: 3px;
+  }
+
+  button:active {
+    transform: translateY(1px);
+  }
+
+  @media (max-width: 760px) {
+    .metar-hero {
+      grid-template-columns: 1fr;
+    }
+
+    .choice-grid,
+    .category-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .metar-shell {
+      width: min(100% - 2rem, 1080px);
+      padding: 3rem 0;
+    }
+
+    .metar-hero,
+    .practice-panel,
+    .practice-note {
+      border-radius: 12px;
+    }
+
+    .category-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .actions > * {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      transition: none !important;
+    }
+  }
+</style>
