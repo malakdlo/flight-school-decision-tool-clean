@@ -1,0 +1,26 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import RadioCallBuilder from '@/components/tools/RadioCallBuilder.astro';
+
+const title = 'Radio Call Script Builder — Practice Tool | Flight School Friend';
+const description =
+  'Build the radio call sequence for taxi, takeoff, pattern work, and landing at Class D towered and untowered CTAF fields — then chair-fly it with practice mode.';
+const canonical = 'https://flightschoolfriend.com/tools/radio-call-builder/';
+const structuredData = {
+  '@type': 'WebApplication',
+  '@id': `${canonical}#webapp`,
+  name: 'Radio Call Script Builder',
+  url: canonical,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any',
+  isAccessibleForFree: true,
+  educationalUse: 'Student pilot radio phraseology practice',
+  description,
+  author: { '@id': 'https://flightschoolfriend.com/#person' },
+};
+---
+
+{/* noindex until instructor sign-off — remove together with the draft banner (see REVIEW.md) */}
+<BaseLayout title={title} description={description} canonical={canonical} structuredData={structuredData} noindex={true}>
+  <RadioCallBuilder />
+</BaseLayout>
