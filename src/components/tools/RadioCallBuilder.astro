@@ -1,5 +1,6 @@
 ---
 import DraftReviewBanner from '@/components/tools/DraftReviewBanner.astro';
+import KitCapture from '@/components/KitCapture.astro';
 
 const directions = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
 const atisLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -28,23 +29,36 @@ const distances = ['3', '5', '7', '10', '15'];
       </aside>
     </header>
 
-    <section class="rcb-panel" aria-label="Build your call script">
+    <section class="rcb-panel" aria-labelledby="rcb-step1-heading">
+      <header class="step-head">
+        <p class="eyebrow">Step 1</p>
+        <h2 id="rcb-step1-heading">What do you want to practice?</h2>
+      </header>
+
       <div class="chip-row" role="group" aria-label="Airport environment">
         <span class="chip-row-label">Airport</span>
         <button type="button" class="chip is-selected" data-env="towered" aria-pressed="true">Class D — towered</button>
         <button type="button" class="chip" data-env="ctaf" aria-pressed="false">Untowered — CTAF</button>
       </div>
 
-      <div class="chip-row" role="group" aria-label="Operation">
-        <span class="chip-row-label">Operation</span>
-        <button type="button" class="chip is-selected" data-op="radio-check" aria-pressed="true" data-label-towered="Radio check + ATIS" data-label-ctaf="Radio check + weather">Radio check + ATIS</button>
-        <button type="button" class="chip" data-op="taxi" aria-pressed="false">Taxi out</button>
-        <button type="button" class="chip" data-op="takeoff" aria-pressed="false">Takeoff</button>
-        <button type="button" class="chip" data-op="pattern" aria-pressed="false">In the pattern</button>
-        <button type="button" class="chip" data-op="inbound" aria-pressed="false">Inbound + landing</button>
-        <button type="button" class="chip" data-op="after-landing" aria-pressed="false">After landing</button>
-        <button type="button" class="chip" data-op="depart" aria-pressed="false">Leaving the area</button>
+      <div class="chip-row" role="group" aria-label="Flight direction">
+        <span class="chip-row-label">Flight</span>
+        <button type="button" class="chip is-selected" data-direction="outbound" aria-pressed="true">Outbound — heading out</button>
+        <button type="button" class="chip" data-direction="inbound" aria-pressed="false">Inbound — coming back</button>
       </div>
+
+      <div class="chip-row" role="group" aria-label="Operations — pick one or more">
+        <span class="chip-row-label">Operations</span>
+        <button type="button" class="chip is-selected" data-op="radio-check" data-dir="outbound" aria-pressed="true" data-label-towered="Radio check + ATIS" data-label-ctaf="Radio check + weather">Radio check + ATIS</button>
+        <button type="button" class="chip is-selected" data-op="taxi" data-dir="outbound" aria-pressed="true">Taxi out</button>
+        <button type="button" class="chip is-selected" data-op="takeoff" data-dir="outbound" aria-pressed="true">Takeoff</button>
+        <button type="button" class="chip is-selected" data-op="pattern" data-dir="outbound" aria-pressed="true">In the pattern</button>
+        <button type="button" class="chip is-selected" data-op="depart" data-dir="outbound" aria-pressed="true">Leaving the area</button>
+        <button type="button" class="chip" data-op="inbound" data-dir="inbound" aria-pressed="false" hidden>Inbound + landing</button>
+        <button type="button" class="chip" data-op="after-landing" data-dir="inbound" aria-pressed="false" hidden>After landing</button>
+        <button type="button" class="chip chip-all is-selected" data-op-all aria-pressed="true">All of these</button>
+      </div>
+      <p class="ops-hint">Pick one, a few, or all — the script stacks them in flight order.</p>
 
       <form class="fields-grid" data-fields autocomplete="off">
         <label class="field" data-field="type">
@@ -141,19 +155,46 @@ const distances = ['3', '5', '7', '10', '15'];
       </form>
     </section>
 
-    <section class="rcb-output" aria-label="Your call script">
+    <section class="rcb-output" aria-labelledby="rcb-step2-heading">
       <header class="output-head">
         <div>
-          <p class="eyebrow" data-op-kicker>Class D — towered</p>
-          <h2 data-op-title>Radio check + ATIS</h2>
+          <p class="eyebrow" data-op-kicker>Step 2 · Class D — towered · Outbound</p>
+          <h2 id="rcb-step2-heading">ATC steps and script</h2>
         </div>
         <label class="practice-toggle">
-          <input type="checkbox" data-practice-toggle />
-          <span>Practice mode — hide the calls until I tap</span>
+          <input type="checkbox" data-practice-toggle checked />
+          <span>Practice mode is on — each call stays hidden until I tap it. Uncheck to show every call.</span>
         </label>
       </header>
-      <p class="op-note" data-op-note hidden></p>
       <ol class="rcb-cards" data-script-zone></ol>
+    </section>
+
+    <section class="rcb-copy" aria-labelledby="rcb-copy-heading">
+      <div class="copy-card">
+        <p class="eyebrow">Step 3</p>
+        <h2 id="rcb-copy-heading">Full script to copy</h2>
+        <p class="copy-sub">The whole sequence as plain text — paste it into your kneeboard notes, flashcards, or notes app.</p>
+        <div class="copy-box" tabindex="0" aria-label="Full script text">
+          <pre data-copy-text></pre>
+        </div>
+        <div class="copy-actions">
+          <button type="button" class="copy-button" data-copy-button>Copy the full script</button>
+          <span class="copy-status" data-copy-status aria-live="polite"></span>
+        </div>
+      </div>
+      <KitCapture
+        id="radio-call-builder-tools"
+        heading="New tools land in your inbox first"
+        body="I'm building a tool like this for every stage of training — radio calls, weather, maneuvers, checkride prep. Subscribe and each new one shows up free the week it ships, plus the flight-by-flight lessons behind it."
+        buttonLabel="Send me the new tools"
+        microcopy="Free. No spam. Unsubscribe anytime."
+        hiddenFields={[
+          { name: 'fields[source_page]', dynamic: 'source_page' },
+          { name: 'fields[utm_source]', dynamic: 'utm_source' },
+          { name: 'fields[utm_medium]', dynamic: 'utm_medium' },
+          { name: 'fields[utm_campaign]', dynamic: 'utm_campaign' },
+        ]}
+      />
     </section>
 
     <section class="rcb-avoid" aria-labelledby="rcb-avoid-heading">
@@ -564,21 +605,32 @@ const distances = ['3', '5', '7', '10', '15'];
     },
   };
 
+  // Flight-order operation sequence per direction.
+  const OP_ORDER = {
+    outbound: ['radio-check', 'taxi', 'takeoff', 'pattern', 'depart'],
+    inbound: ['inbound', 'after-landing'],
+  };
+  const DIRECTION_LABELS = { outbound: 'Outbound', inbound: 'Inbound' };
+
   const root = document.querySelector('.fsf-radio');
   const envButtons = Array.from(root?.querySelectorAll('[data-env]') || []);
+  const dirButtons = Array.from(root?.querySelectorAll('[data-direction]') || []);
   const opButtons = Array.from(root?.querySelectorAll('[data-op]') || []);
+  const allOpsButton = root?.querySelector('[data-op-all]');
   const fieldsForm = root?.querySelector('[data-fields]');
   const fieldWraps = Array.from(root?.querySelectorAll('[data-field]') || []);
   const scriptZone = root?.querySelector('[data-script-zone]');
   const opKicker = root?.querySelector('[data-op-kicker]');
-  const opTitle = root?.querySelector('[data-op-title]');
-  const opNote = root?.querySelector('[data-op-note]');
   const practiceToggle = root?.querySelector('[data-practice-toggle]');
+  const copyTextEl = root?.querySelector('[data-copy-text]');
+  const copyButton = root?.querySelector('[data-copy-button]');
+  const copyStatus = root?.querySelector('[data-copy-status]');
 
   let state = {
     env: 'towered',
-    op: 'radio-check',
-    practice: false,
+    direction: 'outbound',
+    ops: new Set(OP_ORDER.outbound),
+    practice: true,
     revealed: new Set(),
     values: {
       type: '', tail: '', airport: '', runway: '', atis: '', spot: '', taxiway: '', alt: '',
@@ -633,17 +685,76 @@ const distances = ['3', '5', '7', '10', '15'];
     NOTE: 'Note',
   };
 
-  const currentOp = () => OPS[state.env].find((op) => op.id === state.op) || OPS[state.env][0];
+  const selectedOps = () =>
+    OP_ORDER[state.direction]
+      .filter((id) => state.ops.has(id))
+      .map((id) => OPS[state.env].find((op) => op.id === id));
+
+  const segsToText = (segs) =>
+    segs.map((seg) => (seg.isVar && seg.missing ? `[${seg.text}]` : seg.text)).join('');
+
+  const buildPlainText = (ops, s) => {
+    const lines = [
+      `RADIO CALL SCRIPT — ${ENV_LABELS[state.env]} · ${DIRECTION_LABELS[state.direction]}`,
+      'Built with the Flight School Friend radio call script builder.',
+      'Practice reference only — follow your instructor, your school’s procedures, and ATC instructions.',
+      '',
+    ];
+    const total = ops.reduce((sum, op) => sum + op.cards.length, 0);
+    let step = 0;
+    ops.forEach((op) => {
+      lines.push(`== ${op.label.toUpperCase()} ==`);
+      if (op.note) lines.push(op.note);
+      lines.push('');
+      op.cards.forEach((card) => {
+        step += 1;
+        lines.push(`Step ${step} of ${total} · ${WHO_LABELS[card.who]} — ${card.title}`);
+        lines.push(`When: ${card.when}`);
+        if (card.call) lines.push(`Call: "${segsToText(card.call(s))}"`);
+        if (card.listen) lines.push(`Listen for: ${card.listen}`);
+        if (card.body) lines.push(card.body);
+        lines.push('');
+      });
+    });
+    return lines.join('\n').trim();
+  };
+
+  const updateCopy = (ops, s) => {
+    if (!copyTextEl) return;
+    if (!ops.length) {
+      copyTextEl.textContent = 'Pick at least one operation in step 1 and the full script shows up here.';
+      copyButton?.setAttribute('disabled', 'true');
+      return;
+    }
+    copyButton?.removeAttribute('disabled');
+    copyTextEl.textContent = buildPlainText(ops, s);
+  };
 
   const renderCards = () => {
     if (!scriptZone) return;
-    const op = currentOp();
+    const ops = selectedOps();
     const s = resolve();
-    const cards = op.cards;
 
-    scriptZone.innerHTML = cards
-      .map((card, index) => {
-        const key = `${state.env}:${state.op}:${index}`;
+    if (!ops.length) {
+      scriptZone.innerHTML = '<li class="rcb-empty">Pick at least one operation in step 1 and the script builds here.</li>';
+      updateCopy(ops, s);
+      return;
+    }
+
+    const total = ops.reduce((sum, op) => sum + op.cards.length, 0);
+    let step = 0;
+    const chunks = [];
+
+    ops.forEach((op) => {
+      chunks.push(`
+        <li class="rcb-group">
+          <h3>${escapeHtml(op.label)}</h3>
+          ${op.note ? `<p class="op-note">${escapeHtml(op.note)}</p>` : ''}
+        </li>`);
+
+      op.cards.forEach((card, index) => {
+        step += 1;
+        const key = `${state.env}:${op.id}:${index}`;
         const isAdvisory = card.who === 'LISTEN' || card.who === 'NOTE';
         let callHtml = '';
 
@@ -663,30 +774,29 @@ const distances = ['3', '5', '7', '10', '15'];
           }
         }
 
-        return `
+        chunks.push(`
           <li class="rcb-card${isAdvisory ? ' is-advisory' : ''}">
             <div class="card-top">
               <span class="who-chip who-${card.who.toLowerCase()}">${WHO_LABELS[card.who]}</span>
               ${card.tag ? `<span class="tag-chip">${escapeHtml(card.tag)}</span>` : ''}
-              <span class="step-kicker">Step ${index + 1} of ${cards.length}</span>
+              <span class="step-kicker">Step ${step} of ${total}</span>
             </div>
             <h3>${escapeHtml(card.title)}</h3>
             <p class="card-when"><strong>When:</strong> ${escapeHtml(card.when)}</p>
             ${callHtml}
             ${card.listen ? `<p class="card-listen"><strong>Listen for:</strong> ${escapeHtml(card.listen)}</p>` : ''}
             ${card.body ? `<p class="card-body">${escapeHtml(card.body)}</p>` : ''}
-          </li>`;
-      })
-      .join('');
+          </li>`);
+      });
+    });
+
+    scriptZone.innerHTML = chunks.join('');
+    updateCopy(ops, s);
   };
 
   const updateChrome = () => {
-    const op = currentOp();
-    if (opKicker) opKicker.textContent = ENV_LABELS[state.env];
-    if (opTitle) opTitle.textContent = op.label;
-    if (opNote) {
-      opNote.hidden = !op.note;
-      opNote.textContent = op.note || '';
+    if (opKicker) {
+      opKicker.textContent = `Step 2 · ${ENV_LABELS[state.env]} · ${DIRECTION_LABELS[state.direction]}`;
     }
 
     envButtons.forEach((button) => {
@@ -695,19 +805,37 @@ const distances = ['3', '5', '7', '10', '15'];
       button.setAttribute('aria-pressed', String(selected));
     });
 
+    dirButtons.forEach((button) => {
+      const selected = button.dataset.direction === state.direction;
+      button.classList.toggle('is-selected', selected);
+      button.setAttribute('aria-pressed', String(selected));
+    });
+
     opButtons.forEach((button) => {
-      const selected = button.dataset.op === state.op;
+      const inDirection = button.dataset.dir === state.direction;
+      button.hidden = !inDirection;
+      const selected = inDirection && state.ops.has(button.dataset.op);
       button.classList.toggle('is-selected', selected);
       button.setAttribute('aria-pressed', String(selected));
       const envLabel = button.dataset[state.env === 'towered' ? 'labelTowered' : 'labelCtaf'];
       if (envLabel) button.textContent = envLabel;
     });
 
-    const visible = OP_FIELDS[state.env][state.op] || [];
+    if (allOpsButton) {
+      const allSelected = OP_ORDER[state.direction].every((id) => state.ops.has(id));
+      allOpsButton.classList.toggle('is-selected', allSelected);
+      allOpsButton.setAttribute('aria-pressed', String(allSelected));
+    }
+
+    const visible = new Set();
+    OP_ORDER[state.direction]
+      .filter((id) => state.ops.has(id))
+      .forEach((id) => (OP_FIELDS[state.env][id] || []).forEach((name) => visible.add(name)));
+
     fieldWraps.forEach((wrap) => {
       const name = wrap.dataset.field;
-      let show = visible.includes(name);
-      if (name === 'planDir') show = visible.includes('plan') && state.values.plan === 'depart';
+      let show = visible.has(name);
+      if (name === 'planDir') show = visible.has('plan') && state.values.plan === 'depart';
       wrap.hidden = !show;
     });
   };
@@ -725,12 +853,51 @@ const distances = ['3', '5', '7', '10', '15'];
     });
   });
 
-  opButtons.forEach((button) => {
+  dirButtons.forEach((button) => {
     button.addEventListener('click', () => {
-      state.op = button.dataset.op;
+      state.direction = button.dataset.direction;
+      state.ops = new Set(OP_ORDER[state.direction]);
       state.revealed.clear();
       render();
     });
+  });
+
+  opButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const id = button.dataset.op;
+      if (state.ops.has(id)) state.ops.delete(id);
+      else state.ops.add(id);
+      render();
+    });
+  });
+
+  allOpsButton?.addEventListener('click', () => {
+    state.ops = new Set(OP_ORDER[state.direction]);
+    render();
+  });
+
+  copyButton?.addEventListener('click', async () => {
+    const text = copyTextEl?.textContent || '';
+    let copied = false;
+    try {
+      await navigator.clipboard.writeText(text);
+      copied = true;
+    } catch {
+      const helper = document.createElement('textarea');
+      helper.value = text;
+      document.body.appendChild(helper);
+      helper.select();
+      copied = document.execCommand('copy');
+      helper.remove();
+    }
+    if (copyStatus) {
+      copyStatus.textContent = copied
+        ? 'Copied — paste it anywhere.'
+        : 'Copy blocked — select the text and copy manually.';
+      window.setTimeout(() => {
+        copyStatus.textContent = '';
+      }, 2600);
+    }
   });
 
   fieldsForm?.addEventListener('input', (event) => {
@@ -875,6 +1042,26 @@ const distances = ['3', '5', '7', '10', '15'];
   .fsf-radio .rcb-panel {
     margin-top: 1.5rem;
     padding: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .fsf-radio .step-head {
+    margin-bottom: 1.25rem;
+  }
+
+  .fsf-radio .step-head h2,
+  .fsf-radio .copy-card h2 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.25;
+  }
+
+  .fsf-radio .ops-hint {
+    margin: 0.75rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+  }
+
+  .fsf-radio .chip-all {
+    border-style: dashed;
   }
 
   .fsf-radio .chip-row {
@@ -1029,6 +1216,28 @@ const distances = ['3', '5', '7', '10', '15'];
     padding: 1.1rem 1.25rem;
   }
 
+  .fsf-radio .rcb-group {
+    margin-top: 0.5rem;
+  }
+
+  .fsf-radio .rcb-group:first-child {
+    margin-top: 0;
+  }
+
+  .fsf-radio .rcb-group h3 {
+    font-size: 1.125rem;
+  }
+
+  .fsf-radio .rcb-empty {
+    border: 1px dashed var(--border-strong);
+    border-radius: 12px;
+    background: var(--surface-sunken);
+    padding: 1.5rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-align: center;
+  }
+
   .fsf-radio .rcb-card.is-advisory {
     background: var(--surface-sunken);
   }
@@ -1160,6 +1369,91 @@ const distances = ['3', '5', '7', '10', '15'];
     color: var(--primary-hover);
   }
 
+  .fsf-radio .rcb-copy {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+    gap: 1.5rem;
+    align-items: start;
+    margin-top: 1.5rem;
+  }
+
+  .fsf-radio .copy-card {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: var(--shadow-md);
+    padding: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .fsf-radio .copy-sub {
+    margin: 0.75rem 0 0;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .fsf-radio .copy-box {
+    max-height: 340px;
+    margin-top: 1rem;
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface-sunken);
+    padding: 1rem;
+  }
+
+  .fsf-radio .copy-box pre {
+    margin: 0;
+    color: var(--text-body);
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .fsf-radio .copy-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .fsf-radio .copy-button {
+    min-height: 44px;
+    border: 1px solid var(--primary);
+    border-radius: 12px;
+    background: var(--primary);
+    padding: 0.7rem 1.05rem;
+    color: white;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    transition: border-color 200ms ease, background 200ms ease, transform 200ms ease;
+  }
+
+  .fsf-radio .copy-button:hover {
+    border-color: var(--primary-hover);
+    background: var(--primary-hover);
+  }
+
+  .fsf-radio .copy-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .fsf-radio .copy-status {
+    color: var(--success);
+    font-size: 0.9375rem;
+    font-weight: 700;
+  }
+
+  @media (max-width: 900px) {
+    .fsf-radio .rcb-copy {
+      grid-template-columns: 1fr;
+    }
+  }
+
   .fsf-radio .rcb-avoid {
     margin-top: 1.5rem;
     padding: clamp(1.25rem, 3vw, 2rem);
@@ -1263,6 +1557,7 @@ const distances = ['3', '5', '7', '10', '15'];
     .fsf-radio .rcb-hero,
     .fsf-radio .rcb-panel,
     .fsf-radio .rcb-output,
+    .fsf-radio .copy-card,
     .fsf-radio .rcb-avoid,
     .fsf-radio .rcb-note {
       border-radius: 12px;

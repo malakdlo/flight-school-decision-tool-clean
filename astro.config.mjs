@@ -6,6 +6,8 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   output: 'static',
   site: 'https://flightschoolfriend.com',
+  // Dev-only: honor an externally assigned port (e.g. preview tooling); defaults to 4321.
+  server: { port: Number(process.env.PORT) || 4321 },
   integrations: [
     sitemap({
       filter: (page) =>
