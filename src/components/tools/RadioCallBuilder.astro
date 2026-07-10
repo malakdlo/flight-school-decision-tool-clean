@@ -325,15 +325,61 @@ const distances = ['3', '5', '7', '10', '15'];
           who: 'GROUND',
           title: 'Call for taxi',
           when: 'ATIS noted, at your parking spot, ready to move.',
-          call: (s) => [
-            V(s.airport), T(' Ground, '), V(s.callsign), T(', at '), V(s.spot),
-            T(' with information '), V(s.atis), T(', '), V(s.taxiIntent),
-            ...studentTag(s), T('.'),
-          ],
-          listen: (s) =>
-            s.plan === 'stay'
-              ? 'Your runway and taxi route — read back the runway, the route, and any hold-short or cross-runway instruction verbatim with your callsign.'
-              : 'Three things to copy and read back: the altitude cap (“maintain VFR at or below two thousand five hundred”), the departure frequency, and your squawk. Then “readback correct” plus your runway and taxi route — read the runway, route, and any hold-short or cross-runway instruction back verbatim.',
+          exchange: (s) => {
+            const opening = {
+              you: true,
+              label: 'You',
+              segs: [
+                V(s.airport), T(' Ground, '), V(s.callsign), T(', at '), V(s.spot),
+                T(' with information '), V(s.atis), T(', '), V(s.taxiIntent),
+                ...studentTag(s), T('.'),
+              ],
+            };
+            const taxiClearance = {
+              you: false,
+              label: s.groundName,
+              segs: [
+                V(s.shortCallsign), T(', taxi to runway '), V(s.runway), T(' via '), LIVE('route'), T('.'),
+              ],
+            };
+            const taxiReadback = {
+              you: true,
+              label: 'You',
+              segs: [
+                T('Taxi to runway '), V(s.runway), T(' via '), LIVE('route'), T(', '), V(s.shortCallsign), T('.'),
+              ],
+            };
+            if (s.plan === 'stay') return [opening, taxiClearance, taxiReadback];
+            return [
+              opening,
+              {
+                you: false,
+                label: s.groundName,
+                segs: [
+                  V(s.shortCallsign), T(', maintain VFR at or below '), V(s.altVar),
+                  T(', departure frequency '), LIVE('frequency'), T(', squawk '), LIVE('squawk'), T('.'),
+                ],
+              },
+              {
+                you: true,
+                label: 'You',
+                segs: [
+                  T('Maintain VFR at or below '), V(s.altVar), T(', departure '), LIVE('frequency'),
+                  T(', squawk '), LIVE('squawk'), T(', '), V(s.shortCallsign), T('.'),
+                ],
+              },
+              {
+                you: false,
+                label: s.groundName,
+                segs: [
+                  V(s.shortCallsign), T(', readback correct, taxi to runway '), V(s.runway),
+                  T(' via '), LIVE('route'), T('.'),
+                ],
+              },
+              taxiReadback,
+            ];
+          },
+          alternatives: 'The taxi route varies and may add “cross runway one three” or “hold short of runway one niner right” — read crossings and hold-shorts back verbatim. The departure frequency will be one of the facility’s two sectors. And if the ATIS directs it, this whole exchange happens with clearance delivery instead of ground.',
         },
       ],
     },
@@ -352,11 +398,33 @@ const distances = ['3', '5', '7', '10', '15'];
           who: 'TOWER',
           title: 'Number one for departure',
           when: 'At the hold-short line, first in line for takeoff, switched to tower.',
-          call: (s) => [
-            V(s.airport), T(' Tower, '), V(s.callsign), T(', number one at runway '), V(s.runway),
-            T(', '), V(s.takeoffIntent), ...studentTag(s), T('.'),
+          exchange: (s) => [
+            {
+              you: true,
+              label: 'You',
+              segs: [
+                V(s.airport), T(' Tower, '), V(s.callsign), T(', number one at runway '), V(s.runway),
+                T(', '), V(s.takeoffIntent), ...studentTag(s), T('.'),
+              ],
+            },
+            {
+              you: false,
+              label: s.towerName,
+              segs: [
+                V(s.shortCallsign), T(', fly heading '), LIVE('heading'), T(', runway '), V(s.runway),
+                T(', cleared for takeoff.'),
+              ],
+            },
+            {
+              you: true,
+              label: 'You',
+              segs: [
+                T('Fly heading '), LIVE('heading'), T(', runway '), V(s.runway),
+                T(', cleared for takeoff, '), V(s.shortCallsign), T('.'),
+              ],
+            },
           ],
-          listen: 'Three possibilities, all mandatory readbacks: “hold short of runway one niner right for landing traffic,” “runway one niner right, line up and wait,” or “fly heading two three zero, runway one niner right, cleared for takeoff.” Read the clearance back verbatim — runway number included — and fly any assigned heading. Never start the roll without “cleared for takeoff.”',
+          alternatives: '“Hold short of runway one niner right for landing traffic” or “runway one niner right, line up and wait” — both are mandatory verbatim readbacks, and neither one is a takeoff clearance. On a quiet day there may be no heading assignment — just “cleared for takeoff.” Never start the roll without those words.',
         },
       ],
     },
@@ -705,10 +773,20 @@ const distances = ['3', '5', '7', '10', '15'];
       ? speakChars(v.taxiway.trim())
       : v.taxiway.trim();
     const altSpoken = speakAltitude(v.alt);
+    const cleanedTail = String(v.tail).trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const airportName = v.airport.trim();
+    const facilityName = v.facility.trim();
     return {
       callsign: val(speakCallsign(v.type, v.tail), 'your callsign'),
-      airport: val(v.airport.trim(), 'airport'),
-      facility: val(v.facility.trim(), 'approach facility'),
+      // Once contact is established, ATC and readbacks drop the type/November prefix
+      // (N8136F -> "eight one three six foxtrot"), matching the owner's KRVS script.
+      shortCallsign: val(cleanedTail ? speakChars(cleanedTail.replace(/^N/, '')) : '', 'callsign'),
+      groundName: airportName ? `${airportName} Ground` : 'Ground',
+      towerName: airportName ? `${airportName} Tower` : 'Tower',
+      approachName: facilityName ? `${facilityName} Approach` : 'Approach',
+      departureName: facilityName ? `${facilityName} Departure` : 'Departure',
+      airport: val(airportName, 'airport'),
+      facility: val(facilityName, 'approach facility'),
       runway: val(speakRunway(v.runway), 'number'),
       atis: val(v.atis ? LETTERS[v.atis] : '', 'ATIS letter'),
       spot: val(v.spot.trim(), 'spot on the field'),
@@ -779,8 +857,13 @@ const distances = ['3', '5', '7', '10', '15'];
         step += 1;
         lines.push(`Step ${step} of ${total} · ${WHO_LABELS[card.who]} — ${card.title}`);
         lines.push(`When: ${cardText(card.when, s)}`);
-        if (card.call) lines.push(`Call: "${segsToText(card.call(s))}"`);
+        if (card.exchange) {
+          card.exchange(s).forEach((part) => lines.push(`${part.label}: "${segsToText(part.segs)}"`));
+        } else if (card.call) {
+          lines.push(`Call: "${segsToText(card.call(s))}"`);
+        }
         if (card.listen) lines.push(`Listen for: ${cardText(card.listen, s)}`);
+        if (card.alternatives) lines.push(`Possible alternatives: ${cardText(card.alternatives, s)}`);
         if (card.body) lines.push(cardText(card.body, s));
         lines.push('');
       });
@@ -827,12 +910,27 @@ const distances = ['3', '5', '7', '10', '15'];
         const isAdvisory = card.who === 'LISTEN' || card.who === 'NOTE';
         let callHtml = '';
 
-        if (card.call) {
+        if (card.call || card.exchange) {
           if (state.practice && !state.revealed.has(key)) {
             callHtml = `
-              <div class="call-block">
-                <span class="call-label">The call</span>
+              <div class="call-block${card.exchange ? ' is-exchange' : ''}">
+                <span class="call-label">${card.exchange ? 'The exchange' : 'The call'}</span>
                 <button type="button" class="rcb-reveal" data-reveal="${key}">Say it out loud, then tap to check</button>
+              </div>`;
+          } else if (card.exchange) {
+            const rows = card.exchange(s)
+              .map(
+                (part) => `
+                <div class="xmit ${part.you ? 'is-you' : 'is-atc'}">
+                  <span class="xmit-who">${escapeHtml(part.label)}</span>
+                  <p class="xmit-text">“${renderSegs(part.segs)}”</p>
+                </div>`
+              )
+              .join('');
+            callHtml = `
+              <div class="call-block is-exchange" data-call="${key}" tabindex="-1">
+                <span class="call-label">The exchange</span>
+                ${rows}
               </div>`;
           } else {
             callHtml = `
@@ -854,6 +952,7 @@ const distances = ['3', '5', '7', '10', '15'];
             <p class="card-when"><strong>When:</strong> ${escapeHtml(cardText(card.when, s))}</p>
             ${callHtml}
             ${card.listen ? `<p class="card-listen"><strong>Listen for:</strong> ${escapeHtml(cardText(card.listen, s))}</p>` : ''}
+            ${card.alternatives ? `<p class="card-listen"><strong>Possible alternatives:</strong> ${escapeHtml(cardText(card.alternatives, s))}</p>` : ''}
             ${card.body ? `<p class="card-body">${escapeHtml(cardText(card.body, s))}</p>` : ''}
           </li>`);
       });
@@ -1425,6 +1524,55 @@ const distances = ['3', '5', '7', '10', '15'];
     font-weight: 700;
   }
 
+  .fsf-radio .call-block.is-exchange {
+    display: grid;
+    gap: 0.65rem;
+    border: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .fsf-radio .xmit {
+    border-left: 3px solid var(--primary);
+    border-radius: 0 10px 10px 0;
+    background: var(--surface);
+    padding: 0.6rem 0.8rem;
+  }
+
+  .fsf-radio .xmit-who {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--primary-hover);
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .fsf-radio .xmit-text {
+    margin: 0;
+    color: var(--text-strong);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.6;
+  }
+
+  .fsf-radio .xmit.is-atc {
+    border-left-color: var(--warning);
+    background: rgba(224, 134, 0, 0.06);
+  }
+
+  .fsf-radio .xmit.is-atc .xmit-who,
+  .fsf-radio .xmit.is-atc .xmit-text {
+    color: #875000;
+  }
+
+  .fsf-radio .xmit.is-atc .rcb-var {
+    background: rgba(224, 134, 0, 0.14);
+    color: #875000;
+  }
+
   .fsf-radio .rcb-reveal {
     display: block;
     width: 100%;
@@ -1598,7 +1746,8 @@ const distances = ['3', '5', '7', '10', '15'];
   .fsf-radio button:focus-visible,
   .fsf-radio input:focus-visible,
   .fsf-radio select:focus-visible,
-  .fsf-radio .call-text:focus-visible {
+  .fsf-radio .call-text:focus-visible,
+  .fsf-radio .call-block:focus-visible {
     outline: 3px solid rgba(11, 105, 214, 0.35);
     outline-offset: 3px;
   }
