@@ -3,6 +3,7 @@
 **Revision history**
 - **v1 — 2026-07-09:** Conservative AIM Ch. 4 / AC 90-66 set, approved by Malak (owner).
 - **v2 — 2026-07-10:** Towered flows revised by owner direction to match the real-world KRVS script ([project-knowledge/krvs-radio-script.md](project-knowledge/krvs-radio-script.md)): approach/departure radar service added to inbound and outbound, run-up complete call added, rollout-instruction listen step added, radio check removed from outbound (both environments). CTAF templates unchanged from v1 except the radio check deletion.
+- **v2.1 — 2026-07-10:** Presentation approved by owner: towered steps now render as full exchanges — pilot call (blue), typical ATC response (orange, from the KRVS script), pilot readback (blue, instruction first / callsign last), plus a labeled "Possible alternatives" list per step. ATC lines and readbacks drop the type/N prefix ("eight one three six foxtrot" for N8136F) per the owner's example. **Instructor sign-off should verify the ATC example lines and readbacks on the live page, not just the pilot templates below.** CTAF steps stay single self-announce calls (no ATC side).
 
 **Status:** v2 owner-approved (owner supplied the source script). **Instructor sign-off pending on every template below.** The tool stays unlinked and carries the "Draft — under review" banner until every box is checked.
 

@@ -379,7 +379,11 @@ const distances = ['3', '5', '7', '10', '15'];
               taxiReadback,
             ];
           },
-          alternatives: 'The taxi route varies and may add “cross runway one three” or “hold short of runway one niner right” — read crossings and hold-shorts back verbatim. The departure frequency will be one of the facility’s two sectors. And if the ATIS directs it, this whole exchange happens with clearance delivery instead of ground.',
+          alternatives: [
+            { label: 'Departure frequency', text: 'The departure frequency will be one of the facility’s two sectors.' },
+            { label: 'Taxi route', text: 'The route varies and may add “cross runway one three” or “hold short of runway one niner right” — read crossings and hold-shorts back verbatim.' },
+            { label: 'Clearance delivery', text: 'If the ATIS directs it, this whole exchange happens with clearance delivery instead of ground.' },
+          ],
         },
       ],
     },
@@ -391,8 +395,27 @@ const distances = ['3', '5', '7', '10', '15'];
           who: 'GROUND',
           title: 'Run-up complete',
           when: 'Run-up checks done, still in the run-up area. (Some schools go straight to tower — follow your flow.)',
-          call: (s) => [V(s.airport), T(' Ground, '), V(s.callsign), T(', run-up complete.')],
-          listen: '“Number two, contact tower when number one” — read it back, taxi to the hold-short line, and switch to tower when you’re first in line.',
+          exchange: (s) => [
+            {
+              you: true,
+              label: 'You',
+              segs: [V(s.airport), T(' Ground, '), V(s.callsign), T(', run-up complete.')],
+            },
+            {
+              you: false,
+              label: s.groundName,
+              segs: [V(s.shortCallsign), T(', number two, contact tower when number one.')],
+            },
+            {
+              you: true,
+              label: 'You',
+              segs: [T('Contact tower when number one, '), V(s.shortCallsign), T('.')],
+            },
+          ],
+          alternatives: [
+            { label: 'Number one', text: 'If you’re first in line: “number one, contact tower” — read it back and switch right away.' },
+            { label: 'Sequence', text: 'The number tells you how many are ahead of you — taxi to the hold-short line and wait your turn.' },
+          ],
         },
         {
           who: 'TOWER',
@@ -424,7 +447,11 @@ const distances = ['3', '5', '7', '10', '15'];
               ],
             },
           ],
-          alternatives: '“Hold short of runway one niner right for landing traffic” or “runway one niner right, line up and wait” — both are mandatory verbatim readbacks, and neither one is a takeoff clearance. On a quiet day there may be no heading assignment — just “cleared for takeoff.” Never start the roll without those words.',
+          alternatives: [
+            { label: 'Hold short', text: '“Hold short of runway one niner right for landing traffic” — mandatory verbatim readback, and not a takeoff clearance.' },
+            { label: 'Line up and wait', text: '“Runway one niner right, line up and wait” — taxi on and hold; still not a takeoff clearance.' },
+            { label: 'No heading', text: 'On a quiet day there may be no heading assignment — just “cleared for takeoff.” Never start the roll without those words.' },
+          ],
         },
       ],
     },
@@ -438,16 +465,55 @@ const distances = ['3', '5', '7', '10', '15'];
           title: 'Downwind report',
           tag: 'when instructed',
           when: 'Tower told you to report downwind.',
-          call: (s) => [V(s.callsign), T(', midfield '), V(s.side), T(' downwind, runway '), V(s.runway), T('.')],
-          listen: 'Your sequence and clearance — “cleared touch and go,” “cleared for the option,” or “number two, follow the Cherokee on base.” Read clearances back with your callsign.',
+          exchange: (s) => [
+            {
+              you: true,
+              label: 'You',
+              segs: [V(s.shortCallsign), T(', midfield '), V(s.side), T(' downwind, runway '), V(s.runway), T('.')],
+            },
+            {
+              you: false,
+              label: s.towerName,
+              segs: [V(s.shortCallsign), T(', runway '), V(s.runway), T(', cleared for the option.')],
+            },
+            {
+              you: true,
+              label: 'You',
+              segs: [T('Runway '), V(s.runway), T(', cleared for the option, '), V(s.shortCallsign), T('.')],
+            },
+          ],
+          alternatives: [
+            { label: 'Sequencing', text: '“Number two, follow the Cherokee on base” — read it back and follow that traffic.' },
+            { label: 'Extended downwind', text: '“Extend downwind, I’ll call your base” — don’t turn base until they say.' },
+            { label: 'Later clearance', text: 'Tower may hold the clearance until final — keep flying the pattern and listening for your callsign.' },
+          ],
         },
         {
           who: 'TOWER',
           title: 'Final report',
           tag: 'when instructed',
           when: 'Tower told you to report final.',
-          call: (s) => [V(s.callsign), T(', two-mile final, runway '), V(s.runway), T('.')],
-          listen: '“Cleared to land runway …” or “cleared for the option.” No landing clearance by short final? Go around and tell tower.',
+          exchange: (s) => [
+            {
+              you: true,
+              label: 'You',
+              segs: [V(s.shortCallsign), T(', two-mile final, runway '), V(s.runway), T('.')],
+            },
+            {
+              you: false,
+              label: s.towerName,
+              segs: [V(s.shortCallsign), T(', runway '), V(s.runway), T(', cleared to land.')],
+            },
+            {
+              you: true,
+              label: 'You',
+              segs: [T('Runway '), V(s.runway), T(', cleared to land, '), V(s.shortCallsign), T('.')],
+            },
+          ],
+          alternatives: [
+            { label: 'The option', text: '“Cleared for the option” if you’re staying in the pattern — touch and go, stop and go, low approach, or full stop.' },
+            { label: 'Go around', text: 'No clearance by short final? Go around and tell tower.' },
+          ],
         },
       ],
     },
@@ -465,37 +531,120 @@ const distances = ['3', '5', '7', '10', '15'];
           who: 'APPROACH',
           title: 'Call approach',
           when: 'Well outside the shelf, ATIS in hand.',
-          call: (s) => [
-            V(s.facility), T(' Approach, '), V(s.callsign), T(', '), V(s.dist), T(' miles '), V(s.fromDir),
-            ...(s.landmark ? [T(' of '), V({ text: s.landmark, missing: false })] : []),
-            T(', at '), V(s.altVar), T(', inbound '), V(s.airport), T(' with information '), V(s.atis),
-            ...studentTag(s), T('.'),
+          exchange: (s) => {
+            const position = [
+              V(s.dist), T(' miles '), V(s.fromDir),
+              ...(s.landmark ? [T(' of '), V({ text: s.landmark, missing: false })] : []),
+            ];
+            return [
+              {
+                you: true,
+                label: 'You',
+                segs: [
+                  V(s.facility), T(' Approach, '), V(s.callsign), T(', '), ...position,
+                  T(', at '), V(s.altVar), T(', inbound '), V(s.airport), T(' with information '), V(s.atis),
+                  ...studentTag(s), T('.'),
+                ],
+              },
+              {
+                you: false,
+                label: s.approachName,
+                segs: [V(s.shortCallsign), T(', '), V({ text: s.approachName, missing: false }), T(', squawk '), LIVE('squawk'), T('.')],
+              },
+              {
+                you: true,
+                label: 'You',
+                segs: [T('Squawk '), LIVE('squawk'), T(', '), V(s.shortCallsign), T('.')],
+              },
+              {
+                you: false,
+                label: s.approachName,
+                segs: [
+                  V(s.shortCallsign), T(', radar contact, '), ...position,
+                  T(', proceed direct '), V(s.airport), T(', expect runway '), V(s.runway), T('.'),
+                ],
+              },
+              {
+                you: true,
+                label: 'You',
+                segs: [
+                  T('Proceed direct '), V(s.airport), T(', expect runway '), V(s.runway),
+                  T(', '), V(s.shortCallsign), T('.'),
+                ],
+              },
+            ];
+          },
+          alternatives: [
+            { label: 'Routing', text: 'Instead of direct: “fly to the turnpike split” or “fly direct Turkey Mountain” — approach is spacing you for tower. Read it back and fly it.' },
+            { label: 'Expected runway', text: '“Expect runway …” is planning information, not a clearance — it can change before you get there.' },
+            { label: 'Timing', text: 'The squawk sometimes comes a few seconds after your call — give them a moment before calling again.' },
           ],
-          listen: 'First your squawk — sometimes after a few seconds: “squawk zero one four three.” Read it back and set it. Then “radar contact … proceed direct, expect runway one niner right,” or a routing like “fly direct Turkey Mountain.” Read it back and fly it — approach is spacing you for tower. Instructions can change with traffic.',
         },
         {
           who: 'LISTEN',
           title: 'Handoff to tower',
           when: 'About four to five miles out, whenever approach is ready.',
-          body: (s) => `“Contact ${s.airport.missing ? 'tower' : `${s.airport.text} Tower`}.” Read it back and switch — don’t forget the frequency change.`,
+          exchange: (s) => [
+            {
+              you: false,
+              label: s.approachName,
+              segs: [V(s.shortCallsign), T(', contact '), V({ text: s.towerName, missing: false }), T('.')],
+            },
+            {
+              you: true,
+              label: 'You',
+              segs: [T('Contact '), V({ text: s.towerName, missing: false }), T(', '), V(s.shortCallsign), T('.')],
+            },
+          ],
+          alternatives: [
+            { label: 'Frequency change', text: 'Read it back and switch — don’t forget to actually make the change before you key up.' },
+          ],
         },
         {
           who: 'TOWER',
           title: 'Check in with tower',
           when: 'Right after the handoff.',
-          call: (s) => [
-            V(s.airport), T(' Tower, '), V(s.callsign), T(', inbound '), V(s.towerIntent),
-            ...studentTag(s), T('.'),
+          exchange: (s) => [
+            {
+              you: true,
+              label: 'You',
+              segs: [
+                V(s.airport), T(' Tower, '), V(s.callsign), T(', inbound '), V(s.towerIntent),
+                ...studentTag(s), T('.'),
+              ],
+            },
+            {
+              you: false,
+              label: s.towerName,
+              segs: [
+                V(s.shortCallsign), T(', enter a midfield '), V(s.side), T(' downwind for runway '), V(s.runway), T('.'),
+              ],
+            },
+            {
+              you: true,
+              label: 'You',
+              segs: [
+                T('Enter a midfield '), V(s.side), T(' downwind, runway '), V(s.runway),
+                T(', '), V(s.shortCallsign), T('.'),
+              ],
+            },
           ],
-          listen: 'Your pattern entry — “enter a midfield right downwind for runway one niner right,” maybe with “I’ll call your base” (don’t turn base until they say) or “follow an Archer on left downwind, report traffic in sight.” Read it back and fly it. Initial directions can change with traffic.',
+          alternatives: [
+            { label: 'Base entry', text: '“Enter a right base for runway one niner right” — same readback pattern.' },
+            { label: 'I’ll call your base', text: 'Fly the downwind, but don’t turn base until tower says so.' },
+            { label: 'Follow traffic', text: '“Follow an Archer on left downwind, report traffic in sight” — the traffic-in-sight card below is your response.' },
+            { label: 'Changes', text: 'Initial directions can change with traffic — keep listening for your callsign.' },
+          ],
         },
         {
           who: 'TOWER',
           title: 'Position report',
           tag: 'as instructed',
           when: 'Tower told you to report — for example “report midfield downwind.”',
-          call: (s) => [V(s.callsign), T(', midfield '), V(s.side), T(' downwind, runway '), V(s.runway), T('.')],
-          listen: 'Your sequence and, eventually, the landing clearance.',
+          call: (s) => [V(s.shortCallsign), T(', midfield '), V(s.side), T(' downwind, runway '), V(s.runway), T('.')],
+          alternatives: [
+            { label: 'Response', text: 'Often just “roger” — the landing clearance may come now or later.' },
+          ],
         },
         {
           who: 'TOWER',
@@ -503,13 +652,33 @@ const distances = ['3', '5', '7', '10', '15'];
           tag: 'if asked',
           when: 'Tower told you to follow traffic and report it in sight.',
           call: (s) => [T('Traffic in sight, '), V(s.callsign), T('.')],
-          listen: 'Your sequence behind that traffic, then the landing clearance.',
+          alternatives: [
+            { label: 'Can’t see it', text: '“Negative contact, looking, …” — tower keeps the spacing until you report the traffic in sight.' },
+          ],
         },
         {
           who: 'LISTEN',
           title: 'Landing clearance',
           when: 'When tower is ready — the busier the field, the later it comes.',
-          body: '“Number one, runway one niner right, cleared to land” — or “cleared for the option” if you’re staying in the pattern (touch and go, stop and go, low approach, or full stop). Read it back with the runway number. Nothing by short final? Go around and say so.',
+          exchange: (s) => [
+            {
+              you: false,
+              label: s.towerName,
+              segs: [
+                V(s.shortCallsign), T(', number one, runway '), V(s.runway), T(', cleared to land.'),
+              ],
+            },
+            {
+              you: true,
+              label: 'You',
+              segs: [T('Runway '), V(s.runway), T(', cleared to land, '), V(s.shortCallsign), T('.')],
+            },
+          ],
+          alternatives: [
+            { label: 'The option', text: '“Cleared for the option” when you’re staying in the pattern — touch and go, stop and go, low approach, or full stop.' },
+            { label: 'Sequence', text: '“Number two, …” means one aircraft lands ahead of you — follow it and keep your spacing.' },
+            { label: 'Go around', text: 'Nothing by short final? Go around and say so.' },
+          ],
         },
       ],
     },
@@ -521,17 +690,51 @@ const distances = ['3', '5', '7', '10', '15'];
           who: 'LISTEN',
           title: 'Rollout instructions',
           when: 'On the rollout after your final landing — sometimes right away, sometimes a few seconds later.',
-          body: '“Turn right when able, contact ground,” “turn right on Alpha three, contact ground,” or sometimes “taxi to parking this frequency” — that last one means stay with tower all the way in. Read it back, clear the runway fully, then run the after-landing checklist. Never stop on the runway.',
+          exchange: (s) => [
+            {
+              you: false,
+              label: s.towerName,
+              segs: [V(s.shortCallsign), T(', turn right when able, contact ground.')],
+            },
+            {
+              you: true,
+              label: 'You',
+              segs: [T('Right when able, contact ground, '), V(s.shortCallsign), T('.')],
+            },
+          ],
+          alternatives: [
+            { label: 'Named exit', text: '“Turn right on runway three one” or “turn right on Alpha three” — read back exactly what they name.' },
+            { label: 'Stay with tower', text: '“Taxi to parking this frequency” — stay with tower all the way in and skip the ground call below.' },
+            { label: 'Checklist', text: 'Clear the runway fully before the after-landing checklist — never stop on the runway.' },
+          ],
         },
         {
           who: 'GROUND',
           title: 'Call for taxi in',
           when: 'Fully past the hold-short line, checklist done — skip this if tower kept you on frequency.',
-          call: (s) => [
-            V(s.airport), T(' Ground, '), V(s.callsign), T(', at '), V(s.taxiwayVar),
-            T(', request taxi to '), V(s.spot), T('.'),
+          exchange: (s) => [
+            {
+              you: true,
+              label: 'You',
+              segs: [
+                V(s.airport), T(' Ground, '), V(s.callsign), T(', at '), V(s.taxiwayVar),
+                T(', request taxi to '), V(s.spot), T('.'),
+              ],
+            },
+            {
+              you: false,
+              label: s.groundName,
+              segs: [V(s.shortCallsign), T(', taxi to '), V(s.spot), T(' via '), LIVE('route'), T('.')],
+            },
+            {
+              you: true,
+              label: 'You',
+              segs: [T('Taxi to '), V(s.spot), T(' via '), LIVE('route'), T(', '), V(s.shortCallsign), T('.')],
+            },
           ],
-          listen: 'Your route — “taxi to parking via alpha.” Read it back, along with any hold-short.',
+          alternatives: [
+            { label: 'Crossings', text: 'The route may include hold-shorts or runway crossings — read those back verbatim.' },
+          ],
         },
       ],
     },
@@ -543,24 +746,80 @@ const distances = ['3', '5', '7', '10', '15'];
           who: 'LISTEN',
           title: 'Tower hands you off',
           when: 'Climbing out after takeoff, whenever tower is ready.',
-          body: (s) => `Tower will say something like “turn right heading three three zero, contact ${s.facility.missing ? 'departure' : `${s.facility.text} Departure`}.” Read it back, switch, and don’t forget the frequency change.`,
+          exchange: (s) => [
+            {
+              you: false,
+              label: s.towerName,
+              segs: [
+                V(s.shortCallsign), T(', turn right heading '), LIVE('heading'), T(', contact '),
+                V({ text: s.departureName, missing: false }), T('.'),
+              ],
+            },
+            {
+              you: true,
+              label: 'You',
+              segs: [
+                T('Right heading '), LIVE('heading'), T(', contact '),
+                V({ text: s.departureName, missing: false }), T(', '), V(s.shortCallsign), T('.'),
+              ],
+            },
+          ],
+          alternatives: [
+            { label: 'Timing', text: 'The handoff can come right away or a few minutes out — stay with tower until it does.' },
+            { label: 'Frequency change', text: 'Read it back, switch, and don’t forget to actually change the frequency.' },
+          ],
         },
         {
           who: 'DEPARTURE',
           title: 'Check in with departure',
           when: 'Right after switching frequencies.',
-          call: (s) => [
-            V(s.facility), T(' Departure, '), V(s.callsign), T(', off '), V(s.airport),
-            T(', climbing through '), LIVE('passing altitude'), T(' for '), V(s.altVar),
-            T(', heading '), LIVE('assigned heading'), T('.'),
+          exchange: (s) => [
+            {
+              you: true,
+              label: 'You',
+              segs: [
+                V(s.facility), T(' Departure, '), V(s.callsign), T(', off '), V(s.airport),
+                T(', climbing through '), LIVE('passing altitude'), T(' for '), V(s.altVar),
+                T(', heading '), LIVE('assigned heading'), T('.'),
+              ],
+            },
+            {
+              you: false,
+              label: s.departureName,
+              segs: [V(s.shortCallsign), T(', radar contact, continue tower-assigned heading.')],
+            },
+            {
+              you: true,
+              label: 'You',
+              segs: [T('Continue tower-assigned heading, '), V(s.shortCallsign), T('.')],
+            },
           ],
-          listen: '“Radar contact, continue tower-assigned heading,” or “climb on course to the west at or below four thousand five hundred.” Read it back. A new heading is not a new altitude — hold your altitude cap until departure raises it.',
+          alternatives: [
+            { label: 'Climb on course', text: '“Climb on course to the west at or below four thousand five hundred” — read it back.' },
+            { label: 'Heading vs. altitude', text: 'A new heading is not a new altitude — hold your altitude cap until departure raises it.' },
+            { label: 'Release', text: 'After any temporary restriction, departure eventually releases you toward what you originally requested.' },
+          ],
         },
         {
           who: 'LISTEN',
           title: 'Radar service ends',
           when: 'A few minutes out, once you’re clear of the terminal area.',
-          body: 'Local flight: “radar service terminated, squawk VFR, frequency change approved” — read it back and set one two zero zero. Cross-country with flight following: a handoff instead, like “contact Kansas City Center on one two eight point six” — read it back and switch.',
+          exchange: (s) => [
+            {
+              you: false,
+              label: s.departureName,
+              segs: [V(s.shortCallsign), T(', radar service terminated, squawk VFR, frequency change approved.')],
+            },
+            {
+              you: true,
+              label: 'You',
+              segs: [T('Squawk VFR, frequency change approved, '), V(s.shortCallsign), T('.')],
+            },
+          ],
+          alternatives: [
+            { label: 'Transponder', text: 'Set one two zero zero — you’re on your own frequency-wise from here.' },
+            { label: 'Flight following', text: 'On a cross-country you get a handoff instead: “contact Kansas City Center on one two eight point six” — read it back and switch.' },
+          ],
         },
       ],
     },
@@ -863,7 +1122,10 @@ const distances = ['3', '5', '7', '10', '15'];
           lines.push(`Call: "${segsToText(card.call(s))}"`);
         }
         if (card.listen) lines.push(`Listen for: ${cardText(card.listen, s)}`);
-        if (card.alternatives) lines.push(`Possible alternatives: ${cardText(card.alternatives, s)}`);
+        if (card.alternatives) {
+          lines.push('Possible alternatives:');
+          card.alternatives.forEach((alt) => lines.push(`- ${alt.label} — ${alt.text}`));
+        }
         if (card.body) lines.push(cardText(card.body, s));
         lines.push('');
       });
@@ -952,7 +1214,13 @@ const distances = ['3', '5', '7', '10', '15'];
             <p class="card-when"><strong>When:</strong> ${escapeHtml(cardText(card.when, s))}</p>
             ${callHtml}
             ${card.listen ? `<p class="card-listen"><strong>Listen for:</strong> ${escapeHtml(cardText(card.listen, s))}</p>` : ''}
-            ${card.alternatives ? `<p class="card-listen"><strong>Possible alternatives:</strong> ${escapeHtml(cardText(card.alternatives, s))}</p>` : ''}
+            ${card.alternatives ? `
+              <div class="card-alts">
+                <strong>Possible alternatives:</strong>
+                <ul>
+                  ${card.alternatives.map((alt) => `<li><strong>${escapeHtml(alt.label)}</strong> — ${escapeHtml(alt.text)}</li>`).join('')}
+                </ul>
+              </div>` : ''}
             ${card.body ? `<p class="card-body">${escapeHtml(cardText(card.body, s))}</p>` : ''}
           </li>`);
       });
@@ -1479,6 +1747,23 @@ const distances = ['3', '5', '7', '10', '15'];
   .fsf-radio .card-when strong,
   .fsf-radio .card-listen strong {
     color: var(--text-strong);
+  }
+
+  .fsf-radio .card-alts {
+    margin: 0.6rem 0 0;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .fsf-radio .card-alts strong {
+    color: var(--text-strong);
+  }
+
+  .fsf-radio .card-alts ul {
+    display: grid;
+    gap: 0.3rem;
+    margin: 0.35rem 0 0;
+    padding-left: 1.15rem;
   }
 
   .fsf-radio .call-block {
