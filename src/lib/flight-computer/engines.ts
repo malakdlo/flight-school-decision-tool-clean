@@ -121,7 +121,7 @@ export function windTriangle(input: WindTriangleInput): WindTriangleResult | Eng
     steps: [
       `Wind angle = wind direction − true course = ${pad3(windDirection)}° − ${pad3(trueCourse)}° = ${fmt(windAngle)}° ${windAngle >= 0 ? '(wind from the right of course)' : '(wind from the left of course)'}`,
       `WCA = asin(wind speed × sin(wind angle) ÷ TAS) = asin(${fmt(windSpeed)} × sin(${fmt(windAngle)}°) ÷ ${fmt(trueAirspeed)}) = ${fmt(windCorrectionAngle)}°${crabSide}`,
-      `True heading = true course + WCA = ${pad3(trueCourse)}° + ${fmt(windCorrectionAngle)}° = ${fmt(trueHeading)}°`,
+      `True heading = true course + WCA = ${pad3(trueCourse)}° ${windCorrectionAngle < 0 ? '−' : '+'} ${fmt(Math.abs(windCorrectionAngle))}° = ${fmt(trueHeading)}°`,
       `Ground speed = TAS × cos(WCA) − wind speed × cos(wind angle) = ${fmt(trueAirspeed)} × cos(${fmt(windCorrectionAngle)}°) − ${fmt(windSpeed)} × cos(${fmt(windAngle)}°) = ${fmt(groundSpeed)} kts`,
     ],
   };

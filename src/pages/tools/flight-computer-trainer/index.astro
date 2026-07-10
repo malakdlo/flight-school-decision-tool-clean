@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import FlightComputerTrainer from '@/components/tools/FlightComputerTrainer.astro';
+
+const title = 'Flight Computer Trainer — Free E6B Practice Problems | Flight School Friend';
+const description =
+  'Practice E6B-style flight computer calculations — wind correction, ground speed, time-speed-distance, fuel burn, density altitude, and conversions — with every formula shown. Free, no email required.';
+const canonical = 'https://flightschoolfriend.com/tools/flight-computer-trainer/';
+const structuredData = {
+  '@type': 'WebApplication',
+  '@id': `${canonical}#webapp`,
+  name: 'Flight Computer Trainer',
+  url: canonical,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any',
+  isAccessibleForFree: true,
+  educationalUse: 'Student pilot flight computer calculation practice',
+  description,
+  author: { '@id': 'https://flightschoolfriend.com/#person' },
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} structuredData={structuredData}>
+  <FlightComputerTrainer />
+</BaseLayout>
