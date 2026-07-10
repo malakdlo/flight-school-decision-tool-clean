@@ -14,14 +14,14 @@
       <aside class="mode-card" aria-label="Trainer modes">
         <p class="eyebrow">Modes</p>
         <div class="mode-tabs">
-          <button type="button" class="chip is-selected" aria-pressed="true">Calculator</button>
-          <button type="button" class="chip" disabled title="Practice mode is coming next">Practice</button>
+          <button type="button" class="chip is-selected" data-mode-tab="calc" aria-pressed="true">Calculator</button>
+          <button type="button" class="chip" data-mode-tab="practice" aria-pressed="false">Practice</button>
         </div>
-        <span>Practice mode with graded problems is next — the calculator comes first so the math is out in the open.</span>
+        <span>Calculator to check your work, practice for graded problems with real tolerances — the same math engines drive both.</span>
       </aside>
     </header>
 
-    <section class="calc-panel" aria-label="Flight computer calculator">
+    <section class="calc-panel" data-mode-section="calc" aria-label="Flight computer calculator">
       <div class="calc-tabs" aria-label="Choose a calculation">
         <span>Calculation</span>
         <button type="button" class="chip is-selected" data-panel="wind" aria-pressed="true">Wind triangle</button>
@@ -313,6 +313,10 @@
       </div>
     </section>
 
+    <section class="calc-panel" data-mode-section="practice" hidden aria-label="Practice mode">
+      <div data-practice-app></div>
+    </section>
+
     <aside class="practice-note" role="note">
       <div class="note-marker" aria-hidden="true">!</div>
       <div>
@@ -371,6 +375,7 @@
     trueAirspeed,
     windTriangle,
   } from '@/lib/flight-computer/engines';
+  import { buildQueue, CATEGORY_LABELS, gradeField, overallVerdict } from '@/lib/flight-computer/problems';
 
   const root = document.querySelector('.fsf-flightcomp');
   if (root) init(root);
@@ -642,6 +647,323 @@
       inputA.addEventListener('input', () => update(inputA, inputB, converter.aToB));
       inputB.addEventListener('input', () => update(inputB, inputA, converter.bToA));
     });
+
+    // ---- Mode toggle (calculator / practice) -------------------------------
+    const modeTabs = Array.from(root.querySelectorAll('[data-mode-tab]'));
+    const modeSections = Array.from(root.querySelectorAll('[data-mode-section]'));
+
+    modeTabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        modeTabs.forEach((other) => {
+          const selected = other === tab;
+          other.classList.toggle('is-selected', selected);
+          other.setAttribute('aria-pressed', String(selected));
+        });
+        modeSections.forEach((section) => {
+          section.hidden = section.dataset.modeSection !== tab.dataset.modeTab;
+        });
+      });
+    });
+
+    // ---- Practice mode -----------------------------------------------------
+    const practiceApp = root.querySelector('[data-practice-app]');
+    const ALL_CATS = Object.keys(CATEGORY_LABELS);
+    const COUNTS = [5, 10, 15];
+
+    const practice = {
+      screen: 'setup',
+      cats: [...ALL_CATS],
+      count: 10,
+      queue: [],
+      index: 0,
+      responses: [],
+      answered: false,
+    };
+
+    const VERDICT_COPY = {
+      correct: 'Nailed it — within tolerance.',
+      close: 'Close — inside the wider band. Tighten it up.',
+      off: 'Off — walk through the steps below.',
+    };
+
+    const fmtAnswer = (field) => {
+      const value = round(field.value, field.places);
+      const shown = field.circular ? pad3(value) : value.toLocaleString('en-US');
+      return `${shown}${field.unit === '°' ? '°' : ` ${field.unit}`}`;
+    };
+
+    const fmtTolerance = (field) => `±${field.tolerance}${field.unit === '°' ? '°' : ` ${field.unit}`}`;
+
+    const TOLERANCE_SUMMARY = [
+      'Heading ±2°, ground speed ±2 kts',
+      'Time ±6 min (0.1 hr), distance ±2 NM, speed ±2 kts',
+      'Fuel ±0.5 gal, endurance ±6 min',
+      'Pressure altitude ±100 ft, density altitude ±200 ft',
+      'True airspeed ±3 kts',
+      'Conversions ±2 of the target unit (fuel ±0.5 gal)',
+    ];
+
+    function renderPracticeSetup() {
+      practiceApp.innerHTML = `
+        <p class="eyebrow">Practice</p>
+        <h2 class="p-h2">Build your problem set</h2>
+        <p class="calc-help">Pick what to drill and how many problems. Answers are graded with the same tolerance bands a manual flight computer reads to — close counts for something.</p>
+
+        <div class="mode-row" aria-label="Categories">
+          <span>Categories</span>
+          ${ALL_CATS.map((cat) => `
+            <button type="button" class="chip ${practice.cats.includes(cat) ? 'is-selected' : ''}" data-action="toggle-cat" data-cat="${cat}" aria-pressed="${practice.cats.includes(cat)}">${CATEGORY_LABELS[cat]}</button>
+          `).join('')}
+        </div>
+
+        <div class="mode-row" aria-label="Problem count">
+          <span>Problems</span>
+          ${COUNTS.map((count) => `
+            <button type="button" class="chip ${practice.count === count ? 'is-selected' : ''}" data-action="set-count" data-count="${count}" aria-pressed="${practice.count === count}">${count}</button>
+          `).join('')}
+        </div>
+
+        <details class="how p-tolerances">
+          <summary>How grading works</summary>
+          <ol>
+            ${TOLERANCE_SUMMARY.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}
+          </ol>
+          <p class="method-note">Within the band = correct. Within twice the band = close. Manual flight computers read imprecisely — that's the point of the bands.</p>
+        </details>
+
+        ${practice.cats.length === 0 ? '<p class="p-hint">Pick at least one category to start.</p>' : ''}
+
+        <div class="actions">
+          <button type="button" class="primary-action" data-action="start-practice" ${practice.cats.length === 0 ? 'disabled' : ''}>Start practicing</button>
+        </div>
+      `;
+    }
+
+    function renderPracticeQuiz() {
+      const problem = practice.queue[practice.index];
+      const response = practice.answered ? practice.responses[practice.responses.length - 1] : null;
+      const progress = ((practice.index + 1) / practice.queue.length) * 100;
+
+      practiceApp.innerHTML = `
+        <div class="p-quiz-top">
+          <p class="eyebrow">Problem ${practice.index + 1} of ${practice.queue.length}</p>
+          <span class="p-badge">${escapeHtml(problem.categoryLabel)}</span>
+        </div>
+        <div class="p-progress" role="progressbar" aria-label="Practice progress" aria-valuemin="1" aria-valuemax="${practice.queue.length}" aria-valuenow="${practice.index + 1}">
+          <span style="width: ${progress}%"></span>
+        </div>
+
+        <h2 class="p-h2" data-problem-title tabindex="-1">${escapeHtml(problem.title)}</h2>
+        ${problem.givens.length ? `
+          <div class="givens-strip">
+            ${problem.givens.map((given) => `<span>${escapeHtml(given)}</span>`).join('')}
+          </div>` : ''}
+
+        <form data-action="check-practice" novalidate>
+          <div class="p-fields">
+            ${problem.fields.map((field, index) => `
+              <label>
+                <span>${escapeHtml(field.label)} (${escapeHtml(field.unit)}) <small>${escapeHtml(fmtTolerance(field))}</small></span>
+                <input name="field-${index}" type="number" step="any" inputmode="decimal" autocomplete="off" ${response ? 'disabled' : ''} value="${response ? escapeHtml(String(response.entries[index] ?? '')) : ''}" />
+              </label>
+            `).join('')}
+          </div>
+
+          ${response ? '' : `
+            <div class="p-form-feedback" data-form-feedback hidden></div>
+            <div class="actions">
+              <button type="submit" class="primary-action">Check answer</button>
+              <button type="button" class="ghost-action" data-action="reveal-practice">Show the answer</button>
+            </div>
+          `}
+        </form>
+
+        ${response ? `
+          <div class="p-verdict is-${response.overall}">
+            ${response.revealed ? 'Answer revealed — study the steps and get the next one.' : VERDICT_COPY[response.overall]}
+          </div>
+          <ul class="p-field-feedback">
+            ${problem.fields.map((field, index) => {
+              const entered = response.entries[index];
+              const enteredLabel = response.revealed || !Number.isFinite(entered) ? 'no answer' : `you said ${entered}`;
+              return `<li><strong>${escapeHtml(field.label)}:</strong> ${escapeHtml(fmtAnswer(field))} (${escapeHtml(fmtTolerance(field))}) — ${escapeHtml(enteredLabel)}${response.revealed ? '' : ` · ${response.verdicts[index]}`}</li>`;
+            }).join('')}
+          </ul>
+          <details class="how" open>
+            <summary>Worked solution</summary>
+            <ol>${problem.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join('')}</ol>
+            ${problem.method ? `<p class="method-note">${escapeHtml(problem.method)}</p>` : ''}
+          </details>
+          <div class="actions">
+            <button type="button" class="primary-action" data-action="next-practice">
+              ${practice.index + 1 < practice.queue.length ? 'Next problem' : 'See results'}
+            </button>
+          </div>
+        ` : ''}
+      `;
+
+      practiceApp.querySelector('[data-problem-title]')?.focus();
+    }
+
+    function renderPracticeResults() {
+      const totals = { correct: 0, close: 0, off: 0 };
+      const byCat = {};
+      practice.responses.forEach((response) => {
+        totals[response.overall] += 1;
+        const cat = (byCat[response.problem.category] ||= {
+          label: response.problem.categoryLabel,
+          correct: 0,
+          close: 0,
+          off: 0,
+        });
+        cat[response.overall] += 1;
+      });
+      const misses = practice.responses.filter((response) => response.overall !== 'correct');
+
+      practiceApp.innerHTML = `
+        <p class="eyebrow">Results</p>
+        <h2 class="p-h2" data-problem-title tabindex="-1">Here's how it went</h2>
+
+        <div class="givens-strip p-score-strip">
+          <span>${totals.correct} correct · ${totals.close} close · ${totals.off} off — out of ${practice.responses.length}</span>
+        </div>
+
+        <div class="p-cat-results">
+          ${Object.values(byCat).map((cat) => `
+            <div class="p-cat-row">
+              <strong>${escapeHtml(cat.label)}</strong>
+              <span>${cat.correct} correct · ${cat.close} close · ${cat.off} off</span>
+            </div>
+          `).join('')}
+        </div>
+
+        ${misses.length ? `
+          <h3 class="p-h3">Review these</h3>
+          ${misses.map((response) => `
+            <div class="p-review-card">
+              <div class="p-quiz-top">
+                <strong>${escapeHtml(response.problem.title)}</strong>
+                <span class="p-badge">${escapeHtml(response.problem.categoryLabel)}</span>
+              </div>
+              ${response.problem.givens.length ? `<p class="p-review-givens">${escapeHtml(response.problem.givens.join(' · '))}</p>` : ''}
+              <p class="p-review-answer">
+                ${response.problem.fields.map((field, index) => {
+                  const entered = response.entries[index];
+                  const enteredLabel = response.revealed || !Number.isFinite(entered) ? 'no answer' : String(entered);
+                  return `${escapeHtml(field.label)}: ${escapeHtml(fmtAnswer(field))} (your answer: ${escapeHtml(enteredLabel)})`;
+                }).join(' · ')}
+              </p>
+              <details class="how">
+                <summary>Worked solution</summary>
+                <ol>${response.problem.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join('')}</ol>
+                ${response.problem.method ? `<p class="method-note">${escapeHtml(response.problem.method)}</p>` : ''}
+              </details>
+            </div>
+          `).join('')}
+        ` : `
+          <p class="p-review-answer">Clean sweep — every problem inside tolerance. Bump the count or add categories next round.</p>
+        `}
+
+        <div class="actions">
+          <button type="button" class="primary-action" data-action="restart-practice">Practice again</button>
+        </div>
+      `;
+
+      practiceApp.querySelector('[data-problem-title]')?.focus();
+    }
+
+    function renderPractice() {
+      if (!practiceApp) return;
+      if (practice.screen === 'setup') renderPracticeSetup();
+      if (practice.screen === 'quiz') renderPracticeQuiz();
+      if (practice.screen === 'results') renderPracticeResults();
+    }
+
+    practiceApp?.addEventListener('click', (event) => {
+      const control = event.target.closest('[data-action]');
+      if (!control) return;
+      const action = control.dataset.action;
+
+      if (action === 'toggle-cat') {
+        const cat = control.dataset.cat;
+        practice.cats = practice.cats.includes(cat)
+          ? practice.cats.filter((item) => item !== cat)
+          : [...practice.cats, cat];
+        renderPractice();
+      }
+      if (action === 'set-count') {
+        practice.count = Number(control.dataset.count);
+        renderPractice();
+      }
+      if (action === 'start-practice' && practice.cats.length > 0) {
+        practice.queue = buildQueue(practice.cats, practice.count);
+        practice.index = 0;
+        practice.responses = [];
+        practice.answered = false;
+        practice.screen = 'quiz';
+        renderPractice();
+      }
+      if (action === 'reveal-practice') {
+        const problem = practice.queue[practice.index];
+        practice.responses.push({
+          problem,
+          entries: problem.fields.map(() => NaN),
+          verdicts: problem.fields.map(() => 'off'),
+          overall: 'off',
+          revealed: true,
+        });
+        practice.answered = true;
+        renderPractice();
+      }
+      if (action === 'next-practice') {
+        if (practice.index + 1 < practice.queue.length) {
+          practice.index += 1;
+          practice.answered = false;
+        } else {
+          practice.screen = 'results';
+        }
+        renderPractice();
+      }
+      if (action === 'restart-practice') {
+        practice.screen = 'setup';
+        renderPractice();
+      }
+    });
+
+    practiceApp?.addEventListener('submit', (event) => {
+      const form = event.target;
+      if (form.dataset.action !== 'check-practice') return;
+      event.preventDefault();
+      if (practice.answered) return;
+
+      const problem = practice.queue[practice.index];
+      const entries = problem.fields.map((_, index) => {
+        const raw = String(form.elements[`field-${index}`].value).trim();
+        return raw === '' ? NaN : Number(raw);
+      });
+
+      if (entries.some((entry) => !Number.isFinite(entry))) {
+        const feedback = form.querySelector('[data-form-feedback]');
+        if (feedback) {
+          feedback.hidden = false;
+          feedback.textContent = 'Enter an answer in every field before checking — or use "Show the answer."';
+        }
+        return;
+      }
+
+      const verdicts = problem.fields.map((field, index) => gradeField(field, entries[index]));
+      practice.responses.push({
+        problem,
+        entries,
+        verdicts,
+        overall: overallVerdict(verdicts),
+        revealed: false,
+      });
+      practice.answered = true;
+      renderPractice();
+    });
+
+    renderPractice();
 
     // ---- Capture stub ------------------------------------------------------
     root.querySelector('[data-action="pdf-stub"]')?.addEventListener('submit', (event) => {
@@ -1187,6 +1509,397 @@
     *::before,
     *::after {
       scroll-behavior: auto !important;
+      transition: none !important;
+    }
+  }
+</style>
+
+<!-- Practice mode renders via innerHTML, so its styles must be global.
+     Everything is namespaced under [data-practice-app] to stay contained. -->
+<style is:global>
+  .fsf-flightcomp [data-practice-app] .eyebrow {
+    margin: 0 0 0.75rem;
+    color: #0B69D6;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-h2 {
+    margin: 0;
+    color: #0E1B2E;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-h2:focus {
+    outline: none;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-h3 {
+    margin: 1.5rem 0 0;
+    color: #0E1B2E;
+    font-size: 1.25rem;
+    letter-spacing: -0.015em;
+  }
+
+  .fsf-flightcomp [data-practice-app] .calc-help {
+    max-width: 720px;
+    margin: 0.75rem 0 0;
+    line-height: 1.6;
+  }
+
+  .fsf-flightcomp [data-practice-app] .mode-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: 1.25rem;
+  }
+
+  .fsf-flightcomp [data-practice-app] .mode-row > span {
+    color: #64748B;
+    font-size: 0.9375rem;
+    font-weight: 700;
+  }
+
+  .fsf-flightcomp [data-practice-app] .chip,
+  .fsf-flightcomp [data-practice-app] .primary-action,
+  .fsf-flightcomp [data-practice-app] .ghost-action {
+    min-height: 44px;
+    border: 1px solid #CBD5E1;
+    border-radius: 12px;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    transition: border-color 200ms ease, background 200ms ease, color 200ms ease, transform 200ms ease;
+  }
+
+  .fsf-flightcomp [data-practice-app] .chip {
+    background: #FFFFFF;
+    padding: 0.6rem 0.9rem;
+    color: #334155;
+  }
+
+  .fsf-flightcomp [data-practice-app] .chip:hover,
+  .fsf-flightcomp [data-practice-app] .chip.is-selected {
+    border-color: #0B69D6;
+    background: #EAF3FE;
+    color: #0A5BBA;
+  }
+
+  .fsf-flightcomp [data-practice-app] .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  .fsf-flightcomp [data-practice-app] .primary-action {
+    border-color: #0B69D6;
+    background: #0B69D6;
+    padding: 0.7rem 1.05rem;
+    color: white;
+  }
+
+  .fsf-flightcomp [data-practice-app] .primary-action:hover:not([disabled]) {
+    border-color: #0A5BBA;
+    background: #0A5BBA;
+    transform: translateY(-1px);
+  }
+
+  .fsf-flightcomp [data-practice-app] .primary-action[disabled] {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  .fsf-flightcomp [data-practice-app] .ghost-action {
+    background: #FFFFFF;
+    padding: 0.7rem 1.05rem;
+    color: #334155;
+  }
+
+  .fsf-flightcomp [data-practice-app] .ghost-action:hover {
+    border-color: #0B69D6;
+    color: #0A5BBA;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-hint {
+    margin: 1rem 0 0;
+    color: #875000;
+    font-weight: 700;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-quiz-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-quiz-top .eyebrow {
+    margin: 0;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-badge {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid rgba(11, 105, 214, 0.18);
+    border-radius: 999px;
+    background: #EAF3FE;
+    padding: 0.25rem 0.7rem;
+    color: #0A5BBA;
+    font-size: 0.8125rem;
+    font-weight: 800;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-progress {
+    height: 10px;
+    margin: 1rem 0 1.25rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #EEF2F7;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-progress span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #0B69D6;
+    transition: width 220ms ease;
+  }
+
+  .fsf-flightcomp [data-practice-app] .givens-strip {
+    margin-top: 1.25rem;
+    overflow-x: auto;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    background: #0E1B2E;
+    padding: 1rem;
+    color: #EAF1F9;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-weight: 700;
+  }
+
+  .fsf-flightcomp [data-practice-app] .givens-strip span {
+    display: block;
+    font-size: clamp(1rem, 2.4vw, 1.125rem);
+    line-height: 1.6;
+    white-space: nowrap;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-fields label {
+    flex: 1 1 170px;
+    max-width: 300px;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-fields label > span {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: #0E1B2E;
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-fields small {
+    color: #64748B;
+    font-weight: 700;
+  }
+
+  .fsf-flightcomp [data-practice-app] input {
+    width: 100%;
+    min-height: 48px;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 12px;
+    background: #FFFFFF;
+    padding: 0.7rem 0.85rem;
+    color: #0E1B2E;
+    font: inherit;
+    font-size: 1rem;
+  }
+
+  .fsf-flightcomp [data-practice-app] input[disabled] {
+    background: #EEF2F7;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-form-feedback {
+    margin-top: 1rem;
+    border: 1px solid rgba(224, 134, 0, 0.28);
+    border-radius: 12px;
+    background: rgba(224, 134, 0, 0.1);
+    padding: 0.9rem 1rem;
+    color: #875000;
+    font-weight: 800;
+    line-height: 1.5;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-verdict {
+    margin-top: 1.25rem;
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    font-weight: 800;
+    line-height: 1.5;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-verdict.is-correct {
+    border: 1px solid rgba(31, 157, 91, 0.28);
+    background: rgba(31, 157, 91, 0.1);
+    color: #12683B;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-verdict.is-close {
+    border: 1px solid rgba(224, 134, 0, 0.28);
+    background: rgba(224, 134, 0, 0.1);
+    color: #875000;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-verdict.is-off {
+    border: 1px solid rgba(220, 43, 54, 0.28);
+    background: rgba(220, 43, 54, 0.08);
+    color: #8C1A21;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-field-feedback {
+    margin: 0.85rem 0 0;
+    padding-left: 1.25rem;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-field-feedback li {
+    margin-top: 0.35rem;
+    line-height: 1.6;
+  }
+
+  .fsf-flightcomp [data-practice-app] .how {
+    margin-top: 1.25rem;
+    border: 1px solid rgba(11, 105, 214, 0.18);
+    border-radius: 12px;
+    background: #EAF3FE;
+  }
+
+  .fsf-flightcomp [data-practice-app] .how summary {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    color: #0A5BBA;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .fsf-flightcomp [data-practice-app] .how ol {
+    margin: 0;
+    padding: 0 1.25rem 0.9rem 2.25rem;
+  }
+
+  .fsf-flightcomp [data-practice-app] .how li {
+    margin-top: 0.35rem;
+    line-height: 1.6;
+  }
+
+  .fsf-flightcomp [data-practice-app] .how .method-note {
+    margin: 0.35rem 0 0;
+    padding: 0 1rem 0.9rem;
+    color: #64748B;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-score-strip span {
+    font-size: clamp(1.05rem, 2.6vw, 1.35rem);
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-cat-results {
+    margin-top: 1.25rem;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    background: #FFFFFF;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-cat-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1rem;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 0.85rem 1rem;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-cat-row + .p-cat-row {
+    border-top: 1px solid #E2E8F0;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-cat-row strong {
+    color: #0E1B2E;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-cat-row span {
+    color: #64748B;
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-review-card {
+    margin-top: 1rem;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    background: #FFFFFF;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 1px 3px rgba(14, 27, 46, 0.06), 0 1px 2px rgba(14, 27, 46, 0.04);
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-review-card strong {
+    color: #0E1B2E;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-review-givens {
+    margin: 0.5rem 0 0;
+    color: #64748B;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-review-answer {
+    margin: 0.5rem 0 0;
+    line-height: 1.65;
+  }
+
+  .fsf-flightcomp [data-practice-app] button:focus-visible,
+  .fsf-flightcomp [data-practice-app] input:focus-visible,
+  .fsf-flightcomp [data-practice-app] summary:focus-visible {
+    outline: 3px solid rgba(11, 105, 214, 0.35);
+    outline-offset: 3px;
+  }
+
+  .fsf-flightcomp [data-practice-app] button:active:not([disabled]) {
+    transform: translateY(1px);
+  }
+
+  @media (max-width: 760px) {
+    .fsf-flightcomp [data-practice-app] .p-fields label {
+      max-width: none;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .fsf-flightcomp [data-practice-app] .actions > * {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fsf-flightcomp [data-practice-app] * {
       transition: none !important;
     }
   }
