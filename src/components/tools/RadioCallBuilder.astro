@@ -25,7 +25,7 @@ const distances = ['3', '5', '7', '10', '15'];
       <aside class="scope-card" aria-label="What this version covers">
         <p class="eyebrow">In this version</p>
         <strong>Class D towered<br />Untowered CTAF</strong>
-        <span>Class C and B calls and flight following aren't in v1 — I'm starting with the fields I actually train at.</span>
+        <span>Class C and B towers aren't in v1 — but my field sits under a Class C shelf, so the towered scripts include the approach and departure radar-service calls that come with it.</span>
       </aside>
     </header>
 
@@ -49,7 +49,6 @@ const distances = ['3', '5', '7', '10', '15'];
 
       <div class="chip-row" role="group" aria-label="Operations — pick one or more">
         <span class="chip-row-label">Operations</span>
-        <button type="button" class="chip is-selected" data-op="radio-check" data-dir="outbound" aria-pressed="true" data-label-towered="Radio check + ATIS" data-label-ctaf="Radio check + weather">Radio check + ATIS</button>
         <button type="button" class="chip is-selected" data-op="taxi" data-dir="outbound" aria-pressed="true">Taxi out</button>
         <button type="button" class="chip is-selected" data-op="takeoff" data-dir="outbound" aria-pressed="true">Takeoff</button>
         <button type="button" class="chip is-selected" data-op="pattern" data-dir="outbound" aria-pressed="true">In the pattern</button>
@@ -111,6 +110,7 @@ const distances = ['3', '5', '7', '10', '15'];
           <select name="plan">
             <option value="stay">Staying in the pattern</option>
             <option value="depart">Departing the area</option>
+            <option value="xc">Cross-country (flight following)</option>
           </select>
         </label>
         <label class="field" data-field="planDir">
@@ -118,6 +118,18 @@ const distances = ['3', '5', '7', '10', '15'];
           <select name="planDir">
             {directions.map((dir) => <option value={dir}>{dir}</option>)}
           </select>
+        </label>
+        <label class="field" data-field="dest">
+          <span>Destination</span>
+          <input name="dest" placeholder="Okmulgee" />
+        </label>
+        <label class="field" data-field="facility">
+          <span>Approach facility</span>
+          <input name="facility" placeholder="Tulsa" />
+        </label>
+        <label class="field" data-field="landmark">
+          <span>Position landmark <small>optional</small></span>
+          <input name="landmark" placeholder="Keystone Dam" />
         </label>
         <label class="field" data-field="dist">
           <span>Distance out</span>
@@ -291,45 +303,37 @@ const distances = ['3', '5', '7', '10', '15'];
   const T = (text) => ({ text, isVar: false });
   const V = (value) => ({ text: value.text, isVar: true, missing: value.missing });
   const val = (spoken, fallback) => (spoken ? { text: spoken, missing: false } : { text: fallback, missing: true });
+  // A value you only know in the moment (assigned heading, passing altitude) — always rendered as a fill-in-live token.
+  const LIVE = (label) => V({ text: label, missing: true });
 
   const studentTag = (s) => (s.student ? [T(', student pilot')] : []);
   const altSegs = (s, prefix) => (s.alt ? [T(prefix), V({ text: s.alt, missing: false })] : []);
 
-  // ---- Towered (Class D) operations — templates T1–T9 in REVIEW.md ----
+  // ---- Towered (Class D) operations — REVIEW.md v2, matched to the owner's KRVS script ----
   const TOWERED_OPS = [
-    {
-      id: 'radio-check',
-      label: 'Radio check + ATIS',
-      cards: [
-        {
-          who: 'LISTEN',
-          title: 'Listen to the ATIS',
-          when: 'Before your first call — usually right after engine start.',
-          body: 'Note the information letter, the altimeter setting, and the runway in use. You report the letter on your first call to ground.',
-        },
-        {
-          who: 'GROUND',
-          title: 'Radio check',
-          when: 'After you have the ATIS, before you call for taxi.',
-          call: (s) => [V(s.airport), T(' Ground, '), V(s.callsign), T(', radio check.')],
-          listen: 'A readability report — “loud and clear” or “readability five.” If the frequency is busy, most pilots skip this and let the taxi call double as the check.',
-        },
-      ],
-    },
     {
       id: 'taxi',
       label: 'Taxi out',
       cards: [
+        {
+          who: 'LISTEN',
+          title: 'Listen to the ATIS',
+          when: 'After engine start, before your first call.',
+          body: 'Note the information letter, the altimeter, and the runway in use. If the ATIS says to call clearance delivery instead of ground, the script is the same — just a different frequency.',
+        },
         {
           who: 'GROUND',
           title: 'Call for taxi',
           when: 'ATIS noted, at your parking spot, ready to move.',
           call: (s) => [
             V(s.airport), T(' Ground, '), V(s.callsign), T(', at '), V(s.spot),
-            T(', with information '), V(s.atis), T(', ready to taxi, '), V(s.taxiIntent),
+            T(' with information '), V(s.atis), T(', '), V(s.taxiIntent),
             ...studentTag(s), T('.'),
           ],
-          listen: 'Your runway and taxi route. Read back the runway, the route, and any hold-short instruction verbatim with your callsign — hold-short readbacks are mandatory.',
+          listen: (s) =>
+            s.plan === 'stay'
+              ? 'Your runway and taxi route — read back the runway, the route, and any hold-short or cross-runway instruction verbatim with your callsign.'
+              : 'Three things to copy and read back: the altitude cap (“maintain VFR at or below two thousand five hundred”), the departure frequency, and your squawk. Then “readback correct” plus your runway and taxi route — read the runway, route, and any hold-short or cross-runway instruction back verbatim.',
         },
       ],
     },
@@ -338,14 +342,21 @@ const distances = ['3', '5', '7', '10', '15'];
       label: 'Takeoff',
       cards: [
         {
+          who: 'GROUND',
+          title: 'Run-up complete',
+          when: 'Run-up checks done, still in the run-up area. (Some schools go straight to tower — follow your flow.)',
+          call: (s) => [V(s.airport), T(' Ground, '), V(s.callsign), T(', run-up complete.')],
+          listen: '“Number two, contact tower when number one” — read it back, taxi to the hold-short line, and switch to tower when you’re first in line.',
+        },
+        {
           who: 'TOWER',
-          title: 'Ready for departure',
-          when: 'At the hold-short line, run-up complete, switched to tower.',
+          title: 'Number one for departure',
+          when: 'At the hold-short line, first in line for takeoff, switched to tower.',
           call: (s) => [
-            V(s.airport), T(' Tower, '), V(s.callsign), T(', ready for departure, runway '),
-            V(s.runway), T(', '), V(s.takeoffIntent), ...studentTag(s), T('.'),
+            V(s.airport), T(' Tower, '), V(s.callsign), T(', number one at runway '), V(s.runway),
+            T(', '), V(s.takeoffIntent), ...studentTag(s), T('.'),
           ],
-          listen: '“Cleared for takeoff runway …” — read it back with your callsign. “Line up and wait” and “hold short” are mandatory readbacks too. Never start the roll without the words “cleared for takeoff.”',
+          listen: 'Three possibilities, all mandatory readbacks: “hold short of runway one niner right for landing traffic,” “runway one niner right, line up and wait,” or “fly heading two three zero, runway one niner right, cleared for takeoff.” Read the clearance back verbatim — runway number included — and fly any assigned heading. Never start the roll without “cleared for takeoff.”',
         },
       ],
     },
@@ -379,19 +390,36 @@ const distances = ['3', '5', '7', '10', '15'];
         {
           who: 'LISTEN',
           title: 'Get the ATIS early',
-          when: 'About 15–20 miles out.',
-          body: 'Note the letter, altimeter, and runway in use before you call tower.',
+          when: 'Fifteen to twenty miles out — climb high enough to receive it; around two thousand five hundred usually works.',
+          body: 'Note the information letter, the runway in use, and the current approach frequency.',
+        },
+        {
+          who: 'APPROACH',
+          title: 'Call approach',
+          when: 'Well outside the shelf, ATIS in hand.',
+          call: (s) => [
+            V(s.facility), T(' Approach, '), V(s.callsign), T(', '), V(s.dist), T(' miles '), V(s.fromDir),
+            ...(s.landmark ? [T(' of '), V({ text: s.landmark, missing: false })] : []),
+            T(', at '), V(s.altVar), T(', inbound '), V(s.airport), T(' with information '), V(s.atis),
+            ...studentTag(s), T('.'),
+          ],
+          listen: 'First your squawk — sometimes after a few seconds: “squawk zero one four three.” Read it back and set it. Then “radar contact … proceed direct, expect runway one niner right,” or a routing like “fly direct Turkey Mountain.” Read it back and fly it — approach is spacing you for tower. Instructions can change with traffic.',
+        },
+        {
+          who: 'LISTEN',
+          title: 'Handoff to tower',
+          when: 'About four to five miles out, whenever approach is ready.',
+          body: (s) => `“Contact ${s.airport.missing ? 'tower' : `${s.airport.text} Tower`}.” Read it back and switch — don’t forget the frequency change.`,
         },
         {
           who: 'TOWER',
-          title: 'Inbound call',
-          when: 'Before the Class D ring — about 10 miles out.',
+          title: 'Check in with tower',
+          when: 'Right after the handoff.',
           call: (s) => [
-            V(s.airport), T(' Tower, '), V(s.callsign), T(', '), V(s.dist), T(' miles '), V(s.fromDir),
-            ...altSegs(s, ', at '), T(', with information '), V(s.atis), T(', inbound, '), V(s.intent),
+            V(s.airport), T(' Tower, '), V(s.callsign), T(', inbound '), V(s.towerIntent),
             ...studentTag(s), T('.'),
           ],
-          listen: 'Your callsign in the reply — that’s what establishes two-way comms to enter the Class D. “Aircraft calling, standby” without your callsign does not count. Then the entry instruction — read it back and fly it.',
+          listen: 'Your pattern entry — “enter a midfield right downwind for runway one niner right,” maybe with “I’ll call your base” (don’t turn base until they say) or “follow an Archer on left downwind, report traffic in sight.” Read it back and fly it. Initial directions can change with traffic.',
         },
         {
           who: 'TOWER',
@@ -399,7 +427,21 @@ const distances = ['3', '5', '7', '10', '15'];
           tag: 'as instructed',
           when: 'Tower told you to report — for example “report midfield downwind.”',
           call: (s) => [V(s.callsign), T(', midfield '), V(s.side), T(' downwind, runway '), V(s.runway), T('.')],
-          listen: 'Your landing clearance and any sequencing. Same rule as the pattern: no clearance by short final means go around.',
+          listen: 'Your sequence and, eventually, the landing clearance.',
+        },
+        {
+          who: 'TOWER',
+          title: 'Traffic in sight',
+          tag: 'if asked',
+          when: 'Tower told you to follow traffic and report it in sight.',
+          call: (s) => [T('Traffic in sight, '), V(s.callsign), T('.')],
+          listen: 'Your sequence behind that traffic, then the landing clearance.',
+        },
+        {
+          who: 'LISTEN',
+          title: 'Landing clearance',
+          when: 'When tower is ready — the busier the field, the later it comes.',
+          body: '“Number one, runway one niner right, cleared to land” — or “cleared for the option” if you’re staying in the pattern (touch and go, stop and go, low approach, or full stop). Read it back with the runway number. Nothing by short final? Go around and say so.',
         },
       ],
     },
@@ -408,15 +450,20 @@ const distances = ['3', '5', '7', '10', '15'];
       label: 'After landing',
       cards: [
         {
+          who: 'LISTEN',
+          title: 'Rollout instructions',
+          when: 'On the rollout after your final landing — sometimes right away, sometimes a few seconds later.',
+          body: '“Turn right when able, contact ground,” “turn right on Alpha three, contact ground,” or sometimes “taxi to parking this frequency” — that last one means stay with tower all the way in. Read it back, clear the runway fully, then run the after-landing checklist. Never stop on the runway.',
+        },
+        {
           who: 'GROUND',
           title: 'Call for taxi in',
-          when: 'Fully past the hold-short line, stopped, cleanup done, and tower said “contact ground” (or your school’s flow).',
+          when: 'Fully past the hold-short line, checklist done — skip this if tower kept you on frequency.',
           call: (s) => [
-            V(s.airport), T(' Ground, '), V(s.callsign), T(', clear of runway '), V(s.runway),
-            ...(s.taxiway ? [T(' at '), V({ text: s.taxiway, missing: false })] : []),
-            T(', taxi to '), V(s.spot), T('.'),
+            V(s.airport), T(' Ground, '), V(s.callsign), T(', at '), V(s.taxiwayVar),
+            T(', request taxi to '), V(s.spot), T('.'),
           ],
-          listen: 'Your taxi route, plus any hold-short — read hold-shorts back verbatim with your callsign.',
+          listen: 'Your route — “taxi to parking via alpha.” Read it back, along with any hold-short.',
         },
       ],
     },
@@ -425,17 +472,27 @@ const distances = ['3', '5', '7', '10', '15'];
       label: 'Leaving the area',
       cards: [
         {
-          who: 'NOTE',
-          title: 'Stay with tower inside the Class D',
-          when: 'Climbing out after departure.',
-          body: 'Your departure intentions were already in the takeoff call. Tower usually offers “frequency change approved” on its own — stay on frequency until it does or you’re clear.',
+          who: 'LISTEN',
+          title: 'Tower hands you off',
+          when: 'Climbing out after takeoff, whenever tower is ready.',
+          body: (s) => `Tower will say something like “turn right heading three three zero, contact ${s.facility.missing ? 'departure' : `${s.facility.text} Departure`}.” Read it back, switch, and don’t forget the frequency change.`,
         },
         {
-          who: 'TOWER',
-          title: 'Request frequency change',
-          when: 'Clear of the Class D and no frequency change offered yet.',
-          call: (s) => [V(s.airport), T(' Tower, '), V(s.callsign), T(', request frequency change.')],
-          listen: '“Frequency change approved.” Then switch and go.',
+          who: 'DEPARTURE',
+          title: 'Check in with departure',
+          when: 'Right after switching frequencies.',
+          call: (s) => [
+            V(s.facility), T(' Departure, '), V(s.callsign), T(', off '), V(s.airport),
+            T(', climbing through '), LIVE('passing altitude'), T(' for '), V(s.altVar),
+            T(', heading '), LIVE('assigned heading'), T('.'),
+          ],
+          listen: '“Radar contact, continue tower-assigned heading,” or “climb on course to the west at or below four thousand five hundred.” Read it back. A new heading is not a new altitude — hold your altitude cap until departure raises it.',
+        },
+        {
+          who: 'LISTEN',
+          title: 'Radar service ends',
+          when: 'A few minutes out, once you’re clear of the terminal area.',
+          body: 'Local flight: “radar service terminated, squawk VFR, frequency change approved” — read it back and set one two zero zero. Cross-country with flight following: a handoff instead, like “contact Kansas City Center on one two eight point six” — read it back and switch.',
         },
       ],
     },
@@ -459,8 +516,8 @@ const distances = ['3', '5', '7', '10', '15'];
 
   const CTAF_OPS = [
     {
-      id: 'radio-check',
-      label: 'Radio check + weather',
+      id: 'taxi',
+      label: 'Taxi out',
       cards: [
         {
           who: 'LISTEN',
@@ -469,22 +526,9 @@ const distances = ['3', '5', '7', '10', '15'];
           body: 'Wind and altimeter drive which runway you use. There’s no ATIS letter at an untowered field.',
         },
         {
-          who: 'UNICOM',
-          title: 'Radio check',
-          when: 'After the weather, before you taxi.',
-          call: (s) => [V(s.airport), T(' UNICOM, '), V(s.callsign), T(', radio check.')],
-          listen: 'Any reply confirms you transmit. Keep it brief if the frequency is busy.',
-        },
-      ],
-    },
-    {
-      id: 'taxi',
-      label: 'Taxi out',
-      cards: [
-        {
           who: 'CTAF',
           title: 'Announce taxi',
-          when: 'Ready to move from parking.',
+          when: 'Weather noted, ready to move from parking.',
           call: (s) => [
             V(s.airport), T(' traffic, '), V(s.callsign), T(', taxiing from '), V(s.spot),
             T(' to runway '), V(s.runway), T(', '), V(s.airport), T('.'),
@@ -586,16 +630,14 @@ const distances = ['3', '5', '7', '10', '15'];
   // Which input fields each operation needs.
   const OP_FIELDS = {
     towered: {
-      'radio-check': ['type', 'tail', 'airport'],
       taxi: ['type', 'tail', 'airport', 'atis', 'spot', 'plan', 'student'],
       takeoff: ['type', 'tail', 'airport', 'runway', 'plan', 'student'],
       pattern: ['type', 'tail', 'airport', 'runway', 'side'],
-      inbound: ['type', 'tail', 'airport', 'runway', 'atis', 'dist', 'fromDir', 'alt', 'intent', 'side', 'student'],
-      'after-landing': ['type', 'tail', 'airport', 'runway', 'taxiway', 'spot'],
-      depart: ['type', 'tail', 'airport'],
+      inbound: ['type', 'tail', 'airport', 'runway', 'atis', 'facility', 'dist', 'fromDir', 'landmark', 'alt', 'intent', 'side', 'student'],
+      'after-landing': ['type', 'tail', 'airport', 'taxiway', 'spot'],
+      depart: ['type', 'tail', 'airport', 'facility', 'alt'],
     },
     ctaf: {
-      'radio-check': ['type', 'tail', 'airport'],
       taxi: ['type', 'tail', 'airport', 'runway', 'spot'],
       takeoff: ['type', 'tail', 'airport', 'runway', 'plan'],
       pattern: ['type', 'tail', 'airport', 'runway', 'side', 'intent'],
@@ -607,7 +649,7 @@ const distances = ['3', '5', '7', '10', '15'];
 
   // Flight-order operation sequence per direction.
   const OP_ORDER = {
-    outbound: ['radio-check', 'taxi', 'takeoff', 'pattern', 'depart'],
+    outbound: ['taxi', 'takeoff', 'pattern', 'depart'],
     inbound: ['inbound', 'after-landing'],
   };
   const DIRECTION_LABELS = { outbound: 'Outbound', inbound: 'Inbound' };
@@ -634,6 +676,7 @@ const distances = ['3', '5', '7', '10', '15'];
     revealed: new Set(),
     values: {
       type: '', tail: '', airport: '', runway: '', atis: '', spot: '', taxiway: '', alt: '',
+      facility: '', landmark: '', dest: '',
       side: 'left', intent: 'full stop', plan: 'stay', planDir: 'north',
       dist: '10', fromDir: 'south', departDir: 'north', departStyle: 'straight out',
       student: false,
@@ -642,27 +685,48 @@ const distances = ['3', '5', '7', '10', '15'];
 
   const resolve = () => {
     const v = state.values;
-    const planDirText = `departing to the ${v.planDir}`;
+    const dest = v.dest.trim();
+    const destText = dest || 'destination';
+    const xcMissing = v.plan === 'xc' && !dest;
+    const intentPhrases = {
+      stay: { taxi: 'ready to taxi, closed traffic', tkoff: 'closed traffic', ctaf: 'remaining in the pattern' },
+      depart: {
+        taxi: `requesting radar service to the ${v.planDir}`,
+        tkoff: `for departure to the ${v.planDir}`,
+        ctaf: `departing to the ${v.planDir}`,
+      },
+      xc: {
+        taxi: `requesting flight following to ${destText}`,
+        tkoff: `for departure to ${destText}`,
+        ctaf: `departing to ${destText}`,
+      },
+    }[v.plan];
     const taxiwaySpoken = /^[A-Za-z]{1,2}[0-9]{0,2}$/.test(v.taxiway.trim())
       ? speakChars(v.taxiway.trim())
       : v.taxiway.trim();
+    const altSpoken = speakAltitude(v.alt);
     return {
       callsign: val(speakCallsign(v.type, v.tail), 'your callsign'),
       airport: val(v.airport.trim(), 'airport'),
+      facility: val(v.facility.trim(), 'approach facility'),
       runway: val(speakRunway(v.runway), 'number'),
       atis: val(v.atis ? LETTERS[v.atis] : '', 'ATIS letter'),
       spot: val(v.spot.trim(), 'spot on the field'),
-      taxiway: taxiwaySpoken,
+      taxiwayVar: val(taxiwaySpoken, 'where you exited'),
+      landmark: v.landmark.trim(),
       side: val(v.side, 'side'),
       intent: val(v.intent, 'intent'),
+      towerIntent: val(v.intent === 'full stop' ? 'for a full stop' : 'requesting laps in the pattern', ''),
       dist: val(speakChars(v.dist), 'distance'),
       fromDir: val(v.fromDir, 'direction'),
-      alt: speakAltitude(v.alt),
+      alt: altSpoken,
+      altVar: val(altSpoken, 'altitude'),
       departDir: val(v.departDir, 'direction'),
       departStyle: val(v.departStyle, 'departure leg'),
-      taxiIntent: val(v.plan === 'stay' ? 'closed traffic' : `VFR departure to the ${v.planDir}`, ''),
-      takeoffIntent: val(v.plan === 'stay' ? 'closed traffic' : planDirText, ''),
-      ctafTakeoffIntent: val(v.plan === 'stay' ? 'remaining in the pattern' : planDirText, ''),
+      taxiIntent: { text: intentPhrases.taxi, missing: xcMissing },
+      takeoffIntent: { text: intentPhrases.tkoff, missing: xcMissing },
+      ctafTakeoffIntent: { text: intentPhrases.ctaf, missing: xcMissing },
+      plan: v.plan,
       student: v.student,
     };
   };
@@ -679,6 +743,8 @@ const distances = ['3', '5', '7', '10', '15'];
   const WHO_LABELS = {
     GROUND: 'You → ground',
     TOWER: 'You → tower',
+    APPROACH: 'You → approach',
+    DEPARTURE: 'You → departure',
     CTAF: 'Self-announce · CTAF',
     UNICOM: 'You → UNICOM',
     LISTEN: 'Listen',
@@ -692,6 +758,9 @@ const distances = ['3', '5', '7', '10', '15'];
 
   const segsToText = (segs) =>
     segs.map((seg) => (seg.isVar && seg.missing ? `[${seg.text}]` : seg.text)).join('');
+
+  // when/listen/body may be plain strings or functions of the resolved values.
+  const cardText = (field, s) => (typeof field === 'function' ? field(s) : field);
 
   const buildPlainText = (ops, s) => {
     const lines = [
@@ -709,10 +778,10 @@ const distances = ['3', '5', '7', '10', '15'];
       op.cards.forEach((card) => {
         step += 1;
         lines.push(`Step ${step} of ${total} · ${WHO_LABELS[card.who]} — ${card.title}`);
-        lines.push(`When: ${card.when}`);
+        lines.push(`When: ${cardText(card.when, s)}`);
         if (card.call) lines.push(`Call: "${segsToText(card.call(s))}"`);
-        if (card.listen) lines.push(`Listen for: ${card.listen}`);
-        if (card.body) lines.push(card.body);
+        if (card.listen) lines.push(`Listen for: ${cardText(card.listen, s)}`);
+        if (card.body) lines.push(cardText(card.body, s));
         lines.push('');
       });
     });
@@ -782,10 +851,10 @@ const distances = ['3', '5', '7', '10', '15'];
               <span class="step-kicker">Step ${step} of ${total}</span>
             </div>
             <h3>${escapeHtml(card.title)}</h3>
-            <p class="card-when"><strong>When:</strong> ${escapeHtml(card.when)}</p>
+            <p class="card-when"><strong>When:</strong> ${escapeHtml(cardText(card.when, s))}</p>
             ${callHtml}
-            ${card.listen ? `<p class="card-listen"><strong>Listen for:</strong> ${escapeHtml(card.listen)}</p>` : ''}
-            ${card.body ? `<p class="card-body">${escapeHtml(card.body)}</p>` : ''}
+            ${card.listen ? `<p class="card-listen"><strong>Listen for:</strong> ${escapeHtml(cardText(card.listen, s))}</p>` : ''}
+            ${card.body ? `<p class="card-body">${escapeHtml(cardText(card.body, s))}</p>` : ''}
           </li>`);
       });
     });
@@ -817,8 +886,6 @@ const distances = ['3', '5', '7', '10', '15'];
       const selected = inDirection && state.ops.has(button.dataset.op);
       button.classList.toggle('is-selected', selected);
       button.setAttribute('aria-pressed', String(selected));
-      const envLabel = button.dataset[state.env === 'towered' ? 'labelTowered' : 'labelCtaf'];
-      if (envLabel) button.textContent = envLabel;
     });
 
     if (allOpsButton) {
@@ -836,6 +903,7 @@ const distances = ['3', '5', '7', '10', '15'];
       const name = wrap.dataset.field;
       let show = visible.has(name);
       if (name === 'planDir') show = visible.has('plan') && state.values.plan === 'depart';
+      if (name === 'dest') show = visible.has('plan') && state.values.plan === 'xc';
       wrap.hidden = !show;
     });
   };
@@ -1265,7 +1333,9 @@ const distances = ['3', '5', '7', '10', '15'];
   }
 
   .fsf-radio .who-ground,
-  .fsf-radio .who-tower {
+  .fsf-radio .who-tower,
+  .fsf-radio .who-approach,
+  .fsf-radio .who-departure {
     background: var(--primary-soft);
     color: var(--primary-hover);
   }
