@@ -1,4 +1,5 @@
 User-agent: *
+Disallow: /hosted-content/
 Allow: /
 
 Sitemap: https://flightschoolfriend.com/sitemap-index.xml

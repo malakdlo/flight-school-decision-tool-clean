@@ -1,0 +1,4 @@
+# Cloudflare Pages custom headers. Lead-magnet PDFs are unlisted, not gated:
+# keep them out of search indexes (see project-knowledge/gated-content.md).
+/hosted-content/*
+  X-Robots-Tag: noindex, nofollow
