@@ -38,7 +38,7 @@ const isDark = theme === 'dark';
   </div>
 
   <form
-    class="fsf-kit-capture mx-auto mt-6 grid max-w-2xl gap-3 sm:grid-cols-[1fr_auto]"
+    class="fsf-kit-capture mx-auto mt-6 flex max-w-2xl flex-col gap-3 sm:flex-row sm:flex-wrap"
     action={kitFormAction}
     method="post"
     target={iframeName}
@@ -52,14 +52,14 @@ const isDark = theme === 'dark';
       autocomplete="email"
       required
       placeholder="you@example.com"
-      class="h-12 w-full rounded-lg border border-slate-200 bg-white px-4 text-sm font-medium text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-300 focus:ring-4 focus:ring-sky-300/25"
+      class="h-12 min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-4 text-sm font-medium text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-300 focus:ring-4 focus:ring-sky-300/25 sm:min-w-[16rem]"
     />
     {hiddenFields.map((field) => (
       <input type="hidden" name={field.name} value={field.value ?? ''} data-kit-field={field.dynamic} />
     ))}
     <button
       type="submit"
-      class="btn-hover h-12 rounded-lg bg-sky-600 px-5 text-sm font-extrabold text-white transition hover:bg-sky-500 focus:outline-none focus:ring-4 focus:ring-sky-300/30 disabled:cursor-not-allowed disabled:opacity-70"
+      class="btn-hover h-12 w-full rounded-lg bg-sky-600 px-5 text-sm font-extrabold text-white transition hover:bg-sky-500 focus:outline-none focus:ring-4 focus:ring-sky-300/30 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
     >
       {buttonLabel}
     </button>
