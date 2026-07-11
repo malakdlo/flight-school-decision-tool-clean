@@ -48,11 +48,11 @@ const distances = ['3', '5', '7', '10', '15'];
         <span class="chip-row-label">Operations</span>
         <button type="button" class="chip is-selected" data-op="taxi" data-dir="outbound" aria-pressed="true">Taxi out</button>
         <button type="button" class="chip is-selected" data-op="takeoff" data-dir="outbound" aria-pressed="true">Takeoff</button>
-        <button type="button" class="chip is-selected" data-op="pattern" data-dir="outbound" aria-pressed="true">In the pattern</button>
+        <button type="button" class="chip" data-op="pattern" data-dir="outbound" aria-pressed="false">In the pattern</button>
         <button type="button" class="chip is-selected" data-op="depart" data-dir="outbound" aria-pressed="true">Leaving the area</button>
         <button type="button" class="chip" data-op="inbound" data-dir="inbound" aria-pressed="false" hidden>Inbound + landing</button>
         <button type="button" class="chip" data-op="after-landing" data-dir="inbound" aria-pressed="false" hidden>After landing</button>
-        <button type="button" class="chip chip-all is-selected" data-op-all aria-pressed="true">All of these</button>
+        <button type="button" class="chip chip-all" data-op-all aria-pressed="false">All of these</button>
       </div>
       <p class="ops-hint">Pick one, a few, or all — the script stacks them in flight order.</p>
 
@@ -629,28 +629,9 @@ const distances = ['3', '5', '7', '10', '15'];
           alternatives: [
             { label: 'Base entry', text: '“Enter a right base for runway one niner right” — same readback pattern.' },
             { label: 'I’ll call your base', text: 'Fly the downwind, but don’t turn base until tower says so.' },
-            { label: 'Follow traffic', text: '“Follow an Archer on left downwind, report traffic in sight” — the traffic-in-sight card below is your response.' },
+            { label: 'Follow traffic', text: '“Follow an Archer on left downwind, report traffic in sight” — look for it, then reply “traffic in sight” with your callsign, or “negative contact, looking” until you see it.' },
+            { label: 'Position report', text: 'If tower says “report midfield downwind,” report it with your callsign when you get there — often answered with just “roger.”' },
             { label: 'Changes', text: 'Initial directions can change with traffic — keep listening for your callsign.' },
-          ],
-        },
-        {
-          who: 'TOWER',
-          title: 'Position report',
-          tag: 'as instructed',
-          when: 'Tower told you to report — for example “report midfield downwind.”',
-          call: (s) => [V(s.shortCallsign), T(', midfield '), V(s.side), T(' downwind, runway '), V(s.runway), T('.')],
-          alternatives: [
-            { label: 'Response', text: 'Often just “roger” — the landing clearance may come now or later.' },
-          ],
-        },
-        {
-          who: 'TOWER',
-          title: 'Traffic in sight',
-          tag: 'if asked',
-          when: 'Tower told you to follow traffic and report it in sight.',
-          call: (s) => [T('Traffic in sight, '), V(s.callsign), T('.')],
-          alternatives: [
-            { label: 'Can’t see it', text: '“Negative contact, looking, …” — tower keeps the spacing until you report the traffic in sight.' },
           ],
         },
         {
@@ -976,6 +957,11 @@ const distances = ['3', '5', '7', '10', '15'];
     outbound: ['taxi', 'takeoff', 'pattern', 'depart'],
     inbound: ['inbound', 'after-landing'],
   };
+  // Default selections per direction (owner: pattern work off by default on outbound).
+  const OP_DEFAULTS = {
+    outbound: ['taxi', 'takeoff', 'depart'],
+    inbound: ['inbound', 'after-landing'],
+  };
   const DIRECTION_LABELS = { outbound: 'Outbound', inbound: 'Inbound' };
 
   const root = document.querySelector('.fsf-radio');
@@ -995,7 +981,7 @@ const distances = ['3', '5', '7', '10', '15'];
   let state = {
     env: 'towered',
     direction: 'outbound',
-    ops: new Set(OP_ORDER.outbound),
+    ops: new Set(OP_DEFAULTS.outbound),
     practice: true,
     revealed: new Set(),
     values: {
@@ -1288,7 +1274,7 @@ const distances = ['3', '5', '7', '10', '15'];
   dirButtons.forEach((button) => {
     button.addEventListener('click', () => {
       state.direction = button.dataset.direction;
-      state.ops = new Set(OP_ORDER[state.direction]);
+      state.ops = new Set(OP_DEFAULTS[state.direction]);
       state.revealed.clear();
       render();
     });
@@ -1871,9 +1857,8 @@ const distances = ['3', '5', '7', '10', '15'];
 
   .fsf-radio .rcb-copy {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+    grid-template-columns: 1fr;
     gap: 1.5rem;
-    align-items: start;
     margin-top: 1.5rem;
   }
 
@@ -1946,12 +1931,6 @@ const distances = ['3', '5', '7', '10', '15'];
     color: var(--success);
     font-size: 0.9375rem;
     font-weight: 700;
-  }
-
-  @media (max-width: 900px) {
-    .fsf-radio .rcb-copy {
-      grid-template-columns: 1fr;
-    }
   }
 
   .fsf-radio .rcb-avoid {
