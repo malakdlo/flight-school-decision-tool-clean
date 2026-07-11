@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import WeightBalanceCalculator from '@/components/tools/WeightBalanceCalculator.astro';
+
+const title = 'Cessna 150 Weight and Balance Calculator — Free Practice Tool | Flight School Friend';
+const description =
+  'Practice Cessna 150 weight and balance: plot zero-fuel, takeoff, and landing CG on the 1966 150F envelope, with useful load and limit checks. Free, no email required.';
+const canonical = 'https://flightschoolfriend.com/tools/cessna-150-weight-balance/';
+const structuredData = {
+  '@type': 'WebApplication',
+  '@id': `${canonical}#webapp`,
+  name: 'Cessna 150 Weight and Balance Calculator',
+  url: canonical,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any',
+  isAccessibleForFree: true,
+  educationalUse: 'Student pilot weight and balance practice',
+  description,
+  author: { '@id': 'https://flightschoolfriend.com/#person' },
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} structuredData={structuredData}>
+  <WeightBalanceCalculator aircraftId="cessna-150f-1966" />
+</BaseLayout>

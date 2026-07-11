@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro check && astro build",
+    "test": "node --test \"src/**/*.test.ts\"",
+    "build": "npm run test && astro check && astro build",
     "preview": "astro preview"
   },
   "dependencies": {
