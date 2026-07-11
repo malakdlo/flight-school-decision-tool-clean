@@ -5,8 +5,8 @@
  * `src/data/aircraft/`). Adding another aircraft (e.g. a 172S) means writing
  * a new profile file and a new route — no changes here.
  *
- * Uses relative imports (no `@/` alias) so the frozen unit test suite can run
- * under plain `node --test` with no bundler.
+ * Uses relative imports (no `@/` alias) so the frozen unit test suite runs
+ * under the repo test runner with no path-alias config.
  */
 
 export interface EnvelopePoint {

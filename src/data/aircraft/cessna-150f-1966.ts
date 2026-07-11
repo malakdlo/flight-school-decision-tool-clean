@@ -6,8 +6,8 @@
  * 1966 150F specifically. A future aircraft (e.g. 172S) is a new file like
  * this one plus a new route; the calculator component is aircraft-agnostic.
  *
- * Relative import (no `@/` alias) so the unit tests can run under plain
- * `node --test` with no bundler.
+ * Relative import (no `@/` alias) so the unit tests run under the repo test
+ * runner with no path-alias config.
  */
 import type { AircraftWBProfile } from '../../lib/weight-balance.ts';
 

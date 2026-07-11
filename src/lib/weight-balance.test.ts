@@ -1,7 +1,7 @@
 /**
  * Weight & balance math — frozen verification cases.
  *
- * Runs in the build via `node --test` (see package.json). Cases A–H mirror
+ * Runs in the build via `vitest run` (see package.json). Cases A–H mirror
  * the worked examples presented for owner verification against the 1966
  * Cessna 150F Owner's Manual sample problems.
  *
@@ -9,8 +9,7 @@
  * them on 2026-07-10. Do not change expected values without re-verifying
  * against the owner's manual.
  */
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
+import { assert, test } from 'vitest';
 
 import {
   computeWB,
@@ -103,7 +102,7 @@ test('Case A: exactly 1,600 lb is legal (at, not over, the limit)', () => {
   close(r.takeoff.cgIn, 36.5419, 0.001);
   close(r.zeroFuel.weightLb, 1480);
   close(r.zeroFuel.cgIn, 36.0993, 0.001);
-  assert.equal(r.allIssues.length, 0, `expected no issues, got ${codes(r.allIssues)}`);
+  assert.strictEqual(r.allIssues.length, 0, `expected no issues, got ${codes(r.allIssues)}`);
 });
 
 // ---------------------------------------------------------------------------
@@ -219,10 +218,10 @@ test('Case F: fuel burn > fuel on board is flagged and landing is not computed',
     c150,
     inputs({ stationWeightsLb: { frontSeats: 340 }, fuelGal: 10, fuelBurnGal: 12 }),
   );
-  assert.equal(r.landing, null);
+  assert.strictEqual(r.landing, null);
   const burn = r.inputIssues.find((i) => i.code === 'burn-exceeds-fuel');
   assert.ok(burn, 'expected burn-exceeds-fuel issue');
-  assert.equal(burn.kind, 'invalid');
+  assert.strictEqual(burn.kind, 'invalid');
 });
 
 // ---------------------------------------------------------------------------
@@ -276,7 +275,7 @@ test('Case H: normal two-up full-fuel flight — all three conditions in envelop
   close(r.landing!.momentInLb, 54660.4375);
   close(r.landing!.cgIn, 35.717, 0.001);
 
-  assert.equal(r.allIssues.length, 0, `expected no issues, got ${codes(r.allIssues)}`);
+  assert.strictEqual(r.allIssues.length, 0, `expected no issues, got ${codes(r.allIssues)}`);
 });
 
 // ---------------------------------------------------------------------------
