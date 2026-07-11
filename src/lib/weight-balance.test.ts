@@ -5,7 +5,9 @@
  * the worked examples presented for owner verification against the 1966
  * Cessna 150F Owner's Manual sample problems.
  *
- * STATUS: pending owner sign-off against the POH. Adjust + freeze on approval.
+ * STATUS: FROZEN — owner verified these cases against the POH and approved
+ * them on 2026-07-10. Do not change expected values without re-verifying
+ * against the owner's manual.
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
