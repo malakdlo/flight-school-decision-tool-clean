@@ -500,7 +500,7 @@
   render();
 </script>
 
-<style>
+<style is:global>
   .fsf-metar {
     --bg: #FAFBFD;
     --surface: #FFFFFF;
@@ -778,12 +778,12 @@
     font-weight: 800;
   }
 
-  small {
+  :where(.fsf-metar) small {
     color: var(--text-muted);
     font-weight: 700;
   }
 
-  input {
+  :where(.fsf-metar) input {
     width: 100%;
     min-height: 48px;
     border: 1.5px solid var(--border-strong);
@@ -795,7 +795,7 @@
     font-size: 1rem;
   }
 
-  input::placeholder {
+  :where(.fsf-metar) input::placeholder {
     color: var(--text-muted);
   }
 
@@ -810,14 +810,33 @@
   }
 
   .choice-button {
+    position: relative;
     display: flex;
     min-height: 92px;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
     background: var(--surface);
-    padding: 0.95rem;
+    padding: 0.95rem 2.75rem 0.95rem 0.95rem;
     text-align: left;
+  }
+
+  .choice-button::before {
+    content: '';
+    position: absolute;
+    top: 0.95rem;
+    right: 0.95rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    border: 2px solid var(--border-strong);
+    border-radius: 999px;
+    background: var(--surface);
+  }
+
+  .choice-button.is-selected::before {
+    border-color: var(--primary);
+    background: var(--primary);
+    box-shadow: inset 0 0 0 4px var(--surface);
   }
 
   .choice-button strong {
@@ -914,14 +933,14 @@
     line-height: 1.65;
   }
 
-  button:focus-visible,
-  input:focus-visible,
+  :where(.fsf-metar) button:focus-visible,
+  :where(.fsf-metar) input:focus-visible,
   .metar-strip:focus-visible {
     outline: 3px solid rgba(11, 105, 214, 0.35);
     outline-offset: 3px;
   }
 
-  button:active {
+  :where(.fsf-metar) button:active {
     transform: translateY(1px);
   }
 
@@ -958,9 +977,9 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
+    :where(.fsf-metar) *,
+    :where(.fsf-metar) *::before,
+    :where(.fsf-metar) *::after {
       scroll-behavior: auto !important;
       transition: none !important;
     }
