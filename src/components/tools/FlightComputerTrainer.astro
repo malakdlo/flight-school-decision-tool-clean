@@ -1,0 +1,1906 @@
+<section class="fsf-flightcomp" aria-labelledby="fc-heading">
+  <div class="fc-shell">
+    <header class="fc-hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Flight planning practice</p>
+        <h1 id="fc-heading">Flight computer practice trainer</h1>
+        <p class="lead">
+          The calculations you spin through on a manual E6B-style flight computer — wind triangles, time-speed-distance, fuel,
+          density altitude — worked digitally so you can build speed and intuition between lessons. Every result shows the
+          formula behind it.
+        </p>
+      </div>
+
+      <aside class="mode-card" aria-label="Trainer modes">
+        <p class="eyebrow">Modes</p>
+        <div class="mode-tabs">
+          <button type="button" class="chip is-selected" data-mode-tab="calc" aria-pressed="true">Calculator</button>
+          <button type="button" class="chip" data-mode-tab="practice" aria-pressed="false">Practice</button>
+        </div>
+        <span>Calculator to check your work, practice for graded problems with real tolerances — the same math engines drive both.</span>
+      </aside>
+    </header>
+
+    <section class="calc-panel" data-mode-section="calc" aria-label="Flight computer calculator">
+      <div class="calc-tabs" aria-label="Choose a calculation">
+        <span>Calculation</span>
+        <button type="button" class="chip is-selected" data-panel="wind" aria-pressed="true">Wind triangle</button>
+        <button type="button" class="chip" data-panel="tsd" aria-pressed="false">Time · speed · distance</button>
+        <button type="button" class="chip" data-panel="fuel" aria-pressed="false">Fuel</button>
+        <button type="button" class="chip" data-panel="altitude" aria-pressed="false">Altitudes</button>
+        <button type="button" class="chip" data-panel="tas" aria-pressed="false">True airspeed</button>
+        <button type="button" class="chip" data-panel="convert" aria-pressed="false">Conversions</button>
+      </div>
+
+      <!-- Wind triangle -->
+      <div class="calc-view" data-panel-view="wind">
+        <form class="calc-form" data-calc="wind" novalidate>
+          <h2>Wind triangle</h2>
+          <p class="calc-help">Given your true course, true airspeed, and the winds aloft, find the wind correction angle, true heading, and ground speed.</p>
+          <div class="field-row">
+            <label>
+              <span>True course (°)</span>
+              <input name="tc" type="number" min="0" max="360" step="any" inputmode="numeric" autocomplete="off" placeholder="090" />
+            </label>
+            <label>
+              <span>True airspeed (kts)</span>
+              <input name="tas" type="number" min="1" step="any" inputmode="numeric" autocomplete="off" placeholder="110" />
+            </label>
+            <label>
+              <span>Wind from (°)</span>
+              <input name="wdir" type="number" min="0" max="360" step="any" inputmode="numeric" autocomplete="off" placeholder="040" />
+            </label>
+            <label>
+              <span>Wind speed (kts)</span>
+              <input name="wspd" type="number" min="0" step="any" inputmode="numeric" autocomplete="off" placeholder="15" />
+            </label>
+          </div>
+          <div class="actions">
+            <button type="submit" class="primary-action">Calculate</button>
+          </div>
+          <div class="result-zone" data-result aria-live="polite"></div>
+        </form>
+      </div>
+
+      <!-- Time / speed / distance -->
+      <div class="calc-view" data-panel-view="tsd" hidden>
+        <form class="calc-form" data-calc="tsd" data-mode="time" novalidate>
+          <h2>Time, speed, distance</h2>
+          <p class="calc-help">Know two, solve the third — the bread and butter of every cross-country log.</p>
+          <div class="mode-row" aria-label="Solve for">
+            <span>Solve for</span>
+            <button type="button" class="chip is-selected" data-mode-chip="time" aria-pressed="true">Time</button>
+            <button type="button" class="chip" data-mode-chip="speed" aria-pressed="false">Ground speed</button>
+            <button type="button" class="chip" data-mode-chip="distance" aria-pressed="false">Distance</button>
+          </div>
+
+          <fieldset class="field-row" data-mode-view="time">
+            <legend class="sr-only">Solve for time</legend>
+            <label>
+              <span>Ground speed (kts)</span>
+              <input name="time-gs" type="number" min="1" step="any" inputmode="numeric" autocomplete="off" placeholder="110" />
+            </label>
+            <label>
+              <span>Distance (NM)</span>
+              <input name="time-dist" type="number" min="0" step="any" inputmode="decimal" autocomplete="off" placeholder="165" />
+            </label>
+          </fieldset>
+
+          <fieldset class="field-row" data-mode-view="speed" hidden>
+            <legend class="sr-only">Solve for ground speed</legend>
+            <label>
+              <span>Distance (NM)</span>
+              <input name="speed-dist" type="number" min="0" step="any" inputmode="decimal" autocomplete="off" placeholder="240" />
+            </label>
+            <label class="time-field">
+              <span>Time</span>
+              <span class="time-inputs">
+                <input name="speed-th" type="number" min="0" step="any" inputmode="numeric" autocomplete="off" placeholder="2" aria-label="Hours" />
+                <small>hr</small>
+                <input name="speed-tm" type="number" min="0" step="any" inputmode="numeric" autocomplete="off" placeholder="00" aria-label="Minutes" />
+                <small>min</small>
+              </span>
+            </label>
+          </fieldset>
+
+          <fieldset class="field-row" data-mode-view="distance" hidden>
+            <legend class="sr-only">Solve for distance</legend>
+            <label>
+              <span>Ground speed (kts)</span>
+              <input name="dist-gs" type="number" min="1" step="any" inputmode="numeric" autocomplete="off" placeholder="95" />
+            </label>
+            <label class="time-field">
+              <span>Time</span>
+              <span class="time-inputs">
+                <input name="dist-th" type="number" min="0" step="any" inputmode="numeric" autocomplete="off" placeholder="1" aria-label="Hours" />
+                <small>hr</small>
+                <input name="dist-tm" type="number" min="0" step="any" inputmode="numeric" autocomplete="off" placeholder="12" aria-label="Minutes" />
+                <small>min</small>
+              </span>
+            </label>
+          </fieldset>
+
+          <div class="actions">
+            <button type="submit" class="primary-action">Calculate</button>
+          </div>
+          <div class="result-zone" data-result aria-live="polite"></div>
+        </form>
+      </div>
+
+      <!-- Fuel -->
+      <div class="calc-view" data-panel-view="fuel" hidden>
+        <form class="calc-form" data-calc="fuel" data-mode="burned" novalidate>
+          <h2>Fuel</h2>
+          <p class="calc-help">Burn rate in gallons per hour, straight from your POH cruise tables.</p>
+          <div class="mode-row" aria-label="Fuel calculation type">
+            <span>Find</span>
+            <button type="button" class="chip is-selected" data-mode-chip="burned" aria-pressed="true">Fuel burned</button>
+            <button type="button" class="chip" data-mode-chip="endurance" aria-pressed="false">Endurance</button>
+            <button type="button" class="chip" data-mode-chip="required" aria-pressed="false">Fuel required</button>
+          </div>
+
+          <fieldset class="field-row" data-mode-view="burned">
+            <legend class="sr-only">Fuel burned</legend>
+            <label>
+              <span>Burn rate (GPH)</span>
+              <input name="burned-gph" type="number" min="0" step="any" inputmode="decimal" autocomplete="off" placeholder="8.5" />
+            </label>
+            <label class="time-field">
+              <span>Time</span>
+              <span class="time-inputs">
+                <input name="burned-th" type="number" min="0" step="any" inputmode="numeric" autocomplete="off" placeholder="2" aria-label="Hours" />
+                <small>hr</small>
+                <input name="burned-tm" type="number" min="0" step="any" inputmode="numeric" autocomplete="off" placeholder="30" aria-label="Minutes" />
+                <small>min</small>
+              </span>
+            </label>
+          </fieldset>
+
+          <fieldset class="field-row" data-mode-view="endurance" hidden>
+            <legend class="sr-only">Endurance</legend>
+            <label>
+              <span>Usable fuel (gal)</span>
+              <input name="end-gal" type="number" min="0" step="any" inputmode="decimal" autocomplete="off" placeholder="38" />
+            </label>
+            <label>
+              <span>Burn rate (GPH)</span>
+              <input name="end-gph" type="number" min="0" step="any" inputmode="decimal" autocomplete="off" placeholder="9.5" />
+            </label>
+          </fieldset>
+
+          <fieldset class="field-row" data-mode-view="required" hidden>
+            <legend class="sr-only">Fuel required</legend>
+            <label>
+              <span>Burn rate (GPH)</span>
+              <input name="req-gph" type="number" min="0" step="any" inputmode="decimal" autocomplete="off" placeholder="9" />
+            </label>
+            <label class="time-field">
+              <span>Trip time</span>
+              <span class="time-inputs">
+                <input name="req-th" type="number" min="0" step="any" inputmode="numeric" autocomplete="off" placeholder="2" aria-label="Hours" />
+                <small>hr</small>
+                <input name="req-tm" type="number" min="0" step="any" inputmode="numeric" autocomplete="off" placeholder="00" aria-label="Minutes" />
+                <small>min</small>
+              </span>
+            </label>
+            <label>
+              <span>Reserve (min) <small>optional</small></span>
+              <input name="req-reserve" type="number" min="0" step="any" inputmode="numeric" autocomplete="off" placeholder="45" />
+            </label>
+          </fieldset>
+
+          <div class="actions">
+            <button type="submit" class="primary-action">Calculate</button>
+          </div>
+          <div class="result-zone" data-result aria-live="polite"></div>
+        </form>
+      </div>
+
+      <!-- Altitudes -->
+      <div class="calc-view" data-panel-view="altitude" hidden>
+        <div class="altitude-grid">
+          <form class="calc-form" data-calc="pa" novalidate>
+            <h2>Pressure altitude</h2>
+            <p class="calc-help">What the altimeter would read set to 29.92 — the entry point for performance charts.</p>
+            <div class="field-row">
+              <label>
+                <span>Field elevation (ft)</span>
+                <input name="pa-elev" type="number" step="any" inputmode="numeric" autocomplete="off" placeholder="1200" />
+              </label>
+              <label>
+                <span>Altimeter setting (inHg)</span>
+                <input name="pa-alt" type="number" min="28" max="31.5" step="any" inputmode="decimal" autocomplete="off" placeholder="29.92" />
+              </label>
+            </div>
+            <div class="actions">
+              <button type="submit" class="primary-action">Calculate</button>
+            </div>
+            <div class="result-zone" data-result aria-live="polite"></div>
+          </form>
+
+          <form class="calc-form" data-calc="da" novalidate>
+            <h2>Density altitude</h2>
+            <p class="calc-help">The altitude your airplane thinks it's at. Start from the pressure altitude you just found.</p>
+            <div class="field-row">
+              <label>
+                <span>Pressure altitude (ft)</span>
+                <input name="da-pa" type="number" step="any" inputmode="numeric" autocomplete="off" placeholder="5000" />
+              </label>
+              <label>
+                <span>Outside air temp (°C)</span>
+                <input name="da-oat" type="number" step="any" inputmode="decimal" autocomplete="off" placeholder="25" />
+              </label>
+            </div>
+            <div class="actions">
+              <button type="submit" class="primary-action">Calculate</button>
+            </div>
+            <div class="result-zone" data-result aria-live="polite"></div>
+          </form>
+        </div>
+      </div>
+
+      <!-- True airspeed -->
+      <div class="calc-view" data-panel-view="tas" hidden>
+        <form class="calc-form" data-calc="tas" novalidate>
+          <h2>True airspeed</h2>
+          <p class="calc-help">Quick rule-of-thumb TAS from calibrated airspeed: about 2% faster per 1,000 ft of density altitude.</p>
+          <div class="field-row">
+            <label>
+              <span>Calibrated airspeed (kts)</span>
+              <input name="tas-cas" type="number" min="1" step="any" inputmode="numeric" autocomplete="off" placeholder="110" />
+            </label>
+            <label>
+              <span>Pressure altitude (ft)</span>
+              <input name="tas-pa" type="number" step="any" inputmode="numeric" autocomplete="off" placeholder="6500" />
+            </label>
+            <label>
+              <span>Outside air temp (°C)</span>
+              <input name="tas-oat" type="number" step="any" inputmode="decimal" autocomplete="off" placeholder="15" />
+            </label>
+          </div>
+          <div class="actions">
+            <button type="submit" class="primary-action">Calculate</button>
+          </div>
+          <div class="result-zone" data-result aria-live="polite"></div>
+        </form>
+      </div>
+
+      <!-- Conversions -->
+      <div class="calc-view" data-panel-view="convert" hidden>
+        <div class="calc-form">
+          <h2>Conversions</h2>
+          <p class="calc-help">Type in either box — the other converts as you go.</p>
+          <div class="mode-row" aria-label="Conversion type" data-convert-tabs>
+            <span>Convert</span>
+            <button type="button" class="chip is-selected" data-pair-chip="kt-mph" aria-pressed="true">kts ↔ mph</button>
+            <button type="button" class="chip" data-pair-chip="nm-sm" aria-pressed="false">NM ↔ SM</button>
+            <button type="button" class="chip" data-pair-chip="nm-km" aria-pressed="false">NM ↔ km</button>
+            <button type="button" class="chip" data-pair-chip="gal-lbs" aria-pressed="false">gal ↔ lbs</button>
+            <button type="button" class="chip" data-pair-chip="c-f" aria-pressed="false">°C ↔ °F</button>
+          </div>
+
+          <div class="convert-pair" data-pair-view="kt-mph">
+            <label><span>Knots</span><input data-convert-a type="number" step="any" inputmode="decimal" autocomplete="off" placeholder="100" /></label>
+            <span class="convert-eq" aria-hidden="true">=</span>
+            <label><span>Miles per hour</span><input data-convert-b type="number" step="any" inputmode="decimal" autocomplete="off" placeholder="115.1" /></label>
+            <p class="convert-note" data-convert-note>1 kt = 1.15078 mph</p>
+          </div>
+          <div class="convert-pair" data-pair-view="nm-sm" hidden>
+            <label><span>Nautical miles</span><input data-convert-a type="number" step="any" inputmode="decimal" autocomplete="off" placeholder="100" /></label>
+            <span class="convert-eq" aria-hidden="true">=</span>
+            <label><span>Statute miles</span><input data-convert-b type="number" step="any" inputmode="decimal" autocomplete="off" placeholder="115.1" /></label>
+            <p class="convert-note" data-convert-note>1 NM = 1.15078 SM</p>
+          </div>
+          <div class="convert-pair" data-pair-view="nm-km" hidden>
+            <label><span>Nautical miles</span><input data-convert-a type="number" step="any" inputmode="decimal" autocomplete="off" placeholder="100" /></label>
+            <span class="convert-eq" aria-hidden="true">=</span>
+            <label><span>Kilometers</span><input data-convert-b type="number" step="any" inputmode="decimal" autocomplete="off" placeholder="185.2" /></label>
+            <p class="convert-note" data-convert-note>1 NM = 1.852 km (exact)</p>
+          </div>
+          <div class="convert-pair" data-pair-view="gal-lbs" hidden>
+            <label><span>Gallons (avgas)</span><input data-convert-a type="number" step="any" inputmode="decimal" autocomplete="off" placeholder="30" /></label>
+            <span class="convert-eq" aria-hidden="true">=</span>
+            <label><span>Pounds</span><input data-convert-b type="number" step="any" inputmode="decimal" autocomplete="off" placeholder="180" /></label>
+            <p class="convert-note" data-convert-note>Avgas flight-planning weight: 6 lbs per gallon</p>
+          </div>
+          <div class="convert-pair" data-pair-view="c-f" hidden>
+            <label><span>Celsius</span><input data-convert-a type="number" step="any" inputmode="decimal" autocomplete="off" placeholder="15" /></label>
+            <span class="convert-eq" aria-hidden="true">=</span>
+            <label><span>Fahrenheit</span><input data-convert-b type="number" step="any" inputmode="decimal" autocomplete="off" placeholder="59" /></label>
+            <p class="convert-note" data-convert-note>°F = °C × 1.8 + 32</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="calc-panel" data-mode-section="practice" hidden aria-label="Practice mode">
+      <div data-practice-app></div>
+    </section>
+
+    <aside class="practice-note" role="note">
+      <div class="note-marker" aria-hidden="true">!</div>
+      <div>
+        <h2>Training note</h2>
+        <p>
+          Your manual flight computer — whichever brand you fly with — stays the source of truth for checkride prep. This
+          trainer is for building speed and intuition between lessons, and for checking your work when you practice at home.
+        </p>
+      </div>
+    </aside>
+
+    <!-- TODO: wire Kit form — UID + tag pending, see site-map-and-funnels.md. Do not link a download asset until the funnel is live. -->
+    <form class="capture-card" data-action="pdf-stub" aria-labelledby="fc-capture-title">
+      <p class="capture-title" id="fc-capture-title">Get a printable practice problem set</p>
+      <p class="capture-body">
+        A worked set of E6B practice problems — wind triangles, fuel, and density altitude with full solutions — as a
+        printable PDF for the flight bag.
+      </p>
+      <label class="capture-label">
+        <span>Email</span>
+        <input class="capture-input" type="email" placeholder="you@email.com" autocomplete="email" disabled />
+      </label>
+      <button class="primary-action" type="submit" disabled>Coming soon</button>
+      <p class="capture-hint">Email delivery is not wired yet.</p>
+    </form>
+
+    <p class="fc-disclaimer">
+      Flight School Friend is an independent educational resource. It is not legal, medical, financial, or FAA certification
+      advice. Always verify requirements with the FAA, your aviation medical examiner, and your flight school.
+    </p>
+    <p class="fc-disclaimer">Practice reference only — verify performance calculations with your POH and your instructor.</p>
+  </div>
+</section>
+
+<script>
+  // @ts-nocheck
+  import {
+    cToF,
+    densityAltitude,
+    distanceFromSpeedTime,
+    fToC,
+    fuelBurned,
+    fuelEndurance,
+    fuelRequired,
+    galToLbs,
+    kmToNm,
+    ktsToMph,
+    lbsToGal,
+    mphToKts,
+    nmToKm,
+    nmToSm,
+    pressureAltitude,
+    smToNm,
+    speedFromDistanceTime,
+    timeFromSpeedDistance,
+    trueAirspeed,
+    windTriangle,
+  } from '@/lib/flight-computer/engines';
+  import { buildQueue, CATEGORY_LABELS, gradeField, overallVerdict } from '@/lib/flight-computer/problems';
+
+  const root = document.querySelector('.fsf-flightcomp');
+  if (root) init(root);
+
+  function init(root) {
+    const escapeHtml = (value) =>
+      String(value).replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;',
+      })[char]);
+
+    const round = (value, places = 0) => {
+      const factor = 10 ** places;
+      const r = Math.round(value * factor) / factor;
+      return Object.is(r, -0) ? 0 : r;
+    };
+    const fmtNum = (value, places = 0) => round(value, places).toLocaleString('en-US');
+    const pad3 = (deg) => String(Math.round(deg)).padStart(3, '0');
+    const fmtHours = (hours) => {
+      const totalMin = Math.round(hours * 60);
+      const hh = Math.floor(totalMin / 60);
+      const mm = totalMin % 60;
+      return `${round(hours, 2)} hr (${hh}:${String(mm).padStart(2, '0')})`;
+    };
+
+    /** Read a numeric field; blank or junk comes back NaN so engines can reject it. */
+    const numField = (form, name) => {
+      const field = form.elements[name];
+      const raw = field ? String(field.value).trim() : '';
+      return raw === '' ? NaN : Number(raw);
+    };
+
+    /** Combine an hours + minutes field pair into decimal hours. NaN if both blank. */
+    const hoursField = (form, prefix) => {
+      const hField = form.elements[`${prefix}h`];
+      const mField = form.elements[`${prefix}m`];
+      const hRaw = hField ? String(hField.value).trim() : '';
+      const mRaw = mField ? String(mField.value).trim() : '';
+      if (hRaw === '' && mRaw === '') return NaN;
+      const h = hRaw === '' ? 0 : Number(hRaw);
+      const m = mRaw === '' ? 0 : Number(mRaw);
+      if (!Number.isFinite(h) || !Number.isFinite(m) || h < 0 || m < 0) return NaN;
+      return h + m / 60;
+    };
+
+    const renderResult = (zone, headline, rows, steps, methodNote) => {
+      zone.innerHTML = `
+        <div class="result-strip">${escapeHtml(headline)}</div>
+        ${rows && rows.length ? `
+          <dl class="result-rows">
+            ${rows.map(([term, detail]) => `<div><dt>${escapeHtml(term)}</dt><dd>${escapeHtml(detail)}</dd></div>`).join('')}
+          </dl>` : ''}
+        <details class="how">
+          <summary>How this is computed</summary>
+          <ol>${steps.map((step) => `<li>${escapeHtml(step)}</li>`).join('')}</ol>
+          ${methodNote ? `<p class="method-note">${escapeHtml(methodNote)}</p>` : ''}
+        </details>
+      `;
+    };
+
+    const renderError = (zone, message) => {
+      zone.innerHTML = `<div class="result-error">${escapeHtml(message)}</div>`;
+    };
+
+    // ---- Panel switching -------------------------------------------------
+    const panelChips = Array.from(root.querySelectorAll('[data-panel]'));
+    const panelViews = Array.from(root.querySelectorAll('[data-panel-view]'));
+
+    panelChips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        panelChips.forEach((other) => {
+          const selected = other === chip;
+          other.classList.toggle('is-selected', selected);
+          other.setAttribute('aria-pressed', String(selected));
+        });
+        panelViews.forEach((view) => {
+          view.hidden = view.dataset.panelView !== chip.dataset.panel;
+        });
+      });
+    });
+
+    // ---- Sub-mode switching (TSD solve-for, fuel find) -------------------
+    root.querySelectorAll('form[data-mode]').forEach((form) => {
+      const modeChips = Array.from(form.querySelectorAll('[data-mode-chip]'));
+      const modeViews = Array.from(form.querySelectorAll('[data-mode-view]'));
+      modeChips.forEach((chip) => {
+        chip.addEventListener('click', () => {
+          form.dataset.mode = chip.dataset.modeChip;
+          modeChips.forEach((other) => {
+            const selected = other === chip;
+            other.classList.toggle('is-selected', selected);
+            other.setAttribute('aria-pressed', String(selected));
+          });
+          modeViews.forEach((view) => {
+            view.hidden = view.dataset.modeView !== chip.dataset.modeChip;
+          });
+          const zone = form.querySelector('[data-result]');
+          if (zone) zone.innerHTML = '';
+        });
+      });
+    });
+
+    // ---- Calculators -----------------------------------------------------
+    const calculators = {
+      wind(form, zone) {
+        const result = windTriangle({
+          trueCourse: numField(form, 'tc'),
+          trueAirspeed: numField(form, 'tas'),
+          windDirection: numField(form, 'wdir'),
+          windSpeed: numField(form, 'wspd'),
+        });
+        if (!result.ok) return renderError(zone, result.error);
+        const wca = round(result.windCorrectionAngle);
+        const wcaLabel = wca === 0 ? '0° — no crab needed' : `${Math.abs(wca)}° ${wca > 0 ? 'right' : 'left'} (crab into the wind)`;
+        const hw = round(result.headwindComponent);
+        const xw = round(result.crosswindComponent);
+        const hwLabel = hw >= 0 ? `${hw} kt headwind` : `${Math.abs(hw)} kt tailwind`;
+        const xwLabel = xw === 0 ? 'no crosswind' : `${Math.abs(xw)} kt crosswind from the ${xw > 0 ? 'right' : 'left'}`;
+        renderResult(
+          zone,
+          `Heading ${pad3(result.trueHeading)}° · Ground speed ${fmtNum(result.groundSpeed)} kts`,
+          [
+            ['Wind correction angle', wcaLabel],
+            ['Wind components', `${hwLabel} · ${xwLabel}`],
+          ],
+          result.steps,
+          'This is the same triangle the wind side of a manual flight computer solves graphically — your wind vector set against your true course.'
+        );
+      },
+
+      tsd(form, zone) {
+        const mode = form.dataset.mode;
+        if (mode === 'time') {
+          const result = timeFromSpeedDistance(numField(form, 'time-gs'), numField(form, 'time-dist'));
+          if (!result.ok) return renderError(zone, result.error);
+          return renderResult(zone, `Time ${fmtHours(result.value)}`, [], result.steps);
+        }
+        if (mode === 'speed') {
+          const result = speedFromDistanceTime(numField(form, 'speed-dist'), hoursField(form, 'speed-t'));
+          if (!result.ok) return renderError(zone, result.error);
+          return renderResult(zone, `Ground speed ${fmtNum(result.value)} kts`, [], result.steps);
+        }
+        const result = distanceFromSpeedTime(numField(form, 'dist-gs'), hoursField(form, 'dist-t'));
+        if (!result.ok) return renderError(zone, result.error);
+        return renderResult(zone, `Distance ${fmtNum(result.value, 1)} NM`, [], result.steps);
+      },
+
+      fuel(form, zone) {
+        const mode = form.dataset.mode;
+        if (mode === 'burned') {
+          const result = fuelBurned(numField(form, 'burned-gph'), hoursField(form, 'burned-t'));
+          if (!result.ok) return renderError(zone, result.error);
+          return renderResult(zone, `Fuel burned ${fmtNum(result.value, 1)} gal`, [], result.steps);
+        }
+        if (mode === 'endurance') {
+          const result = fuelEndurance(numField(form, 'end-gal'), numField(form, 'end-gph'));
+          if (!result.ok) return renderError(zone, result.error);
+          return renderResult(
+            zone,
+            `Endurance ${fmtHours(result.value)}`,
+            [],
+            result.steps,
+            'Plan to be on the ground well before this — your legal reserve is a minimum, not a target.'
+          );
+        }
+        const reserveRaw = String(form.elements['req-reserve'].value).trim();
+        const reserveHours = reserveRaw === '' ? 0 : Number(reserveRaw) / 60;
+        const result = fuelRequired(numField(form, 'req-gph'), hoursField(form, 'req-t'), reserveHours);
+        if (!result.ok) return renderError(zone, result.error);
+        return renderResult(zone, `Fuel required ${fmtNum(result.value, 1)} gal`, [], result.steps);
+      },
+
+      pa(form, zone) {
+        const result = pressureAltitude(numField(form, 'pa-elev'), numField(form, 'pa-alt'));
+        if (!result.ok) return renderError(zone, result.error);
+        renderResult(
+          zone,
+          `Pressure altitude ${fmtNum(result.value)} ft`,
+          [],
+          result.steps,
+          'Rule of thumb: about 1,000 ft per inch of pressure. Lower setting than 29.92 means higher pressure altitude.'
+        );
+      },
+
+      da(form, zone) {
+        const result = densityAltitude(numField(form, 'da-pa'), numField(form, 'da-oat'));
+        if (!result.ok) return renderError(zone, result.error);
+        renderResult(
+          zone,
+          `Density altitude ${fmtNum(result.value)} ft`,
+          [],
+          result.steps,
+          'Rule of thumb: about 120 ft per °C of ISA deviation. Performance charts curve a little; this is the planning approximation.'
+        );
+      },
+
+      tas(form, zone) {
+        const result = trueAirspeed(numField(form, 'tas-cas'), numField(form, 'tas-pa'), numField(form, 'tas-oat'));
+        if (!result.ok) return renderError(zone, result.error);
+        renderResult(
+          zone,
+          `True airspeed ${fmtNum(result.value)} kts`,
+          [['Density altitude used', `${fmtNum(result.densityAltitudeFt)} ft`]],
+          result.steps,
+          'Rule of thumb: add 2% of CAS per 1,000 ft of density altitude. The precise wheel on your flight computer will read slightly differently — that is expected.'
+        );
+      },
+    };
+
+    root.querySelectorAll('form[data-calc]').forEach((form) => {
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const zone = form.querySelector('[data-result]');
+        const calculate = calculators[form.dataset.calc];
+        if (zone && calculate) calculate(form, zone);
+      });
+    });
+
+    // ---- Conversions (live, bidirectional) --------------------------------
+    const converters = {
+      'kt-mph': { aToB: ktsToMph, bToA: mphToKts, idle: '1 kt = 1.15078 mph' },
+      'nm-sm': { aToB: nmToSm, bToA: smToNm, idle: '1 NM = 1.15078 SM' },
+      'nm-km': { aToB: nmToKm, bToA: kmToNm, idle: '1 NM = 1.852 km (exact)' },
+      'gal-lbs': { aToB: galToLbs, bToA: lbsToGal, idle: 'Avgas flight-planning weight: 6 lbs per gallon' },
+      'c-f': { aToB: cToF, bToA: fToC, idle: '°F = °C × 1.8 + 32' },
+    };
+
+    const pairChips = Array.from(root.querySelectorAll('[data-pair-chip]'));
+    const pairViews = Array.from(root.querySelectorAll('[data-pair-view]'));
+
+    pairChips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        pairChips.forEach((other) => {
+          const selected = other === chip;
+          other.classList.toggle('is-selected', selected);
+          other.setAttribute('aria-pressed', String(selected));
+        });
+        pairViews.forEach((view) => {
+          view.hidden = view.dataset.pairView !== chip.dataset.pairChip;
+        });
+      });
+    });
+
+    pairViews.forEach((view) => {
+      const converter = converters[view.dataset.pairView];
+      const inputA = view.querySelector('[data-convert-a]');
+      const inputB = view.querySelector('[data-convert-b]');
+      const note = view.querySelector('[data-convert-note]');
+
+      const update = (source, target, fn) => {
+        const raw = String(source.value).trim();
+        if (raw === '') {
+          target.value = '';
+          note.textContent = converter.idle;
+          return;
+        }
+        const result = fn(Number(raw));
+        if (!result.ok) {
+          note.textContent = result.error;
+          return;
+        }
+        target.value = String(round(result.value, 2));
+        note.textContent = result.steps[0];
+      };
+
+      inputA.addEventListener('input', () => update(inputA, inputB, converter.aToB));
+      inputB.addEventListener('input', () => update(inputB, inputA, converter.bToA));
+    });
+
+    // ---- Mode toggle (calculator / practice) -------------------------------
+    const modeTabs = Array.from(root.querySelectorAll('[data-mode-tab]'));
+    const modeSections = Array.from(root.querySelectorAll('[data-mode-section]'));
+
+    modeTabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        modeTabs.forEach((other) => {
+          const selected = other === tab;
+          other.classList.toggle('is-selected', selected);
+          other.setAttribute('aria-pressed', String(selected));
+        });
+        modeSections.forEach((section) => {
+          section.hidden = section.dataset.modeSection !== tab.dataset.modeTab;
+        });
+      });
+    });
+
+    // ---- Practice mode -----------------------------------------------------
+    const practiceApp = root.querySelector('[data-practice-app]');
+    const ALL_CATS = Object.keys(CATEGORY_LABELS);
+    const COUNTS = [5, 10, 15];
+
+    const practice = {
+      screen: 'setup',
+      cats: [...ALL_CATS],
+      count: 10,
+      queue: [],
+      index: 0,
+      responses: [],
+      answered: false,
+    };
+
+    const VERDICT_COPY = {
+      correct: 'Nailed it — within tolerance.',
+      close: 'Close — inside the wider band. Tighten it up.',
+      off: 'Off — walk through the steps below.',
+    };
+
+    const fmtAnswer = (field) => {
+      const value = round(field.value, field.places);
+      const shown = field.circular ? pad3(value) : value.toLocaleString('en-US');
+      return `${shown}${field.unit === '°' ? '°' : ` ${field.unit}`}`;
+    };
+
+    const fmtTolerance = (field) => `±${field.tolerance}${field.unit === '°' ? '°' : ` ${field.unit}`}`;
+
+    const TOLERANCE_SUMMARY = [
+      'Heading ±2°, ground speed ±2 kts',
+      'Time ±6 min (0.1 hr), distance ±2 NM, speed ±2 kts',
+      'Fuel ±0.5 gal, endurance ±6 min',
+      'Pressure altitude ±100 ft, density altitude ±200 ft',
+      'True airspeed ±3 kts',
+      'Conversions ±2 of the target unit (fuel ±0.5 gal)',
+    ];
+
+    function renderPracticeSetup() {
+      practiceApp.innerHTML = `
+        <p class="eyebrow">Practice</p>
+        <h2 class="p-h2">Build your problem set</h2>
+        <p class="calc-help">Pick what to drill and how many problems. Answers are graded with the same tolerance bands a manual flight computer reads to — close counts for something.</p>
+
+        <div class="mode-row" aria-label="Categories">
+          <span>Categories</span>
+          ${ALL_CATS.map((cat) => `
+            <button type="button" class="chip ${practice.cats.includes(cat) ? 'is-selected' : ''}" data-action="toggle-cat" data-cat="${cat}" aria-pressed="${practice.cats.includes(cat)}">${CATEGORY_LABELS[cat]}</button>
+          `).join('')}
+        </div>
+
+        <div class="mode-row" aria-label="Problem count">
+          <span>Problems</span>
+          ${COUNTS.map((count) => `
+            <button type="button" class="chip ${practice.count === count ? 'is-selected' : ''}" data-action="set-count" data-count="${count}" aria-pressed="${practice.count === count}">${count}</button>
+          `).join('')}
+        </div>
+
+        <details class="how p-tolerances">
+          <summary>How grading works</summary>
+          <ol>
+            ${TOLERANCE_SUMMARY.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}
+          </ol>
+          <p class="method-note">Within the band = correct. Within twice the band = close. Manual flight computers read imprecisely — that's the point of the bands.</p>
+        </details>
+
+        ${practice.cats.length === 0 ? '<p class="p-hint">Pick at least one category to start.</p>' : ''}
+
+        <div class="actions">
+          <button type="button" class="primary-action" data-action="start-practice" ${practice.cats.length === 0 ? 'disabled' : ''}>Start practicing</button>
+        </div>
+      `;
+    }
+
+    function renderPracticeQuiz() {
+      const problem = practice.queue[practice.index];
+      const response = practice.answered ? practice.responses[practice.responses.length - 1] : null;
+      const progress = ((practice.index + 1) / practice.queue.length) * 100;
+
+      practiceApp.innerHTML = `
+        <div class="p-quiz-top">
+          <p class="eyebrow">Problem ${practice.index + 1} of ${practice.queue.length}</p>
+          <span class="p-badge">${escapeHtml(problem.categoryLabel)}</span>
+        </div>
+        <div class="p-progress" role="progressbar" aria-label="Practice progress" aria-valuemin="1" aria-valuemax="${practice.queue.length}" aria-valuenow="${practice.index + 1}">
+          <span style="width: ${progress}%"></span>
+        </div>
+
+        <h2 class="p-h2" data-problem-title tabindex="-1">${escapeHtml(problem.title)}</h2>
+        ${problem.givens.length ? `
+          <div class="givens-strip">
+            ${problem.givens.map((given) => `<span>${escapeHtml(given)}</span>`).join('')}
+          </div>` : ''}
+
+        <form data-action="check-practice" novalidate>
+          <div class="p-fields">
+            ${problem.fields.map((field, index) => `
+              <label>
+                <span>${escapeHtml(field.label)} (${escapeHtml(field.unit)}) <small>${escapeHtml(fmtTolerance(field))}</small></span>
+                <input name="field-${index}" type="number" step="any" inputmode="decimal" autocomplete="off" ${response ? 'disabled' : ''} value="${response ? escapeHtml(String(response.entries[index] ?? '')) : ''}" />
+              </label>
+            `).join('')}
+          </div>
+
+          ${response ? '' : `
+            <div class="p-form-feedback" data-form-feedback hidden></div>
+            <div class="actions">
+              <button type="submit" class="primary-action">Check answer</button>
+              <button type="button" class="ghost-action" data-action="reveal-practice">Show the answer</button>
+            </div>
+          `}
+        </form>
+
+        ${response ? `
+          <div class="p-verdict is-${response.overall}">
+            ${response.revealed ? 'Answer revealed — study the steps and get the next one.' : VERDICT_COPY[response.overall]}
+          </div>
+          <ul class="p-field-feedback">
+            ${problem.fields.map((field, index) => {
+              const entered = response.entries[index];
+              const enteredLabel = response.revealed || !Number.isFinite(entered) ? 'no answer' : `you said ${entered}`;
+              return `<li><strong>${escapeHtml(field.label)}:</strong> ${escapeHtml(fmtAnswer(field))} (${escapeHtml(fmtTolerance(field))}) — ${escapeHtml(enteredLabel)}${response.revealed ? '' : ` · ${response.verdicts[index]}`}</li>`;
+            }).join('')}
+          </ul>
+          <details class="how" open>
+            <summary>Worked solution</summary>
+            <ol>${problem.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join('')}</ol>
+            ${problem.method ? `<p class="method-note">${escapeHtml(problem.method)}</p>` : ''}
+          </details>
+          <div class="actions">
+            <button type="button" class="primary-action" data-action="next-practice">
+              ${practice.index + 1 < practice.queue.length ? 'Next problem' : 'See results'}
+            </button>
+          </div>
+        ` : ''}
+      `;
+
+      practiceApp.querySelector('[data-problem-title]')?.focus();
+    }
+
+    function renderPracticeResults() {
+      const totals = { correct: 0, close: 0, off: 0 };
+      const byCat = {};
+      practice.responses.forEach((response) => {
+        totals[response.overall] += 1;
+        const cat = (byCat[response.problem.category] ||= {
+          label: response.problem.categoryLabel,
+          correct: 0,
+          close: 0,
+          off: 0,
+        });
+        cat[response.overall] += 1;
+      });
+      const misses = practice.responses.filter((response) => response.overall !== 'correct');
+
+      practiceApp.innerHTML = `
+        <p class="eyebrow">Results</p>
+        <h2 class="p-h2" data-problem-title tabindex="-1">Here's how it went</h2>
+
+        <div class="givens-strip p-score-strip">
+          <span>${totals.correct} correct · ${totals.close} close · ${totals.off} off — out of ${practice.responses.length}</span>
+        </div>
+
+        <div class="p-cat-results">
+          ${Object.values(byCat).map((cat) => `
+            <div class="p-cat-row">
+              <strong>${escapeHtml(cat.label)}</strong>
+              <span>${cat.correct} correct · ${cat.close} close · ${cat.off} off</span>
+            </div>
+          `).join('')}
+        </div>
+
+        ${misses.length ? `
+          <h3 class="p-h3">Review these</h3>
+          ${misses.map((response) => `
+            <div class="p-review-card">
+              <div class="p-quiz-top">
+                <strong>${escapeHtml(response.problem.title)}</strong>
+                <span class="p-badge">${escapeHtml(response.problem.categoryLabel)}</span>
+              </div>
+              ${response.problem.givens.length ? `<p class="p-review-givens">${escapeHtml(response.problem.givens.join(' · '))}</p>` : ''}
+              <p class="p-review-answer">
+                ${response.problem.fields.map((field, index) => {
+                  const entered = response.entries[index];
+                  const enteredLabel = response.revealed || !Number.isFinite(entered) ? 'no answer' : String(entered);
+                  return `${escapeHtml(field.label)}: ${escapeHtml(fmtAnswer(field))} (your answer: ${escapeHtml(enteredLabel)})`;
+                }).join(' · ')}
+              </p>
+              <details class="how">
+                <summary>Worked solution</summary>
+                <ol>${response.problem.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join('')}</ol>
+                ${response.problem.method ? `<p class="method-note">${escapeHtml(response.problem.method)}</p>` : ''}
+              </details>
+            </div>
+          `).join('')}
+        ` : `
+          <p class="p-review-answer">Clean sweep — every problem inside tolerance. Bump the count or add categories next round.</p>
+        `}
+
+        <div class="actions">
+          <button type="button" class="primary-action" data-action="restart-practice">Practice again</button>
+        </div>
+      `;
+
+      practiceApp.querySelector('[data-problem-title]')?.focus();
+    }
+
+    function renderPractice() {
+      if (!practiceApp) return;
+      if (practice.screen === 'setup') renderPracticeSetup();
+      if (practice.screen === 'quiz') renderPracticeQuiz();
+      if (practice.screen === 'results') renderPracticeResults();
+    }
+
+    practiceApp?.addEventListener('click', (event) => {
+      const control = event.target.closest('[data-action]');
+      if (!control) return;
+      const action = control.dataset.action;
+
+      if (action === 'toggle-cat') {
+        const cat = control.dataset.cat;
+        practice.cats = practice.cats.includes(cat)
+          ? practice.cats.filter((item) => item !== cat)
+          : [...practice.cats, cat];
+        renderPractice();
+      }
+      if (action === 'set-count') {
+        practice.count = Number(control.dataset.count);
+        renderPractice();
+      }
+      if (action === 'start-practice' && practice.cats.length > 0) {
+        practice.queue = buildQueue(practice.cats, practice.count);
+        practice.index = 0;
+        practice.responses = [];
+        practice.answered = false;
+        practice.screen = 'quiz';
+        renderPractice();
+      }
+      if (action === 'reveal-practice') {
+        const problem = practice.queue[practice.index];
+        practice.responses.push({
+          problem,
+          entries: problem.fields.map(() => NaN),
+          verdicts: problem.fields.map(() => 'off'),
+          overall: 'off',
+          revealed: true,
+        });
+        practice.answered = true;
+        renderPractice();
+      }
+      if (action === 'next-practice') {
+        if (practice.index + 1 < practice.queue.length) {
+          practice.index += 1;
+          practice.answered = false;
+        } else {
+          practice.screen = 'results';
+        }
+        renderPractice();
+      }
+      if (action === 'restart-practice') {
+        practice.screen = 'setup';
+        renderPractice();
+      }
+    });
+
+    practiceApp?.addEventListener('submit', (event) => {
+      const form = event.target;
+      if (form.dataset.action !== 'check-practice') return;
+      event.preventDefault();
+      if (practice.answered) return;
+
+      const problem = practice.queue[practice.index];
+      const entries = problem.fields.map((_, index) => {
+        const raw = String(form.elements[`field-${index}`].value).trim();
+        return raw === '' ? NaN : Number(raw);
+      });
+
+      if (entries.some((entry) => !Number.isFinite(entry))) {
+        const feedback = form.querySelector('[data-form-feedback]');
+        if (feedback) {
+          feedback.hidden = false;
+          feedback.textContent = 'Enter an answer in every field before checking — or use "Show the answer."';
+        }
+        return;
+      }
+
+      const verdicts = problem.fields.map((field, index) => gradeField(field, entries[index]));
+      practice.responses.push({
+        problem,
+        entries,
+        verdicts,
+        overall: overallVerdict(verdicts),
+        revealed: false,
+      });
+      practice.answered = true;
+      renderPractice();
+    });
+
+    renderPractice();
+
+    // ---- Capture stub ------------------------------------------------------
+    root.querySelector('[data-action="pdf-stub"]')?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      // TODO: wire Kit form — UID + tag pending, see site-map-and-funnels.md
+    });
+  }
+</script>
+
+<style>
+  .fsf-flightcomp {
+    --bg: #FAFBFD;
+    --surface: #FFFFFF;
+    --surface-sunken: #EEF2F7;
+    --surface-inverse: #0E1B2E;
+    --border: #E2E8F0;
+    --border-strong: #CBD5E1;
+    --text-strong: #0E1B2E;
+    --text-body: #334155;
+    --text-muted: #64748B;
+    --primary: #0B69D6;
+    --primary-hover: #0A5BBA;
+    --primary-soft: #EAF3FE;
+    --success: #1F9D5B;
+    --warning: #E08600;
+    --error: #DC2B36;
+    --shadow-sm: 0 1px 3px rgba(14, 27, 46, 0.06), 0 1px 2px rgba(14, 27, 46, 0.04);
+    --shadow-md: 0 4px 12px rgba(14, 27, 46, 0.07), 0 2px 4px rgba(14, 27, 46, 0.04);
+    background: var(--bg);
+    color: var(--text-body);
+  }
+
+  .fc-shell {
+    width: min(100% - clamp(2.5rem, 10vw, 6rem), 1080px);
+    margin: 0 auto;
+    padding: clamp(4rem, 8vw, 7rem) 0;
+  }
+
+  .fc-hero,
+  .calc-panel,
+  .practice-note,
+  .capture-card {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: var(--shadow-md);
+  }
+
+  .fc-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+    gap: 1.5rem;
+    align-items: stretch;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .hero-copy h1,
+  .calc-form h2,
+  .practice-note h2 {
+    margin: 0;
+    color: var(--text-strong);
+    letter-spacing: -0.015em;
+  }
+
+  .hero-copy h1 {
+    max-width: 780px;
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    line-height: 1.15;
+  }
+
+  .lead {
+    max-width: 720px;
+    margin: 1rem 0 0;
+    font-size: 1.1875rem;
+    line-height: 1.7;
+  }
+
+  .eyebrow {
+    margin: 0 0 0.75rem;
+    color: var(--primary);
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .mode-card {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 12px;
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      var(--surface-inverse);
+    background-size: 32px 32px;
+    padding: 1.25rem;
+    color: #B6C6D8;
+  }
+
+  .mode-card .eyebrow {
+    color: #8FAAD4;
+  }
+
+  .mode-card > span {
+    margin-top: 0.75rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .mode-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .mode-tabs .chip {
+    background: transparent;
+    border-color: rgba(182, 198, 216, 0.4);
+    color: #EAF1F9;
+  }
+
+  .mode-tabs .chip.is-selected {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: white;
+  }
+
+  .mode-tabs .chip[disabled] {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  .calc-panel {
+    margin-top: 1.5rem;
+    padding: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .calc-tabs,
+  .mode-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .calc-tabs > span,
+  .mode-row > span {
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    font-weight: 700;
+  }
+
+  .chip,
+  .primary-action {
+    min-height: 44px;
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    transition: border-color 200ms ease, background 200ms ease, color 200ms ease, transform 200ms ease;
+  }
+
+  .chip {
+    background: var(--surface);
+    padding: 0.6rem 0.9rem;
+    color: var(--text-body);
+  }
+
+  .chip:hover:not([disabled]),
+  .chip.is-selected {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+    color: var(--primary-hover);
+  }
+
+  .calc-view {
+    margin-top: 1.5rem;
+  }
+
+  .calc-form h2 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.25;
+  }
+
+  .calc-help {
+    max-width: 720px;
+    margin: 0.75rem 0 0;
+    line-height: 1.6;
+  }
+
+  .mode-row {
+    margin-top: 1.25rem;
+  }
+
+  .field-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 1.25rem 0 0;
+    border: 0;
+    padding: 0;
+  }
+
+  .field-row label {
+    flex: 1 1 170px;
+    max-width: 300px;
+  }
+
+  .field-row label > span:first-child {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--text-strong);
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+
+  small {
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+
+  input {
+    width: 100%;
+    min-height: 48px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 12px;
+    background: var(--surface);
+    padding: 0.7rem 0.85rem;
+    color: var(--text-strong);
+    font: inherit;
+    font-size: 1rem;
+  }
+
+  input::placeholder {
+    color: var(--text-muted);
+  }
+
+  input[disabled] {
+    background: var(--surface-sunken);
+    cursor: not-allowed;
+  }
+
+  .time-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .time-inputs input {
+    width: 5.5rem;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  .primary-action {
+    border-color: var(--primary);
+    background: var(--primary);
+    padding: 0.7rem 1.05rem;
+    color: white;
+  }
+
+  .primary-action:hover:not([disabled]) {
+    border-color: var(--primary-hover);
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+  }
+
+  .primary-action[disabled] {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  .result-zone {
+    margin-top: 1.25rem;
+  }
+
+  .result-zone :global(.result-strip) {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface-inverse);
+    padding: 1rem;
+    color: #EAF1F9;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: clamp(1rem, 2.4vw, 1.25rem);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .result-zone :global(.result-rows) {
+    margin: 0.85rem 0 0;
+  }
+
+  .result-zone :global(.result-rows div) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.75rem;
+    padding: 0.35rem 0;
+  }
+
+  .result-zone :global(.result-rows dt) {
+    color: var(--text-strong);
+    font-weight: 800;
+  }
+
+  .result-zone :global(.result-rows dd) {
+    margin: 0;
+  }
+
+  .result-zone :global(.result-error) {
+    border: 1px solid rgba(224, 134, 0, 0.28);
+    border-radius: 12px;
+    background: rgba(224, 134, 0, 0.1);
+    padding: 0.9rem 1rem;
+    color: #875000;
+    font-weight: 800;
+    line-height: 1.5;
+  }
+
+  .result-zone :global(.how) {
+    margin-top: 0.85rem;
+    border: 1px solid rgba(11, 105, 214, 0.18);
+    border-radius: 12px;
+    background: var(--primary-soft);
+  }
+
+  .result-zone :global(.how summary) {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    color: var(--primary-hover);
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .result-zone :global(.how ol) {
+    margin: 0;
+    padding: 0 1.25rem 0.9rem 2.25rem;
+  }
+
+  .result-zone :global(.how li) {
+    margin-top: 0.35rem;
+    line-height: 1.6;
+  }
+
+  .result-zone :global(.how .method-note) {
+    margin: 0.35rem 0 0;
+    padding: 0 1rem 0.9rem;
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  .altitude-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  .convert-pair {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+    margin-top: 1.25rem;
+  }
+
+  .convert-pair label {
+    flex: 1 1 170px;
+    max-width: 300px;
+  }
+
+  .convert-pair label span {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--text-strong);
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+
+  .convert-eq {
+    padding-bottom: 0.8rem;
+    color: var(--text-muted);
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+
+  .convert-note {
+    flex-basis: 100%;
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  .practice-note {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+  }
+
+  .practice-note h2 {
+    font-size: 1.125rem;
+  }
+
+  .note-marker {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    place-items: center;
+    border-radius: 999px;
+    background: rgba(224, 134, 0, 0.12);
+    color: var(--warning);
+    font-weight: 900;
+  }
+
+  .practice-note p {
+    margin: 0.45rem 0 0;
+    line-height: 1.65;
+  }
+
+  .capture-card {
+    max-width: 520px;
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+  }
+
+  .capture-title {
+    margin: 0;
+    color: var(--text-strong);
+    font-size: 1.125rem;
+    font-weight: 800;
+  }
+
+  .capture-body {
+    margin: 0.5rem 0 0;
+    line-height: 1.6;
+  }
+
+  .capture-label {
+    display: block;
+    margin: 1rem 0 0;
+  }
+
+  .capture-label span {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--text-strong);
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+
+  .capture-card .primary-action {
+    margin-top: 0.85rem;
+    width: 100%;
+  }
+
+  .capture-hint {
+    margin: 0.65rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+  }
+
+  .fc-disclaimer {
+    max-width: 760px;
+    margin: 1.5rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  .fc-disclaimer + .fc-disclaimer {
+    margin-top: 0.5rem;
+  }
+
+  button:focus-visible,
+  input:focus-visible,
+  .result-zone :global(.how summary:focus-visible) {
+    outline: 3px solid rgba(11, 105, 214, 0.35);
+    outline-offset: 3px;
+  }
+
+  button:active:not([disabled]) {
+    transform: translateY(1px);
+  }
+
+  @media (max-width: 760px) {
+    .fc-hero {
+      grid-template-columns: 1fr;
+    }
+
+    .altitude-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .field-row label,
+    .convert-pair label {
+      max-width: none;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .fc-shell {
+      width: min(100% - 2rem, 1080px);
+      padding: 3rem 0;
+    }
+
+    .fc-hero,
+    .calc-panel,
+    .practice-note,
+    .capture-card {
+      border-radius: 12px;
+    }
+
+    .actions > * {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      transition: none !important;
+    }
+  }
+</style>
+
+<!-- Practice mode renders via innerHTML, so its styles must be global.
+     Everything is namespaced under [data-practice-app] to stay contained. -->
+<style is:global>
+  .fsf-flightcomp [data-practice-app] .eyebrow {
+    margin: 0 0 0.75rem;
+    color: #0B69D6;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-h2 {
+    margin: 0;
+    color: #0E1B2E;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-h2:focus {
+    outline: none;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-h3 {
+    margin: 1.5rem 0 0;
+    color: #0E1B2E;
+    font-size: 1.25rem;
+    letter-spacing: -0.015em;
+  }
+
+  .fsf-flightcomp [data-practice-app] .calc-help {
+    max-width: 720px;
+    margin: 0.75rem 0 0;
+    line-height: 1.6;
+  }
+
+  .fsf-flightcomp [data-practice-app] .mode-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: 1.25rem;
+  }
+
+  .fsf-flightcomp [data-practice-app] .mode-row > span {
+    color: #64748B;
+    font-size: 0.9375rem;
+    font-weight: 700;
+  }
+
+  .fsf-flightcomp [data-practice-app] .chip,
+  .fsf-flightcomp [data-practice-app] .primary-action,
+  .fsf-flightcomp [data-practice-app] .ghost-action {
+    min-height: 44px;
+    border: 1px solid #CBD5E1;
+    border-radius: 12px;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    transition: border-color 200ms ease, background 200ms ease, color 200ms ease, transform 200ms ease;
+  }
+
+  .fsf-flightcomp [data-practice-app] .chip {
+    background: #FFFFFF;
+    padding: 0.6rem 0.9rem;
+    color: #334155;
+  }
+
+  .fsf-flightcomp [data-practice-app] .chip:hover,
+  .fsf-flightcomp [data-practice-app] .chip.is-selected {
+    border-color: #0B69D6;
+    background: #EAF3FE;
+    color: #0A5BBA;
+  }
+
+  .fsf-flightcomp [data-practice-app] .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  .fsf-flightcomp [data-practice-app] .primary-action {
+    border-color: #0B69D6;
+    background: #0B69D6;
+    padding: 0.7rem 1.05rem;
+    color: white;
+  }
+
+  .fsf-flightcomp [data-practice-app] .primary-action:hover:not([disabled]) {
+    border-color: #0A5BBA;
+    background: #0A5BBA;
+    transform: translateY(-1px);
+  }
+
+  .fsf-flightcomp [data-practice-app] .primary-action[disabled] {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  .fsf-flightcomp [data-practice-app] .ghost-action {
+    background: #FFFFFF;
+    padding: 0.7rem 1.05rem;
+    color: #334155;
+  }
+
+  .fsf-flightcomp [data-practice-app] .ghost-action:hover {
+    border-color: #0B69D6;
+    color: #0A5BBA;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-hint {
+    margin: 1rem 0 0;
+    color: #875000;
+    font-weight: 700;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-quiz-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-quiz-top .eyebrow {
+    margin: 0;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-badge {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid rgba(11, 105, 214, 0.18);
+    border-radius: 999px;
+    background: #EAF3FE;
+    padding: 0.25rem 0.7rem;
+    color: #0A5BBA;
+    font-size: 0.8125rem;
+    font-weight: 800;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-progress {
+    height: 10px;
+    margin: 1rem 0 1.25rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #EEF2F7;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-progress span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #0B69D6;
+    transition: width 220ms ease;
+  }
+
+  .fsf-flightcomp [data-practice-app] .givens-strip {
+    margin-top: 1.25rem;
+    overflow-x: auto;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    background: #0E1B2E;
+    padding: 1rem;
+    color: #EAF1F9;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-weight: 700;
+  }
+
+  .fsf-flightcomp [data-practice-app] .givens-strip span {
+    display: block;
+    font-size: clamp(1rem, 2.4vw, 1.125rem);
+    line-height: 1.6;
+    white-space: nowrap;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-fields label {
+    flex: 1 1 170px;
+    max-width: 300px;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-fields label > span {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: #0E1B2E;
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-fields small {
+    color: #64748B;
+    font-weight: 700;
+  }
+
+  .fsf-flightcomp [data-practice-app] input {
+    width: 100%;
+    min-height: 48px;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 12px;
+    background: #FFFFFF;
+    padding: 0.7rem 0.85rem;
+    color: #0E1B2E;
+    font: inherit;
+    font-size: 1rem;
+  }
+
+  .fsf-flightcomp [data-practice-app] input[disabled] {
+    background: #EEF2F7;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-form-feedback {
+    margin-top: 1rem;
+    border: 1px solid rgba(224, 134, 0, 0.28);
+    border-radius: 12px;
+    background: rgba(224, 134, 0, 0.1);
+    padding: 0.9rem 1rem;
+    color: #875000;
+    font-weight: 800;
+    line-height: 1.5;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-verdict {
+    margin-top: 1.25rem;
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    font-weight: 800;
+    line-height: 1.5;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-verdict.is-correct {
+    border: 1px solid rgba(31, 157, 91, 0.28);
+    background: rgba(31, 157, 91, 0.1);
+    color: #12683B;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-verdict.is-close {
+    border: 1px solid rgba(224, 134, 0, 0.28);
+    background: rgba(224, 134, 0, 0.1);
+    color: #875000;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-verdict.is-off {
+    border: 1px solid rgba(220, 43, 54, 0.28);
+    background: rgba(220, 43, 54, 0.08);
+    color: #8C1A21;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-field-feedback {
+    margin: 0.85rem 0 0;
+    padding-left: 1.25rem;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-field-feedback li {
+    margin-top: 0.35rem;
+    line-height: 1.6;
+  }
+
+  .fsf-flightcomp [data-practice-app] .how {
+    margin-top: 1.25rem;
+    border: 1px solid rgba(11, 105, 214, 0.18);
+    border-radius: 12px;
+    background: #EAF3FE;
+  }
+
+  .fsf-flightcomp [data-practice-app] .how summary {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    color: #0A5BBA;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .fsf-flightcomp [data-practice-app] .how ol {
+    margin: 0;
+    padding: 0 1.25rem 0.9rem 2.25rem;
+  }
+
+  .fsf-flightcomp [data-practice-app] .how li {
+    margin-top: 0.35rem;
+    line-height: 1.6;
+  }
+
+  .fsf-flightcomp [data-practice-app] .how .method-note {
+    margin: 0.35rem 0 0;
+    padding: 0 1rem 0.9rem;
+    color: #64748B;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-score-strip span {
+    font-size: clamp(1.05rem, 2.6vw, 1.35rem);
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-cat-results {
+    margin-top: 1.25rem;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    background: #FFFFFF;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-cat-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1rem;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 0.85rem 1rem;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-cat-row + .p-cat-row {
+    border-top: 1px solid #E2E8F0;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-cat-row strong {
+    color: #0E1B2E;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-cat-row span {
+    color: #64748B;
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-review-card {
+    margin-top: 1rem;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    background: #FFFFFF;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 1px 3px rgba(14, 27, 46, 0.06), 0 1px 2px rgba(14, 27, 46, 0.04);
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-review-card strong {
+    color: #0E1B2E;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-review-givens {
+    margin: 0.5rem 0 0;
+    color: #64748B;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  .fsf-flightcomp [data-practice-app] .p-review-answer {
+    margin: 0.5rem 0 0;
+    line-height: 1.65;
+  }
+
+  .fsf-flightcomp [data-practice-app] button:focus-visible,
+  .fsf-flightcomp [data-practice-app] input:focus-visible,
+  .fsf-flightcomp [data-practice-app] summary:focus-visible {
+    outline: 3px solid rgba(11, 105, 214, 0.35);
+    outline-offset: 3px;
+  }
+
+  .fsf-flightcomp [data-practice-app] button:active:not([disabled]) {
+    transform: translateY(1px);
+  }
+
+  @media (max-width: 760px) {
+    .fsf-flightcomp [data-practice-app] .p-fields label {
+      max-width: none;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .fsf-flightcomp [data-practice-app] .actions > * {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fsf-flightcomp [data-practice-app] * {
+      transition: none !important;
+    }
+  }
+</style>
